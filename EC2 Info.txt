@@ -1,0 +1,8 @@
+EC2 Info
+
+Public DNS
+ ec2-3-147-28-83.us-east-2.compute.amazonaws.com
+User name
+ Administrator
+Password
+ cdeiA@A=CSDDZaun3&whv*A3PP4.Yx$u

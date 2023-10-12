@@ -1,0 +1,43 @@
+﻿@{
+    ViewBag.Title = "Queue";
+}
+<h2>@ViewBag.Title</h2>
+<h3>@ViewBag.Message</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Customer Name</th>
+            <th>Phone Number</th>
+            <th>Timestamp</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var entry in Model)
+        {
+            <tr>
+                <td>@entry.Username</td>
+                <td>@entry.Phone</td>
+                <td>@entry.Position</td>
+                <td>
+                    @Html.ActionLink("Remove", "RemoveFromQueue", new { Username = entry.Username })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3>Add to Queue</h3>
+@using (Html.BeginForm("AddToQueue", "Queue", FormMethod.Post))
+{
+    <label for="Username">Username:</label>
+    <input type="text" id="Username" name="Username" required />
+
+    <label for="Phone">Phone Number:</label>
+    <input type="text" id="Phone" name="Phone" required />
+
+    <button type="submit">Add to Queue</button>
+    @Html.ActionLink("Remove", "RemoveFromQueue")
+}
