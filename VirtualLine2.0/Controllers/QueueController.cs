@@ -29,11 +29,47 @@ namespace VirtualLine2._0.Controllers
 
         private static List<QueueEntry> queue = new List<QueueEntry>();
 
-        private queueDBEntities3 dbQueue = new queueDBEntities3();
+        private queueDBEntities3 db = new queueDBEntities3();
 
-        public ActionResult Index()
+        //private string BarName = HomeController.bar;
+
+      private static string bar = "";
+
+      public ActionResult Doggies()
+      {
+         bar = "Doggies";
+         //return the queue index view 
+         return RedirectToAction("Index", "Queue");
+      }
+
+      public ActionResult Pman()
+      {
+         bar = "Pman";
+         return RedirectToAction("Index", "Queue");
+      }
+
+      public ActionResult Champs()
+      {
+         bar = "Champs";
+         return RedirectToAction("Index", "Queue");
+      }
+
+      public ActionResult Shandygaff()
+      {
+         bar = "Shandygaff";
+         return RedirectToAction("Index", "Queue");
+      }
+
+      public ActionResult Phyrst()
+      {
+         bar = "Phyrst";
+         return RedirectToAction("Index", "Queue");
+      }
+
+      public ActionResult Index()
         {
-            return View(queue);
+         ViewBag.Title = bar;
+         return View(queue);
         }
 
         [HttpPost]
@@ -41,12 +77,12 @@ namespace VirtualLine2._0.Controllers
         {
 
             Queue user = new Queue();
-
+         
             //get length of db
             int dblength = 0;
-            if (dbQueue.Queues.ToArray()!=null)
+            if (db.Queues.ToArray()!=null)
             {
-                foreach (Queue q in dbQueue.Queues.ToArray())
+                foreach (Queue q in db.Queues.ToArray())
                 {
                     dblength += 1;
                 }
@@ -67,16 +103,16 @@ namespace VirtualLine2._0.Controllers
             //queue.Add(entry);
             user.Username = entry.Username;
             user.Phone = entry.Phone;
-            dbQueue.Queues.Add(user);
-            dbQueue.SaveChanges();
+            db.Queues.Add(user);
+            db.SaveChanges();
             return RedirectToAction("Index");
         }
 
         public ActionResult RemoveFromQueue(QueueEntry entry)
         {
             Queue user = new Queue();
-            String uname = "brian";
-            user = dbQueue.Queues.Find(uname);
+            String uname = "Connor";
+            user = db.Queues.Find(uname);
             
             if (user == null)
             {
@@ -84,28 +120,28 @@ namespace VirtualLine2._0.Controllers
             }
             else
             {
-                bool oldValidateOnSaveEnabled = dbQueue.Configuration.ValidateOnSaveEnabled;
+                bool oldValidateOnSaveEnabled = db.Configuration.ValidateOnSaveEnabled;
 
                 try
                 {
-                    dbQueue.Configuration.ValidateOnSaveEnabled = false;
+                    db.Configuration.ValidateOnSaveEnabled = false;
 
 
-                    dbQueue.Queues.Attach(user);
-                    dbQueue.Queues.Remove(user);
-                    dbQueue.SaveChanges();
+                    db.Queues.Attach(user);
+                    db.Queues.Remove(user);
+                    db.SaveChanges();
                 }
                 finally
                 {
-                    dbQueue.Configuration.ValidateOnSaveEnabled = oldValidateOnSaveEnabled;
+                    db.Configuration.ValidateOnSaveEnabled = oldValidateOnSaveEnabled;
                 }
 
-                foreach (Queue q in dbQueue.Queues.ToArray())
+                foreach (Queue q in db.Queues.ToArray())
                 {
                     if (q.Position > user.Position)
                     {
                         q.Position = q.Position - 1;
-                        dbQueue.SaveChanges();
+                        db.SaveChanges();
                     }
                 }
             }

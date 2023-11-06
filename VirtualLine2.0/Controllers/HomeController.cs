@@ -1,24 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.Data.Entity.Validation;
 using System.Linq;
+using System.Net;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.WebPages;
+using Microsoft.Ajax.Utilities;
+using EntityState = System.Data.Entity.EntityState;
+using VirtualLine2._0.Controllers;
+using VirtualLine2._0.Models;
 
 namespace VirtualLine2._0.Controllers
 {
-    public class HomeController : Controller
-    {
-        public ActionResult Index()
-        {
-            return View();
-        }
+   
+   public class HomeController : Controller
+   {
 
+      public ActionResult Index()
+      {
+         return View();
+      }
 
-        public ActionResult MyAccount()
-        {
-            ViewBag.Message = "My Account";
+      public ActionResult MyAccount()
+      {
+         ViewBag.Message = "My Account";
+         return View();
+      }
 
-            return View();
-        }
-    }
+   }
 }

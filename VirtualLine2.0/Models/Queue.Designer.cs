@@ -1,4 +1,4 @@
-﻿// T4 code generation is enabled for model 'C:\Users\320097617\Desktop\VirtualLine\VirtualLine2.0\Models\Queue.edmx'. 
+﻿// T4 code generation is enabled for model 'C:\Users\lande\source\repos\VirtualLineRepo\VirtualLine2.0\Models\Queue.edmx'. 
 // To enable legacy code generation, change the value of the 'Code Generation Strategy' designer
 // property to 'Legacy ObjectContext'. This property is available in the Properties Window when the model
 // is open in the designer.
