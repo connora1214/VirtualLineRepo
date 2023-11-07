@@ -21,6 +21,7 @@
           <Property Name="Username" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Phone" Type="nvarchar(max)" />
           <Property Name="Position" Type="int" Nullable="false" />
+          <Property Name="Bar" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityContainer Name="QueueStoreContainer">
           <EntitySet Name="Account" EntityType="Self.Account" Schema="dbo" store:Type="Tables" />
@@ -37,6 +38,7 @@
           <Property Name="Username" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Phone" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Position" Type="Int32" Nullable="false" />
+          <Property Name="Bar" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Account">
           <Key>
@@ -60,6 +62,7 @@
           <EntitySetMapping Name="Queues">
             <EntityTypeMapping TypeName="Queue.Queue">
               <MappingFragment StoreEntitySet="Queue">
+                <ScalarProperty Name="Bar" ColumnName="Bar" />
                 <ScalarProperty Name="Username" ColumnName="Username" />
                 <ScalarProperty Name="Phone" ColumnName="Phone" />
                 <ScalarProperty Name="Position" ColumnName="Position" />

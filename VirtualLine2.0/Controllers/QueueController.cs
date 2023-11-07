@@ -66,10 +66,24 @@ namespace VirtualLine2._0.Controllers
          return RedirectToAction("Index", "Queue");
       }
 
-      public ActionResult Index()
+        public ActionResult Confirmation()
         {
-         ViewBag.Title = bar;
-         return View(queue);
+            ViewBag.Message = "You successfully joined the queue for " + bar;
+            return View();
+        }
+        
+        public ActionResult NotInQueue()
+        {
+            return View();
+        }
+        public ActionResult AlreadyInQueue()
+        {
+           return View();
+        }
+        public ActionResult Index()
+        {
+           ViewBag.Title = bar;
+           return View(queue);
         }
 
         [HttpPost]
@@ -80,9 +94,15 @@ namespace VirtualLine2._0.Controllers
          
             //get length of db
             int dblength = 0;
+
+            //select only the queue entries of the bar that the user is joining the queue of
+            var BarQueue = from q in db.Queues select q;
+            BarQueue = BarQueue.Where(q => q.Bar.Equals(bar));
+            
+
             if (db.Queues.ToArray()!=null)
             {
-                foreach (Queue q in db.Queues.ToArray())
+                foreach (Queue q in BarQueue.ToArray())
                 {
                     dblength += 1;
                 }
@@ -91,7 +111,6 @@ namespace VirtualLine2._0.Controllers
             //first on the queue
             if (dblength==0)
             {
-                //entry.Position = 1;
                 user.Position = 1;
             }
             //not first on the queue
@@ -100,23 +119,27 @@ namespace VirtualLine2._0.Controllers
                 user.Position = dblength+1;
             }
 
-            //queue.Add(entry);
             user.Username = entry.Username;
             user.Phone = entry.Phone;
+            user.Bar = bar;
+            if(db.Queues.Find(user.Username)!= null)
+            {
+            return RedirectToAction("AlreadyInQueue");
+            }
             db.Queues.Add(user);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("Confirmation");
         }
 
         public ActionResult RemoveFromQueue(QueueEntry entry)
         {
             Queue user = new Queue();
-            String uname = "Connor";
+            String uname = "Brian";
             user = db.Queues.Find(uname);
             
             if (user == null)
             {
-                ViewBag.message = "You are not currently in this queue.";
+               return RedirectToAction("NotInQueue");              
             }
             else
             {
@@ -125,8 +148,6 @@ namespace VirtualLine2._0.Controllers
                 try
                 {
                     db.Configuration.ValidateOnSaveEnabled = false;
-
-
                     db.Queues.Attach(user);
                     db.Queues.Remove(user);
                     db.SaveChanges();
@@ -136,7 +157,10 @@ namespace VirtualLine2._0.Controllers
                     db.Configuration.ValidateOnSaveEnabled = oldValidateOnSaveEnabled;
                 }
 
-                foreach (Queue q in db.Queues.ToArray())
+                bar = user.Bar;
+                var BarQueue = from q in db.Queues select q;
+                BarQueue = BarQueue.Where(q => q.Bar.Equals(user.Bar));
+                foreach (Queue q in BarQueue.ToArray())
                 {
                     if (q.Position > user.Position)
                     {

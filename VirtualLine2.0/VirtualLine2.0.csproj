@@ -209,6 +209,9 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Scripts\jquery-3.4.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.4.1.min.map" />
+    <Content Include="Views\Queue\NotInQueue.cshtml" />
+    <Content Include="Views\Queue\Confirmation.cshtml" />
+    <Content Include="Views\Queue\AlreadyInQueue.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
