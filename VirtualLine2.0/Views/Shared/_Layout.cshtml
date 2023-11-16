@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - BarFlow</title>
+    <title>@ViewBag.Title - BarHop</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
@@ -20,7 +20,7 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">                    
-                    <li>@Html.ActionLink("Queue", "Index", "Queue")</li>
+                    <li>@Html.ActionLink("My Queue", "Index", "Queue")</li>
                     <li>@Html.ActionLink("MyAccount", "MyAccount", "Home")</li>
                 </ul>
             </div>
@@ -30,7 +30,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - Virtual Line 3</p>
+            <p>&copy; @DateTime.Now.Year - BarHop</p>
         </footer>
     </div>
 

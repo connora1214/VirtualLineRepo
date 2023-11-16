@@ -16,29 +16,26 @@ using VirtualLine2._0.Models;
 
 namespace VirtualLine2._0.Controllers
 {
+   /*
     public class QueueEntry
     {
         public string Username { get; set; }
         public string Phone { get; set; }
         public int Position { get; set; }
     }
+   */
 
     public class QueueController : Controller
     {
-        // GET: Queue
+        //private static List<QueueEntry> queue = new List<QueueEntry>();
 
-        private static List<QueueEntry> queue = new List<QueueEntry>();
-
-        private queueDBEntities3 db = new queueDBEntities3();
-
-        //private string BarName = HomeController.bar;
+      private queueDBEntities3 db = new queueDBEntities3();
 
       private static string bar = "";
 
       public ActionResult Doggies()
       {
          bar = "Doggies";
-         //return the queue index view 
          return RedirectToAction("Index", "Queue");
       }
 
@@ -76,24 +73,102 @@ namespace VirtualLine2._0.Controllers
         {
             return View();
         }
+        public ActionResult AlreadyInAnotherQueue()
+        {
+           return View();
+        }
+        public ActionResult LeaveConfirmation()
+        {
+           return View();
+        }
         public ActionResult AlreadyInQueue()
         {
            return View();
         }
+        public ActionResult MyQueueActive()
+        {
+           Queue q = db.Queues.Find(User.Identity.Name);
+           ViewBag.Title = q.Bar;
+           int estimatedTime = q.Position;
+           int hours = estimatedTime / 60;
+           int minutes = estimatedTime % 60;
+           if(hours == 0)
+           {
+              ViewBag.Message = "Estimated wait time for " + q.Bar + ": " + minutes + "min";             
+           }
+           else
+           {
+            ViewBag.Message = "Estimated wait time for " + q.Bar + ": " + hours + "hr " + minutes + "min";
+           }
+           
+           return View();
+        }
+        public ActionResult MyQueueInactive()
+        {
+           var BarQueue = from q in db.Queues select q;
+           BarQueue = BarQueue.Where(q => q.Bar.Equals(bar));
+           int LineLength = 0;
+
+           if (db.Queues.ToArray() != null)
+           {
+              foreach (Queue q in BarQueue.ToArray())
+              {
+                 LineLength += 1;
+              }
+           }
+
+           int hours = LineLength / 60;
+           int minutes = LineLength % 60;
+           if (hours == 0)
+           {
+              ViewBag.Message = "Estimated wait time for " + bar + ": " + LineLength + "min";
+           }
+           else
+           {
+              ViewBag.Message = "Estimated wait time for " + bar + ": " + hours + "hr " + minutes + "min";
+           }
+           return View();
+        }
         public ActionResult Index()
         {
-           ViewBag.Title = bar;
-           return View(queue);
+           //if user is not logged in redirect them to the account page
+           if (User.Identity.Name == "")
+           {
+              return RedirectToAction("MyAccount", "Home");
+           }
+
+           //user is logged in but is not currently in a line
+           if (db.Queues.Find(User.Identity.Name) == null)
+           {
+              if(bar == "")
+              {
+               return RedirectToAction("NotinQueue", "Queue");
+              }
+              return RedirectToAction("MyQueueInactive", "Queue");
+           }
+           //user is logged in and is currently in a line
+           else
+           {
+              Queue user = db.Queues.Find(User.Identity.Name);
+              if (user.Bar == bar)
+              {
+                 return RedirectToAction("MyQueueActive", "Queue");
+              }
+              else 
+              {
+                 return RedirectToAction("AlreadyInAnotherQueue", "Queue");
+              }
+           }          
         }
 
         [HttpPost]
-        public ActionResult AddToQueue(QueueEntry entry)
+        public ActionResult AddToQueue()
         {
 
             Queue user = new Queue();
          
             //get length of db
-            int dblength = 0;
+            int LineLength = 0;
 
             //select only the queue entries of the bar that the user is joining the queue of
             var BarQueue = from q in db.Queues select q;
@@ -104,41 +179,60 @@ namespace VirtualLine2._0.Controllers
             {
                 foreach (Queue q in BarQueue.ToArray())
                 {
-                    dblength += 1;
+                    LineLength += 1;
                 }
             }
 
             //first on the queue
-            if (dblength==0)
+            if (LineLength==0)
             {
                 user.Position = 1;
             }
             //not first on the queue
             else
             {
-                user.Position = dblength+1;
+                user.Position = LineLength + 1;
             }
 
-            user.Username = entry.Username;
-            user.Phone = entry.Phone;
-            user.Bar = bar;
-            if(db.Queues.Find(user.Username)!= null)
+            //user is logged in
+            if(User.Identity.Name != "")
             {
-            return RedirectToAction("AlreadyInQueue");
+               //get the account info of the logged in user
+               Account account = db.Accounts.Find(User.Identity.Name);
+               user.Username = account.Username;               
+               user.Phone = account.Phone;
+               user.Bar = bar;
+
+               if (db.Queues.Find(user.Username) != null)
+               {
+                  return RedirectToAction("AlreadyInQueue");
+               }
+
+               db.Queues.Add(user);
+               db.SaveChanges();
+               return RedirectToAction("Confirmation", "Queue");
             }
-            db.Queues.Add(user);
-            db.SaveChanges();
-            return RedirectToAction("Confirmation");
+            //if user is not logged in direct them to the login page
+            else
+            {
+               return RedirectToAction("MyAccount", "Home");
+            }
+            
         }
 
-        public ActionResult RemoveFromQueue(QueueEntry entry)
+        public ActionResult RemoveFromQueue()
         {
-            Queue user = new Queue();
-            String uname = "Brian";
-            user = db.Queues.Find(uname);
-            
+            //if user is not logged in, send them to account page
+            if(User.Identity.Name == "")
+            {
+               return RedirectToAction("MyAccount", "Home");
+            }
+
+            Queue user = db.Queues.Find(User.Identity.Name);
+        
             if (user == null)
             {
+               ViewBag.Message = "You are not currently in line.";
                return RedirectToAction("NotInQueue");              
             }
             else
@@ -170,7 +264,7 @@ namespace VirtualLine2._0.Controllers
                 }
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("LeaveConfirmation");
         }
     }
 }

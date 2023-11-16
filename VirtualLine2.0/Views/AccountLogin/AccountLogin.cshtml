@@ -1,0 +1,14 @@
+﻿<h2>Account Login</h2>
+<h3>@ViewBag.Message</h3>
+
+@using (Html.BeginForm("AccountLogin", "AccountLogin", FormMethod.Post))
+{
+    <label for="Username">Username:</label>
+    <input type="text" id="Username" name="Username" required />
+
+    <label for="Password">Password:</label>
+    <input type="text" id="Password" name="Password" required />
+
+    <button type="submit">Submit</button>
+
+}

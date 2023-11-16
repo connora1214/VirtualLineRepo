@@ -116,7 +116,8 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AccountLoginController.cs" />
+    <Compile Include="Controllers\AccountCreateController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\QueueController.cs" />
     <Compile Include="Global.asax.cs">
@@ -204,18 +205,23 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Queue\Index.cshtml" />
     <Content Include="Views\Home\MyAccount.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Scripts\jquery-3.4.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.4.1.min.map" />
     <Content Include="Views\Queue\NotInQueue.cshtml" />
     <Content Include="Views\Queue\Confirmation.cshtml" />
-    <Content Include="Views\Queue\AlreadyInQueue.cshtml" />
+    <Content Include="Views\Queue\AlreadyInAnotherQueue.cshtml" />
+    <Content Include="Views\AccountCreate\CreateAccount.cshtml" />
+    <Content Include="Views\AccountLogin\AccountLogin.cshtml" />
+    <Content Include="Views\Queue\MyQueueActive.cshtml" />
+    <Content Include="Views\Queue\MyQueueInactive.cshtml" />
+    <Content Include="Views\AccountCreate\Confirmation.cshtml" />
+    <Content Include="Views\AccountLogin\Confirmation.cshtml" />
+    <Content Include="Views\Queue\LeaveConfirmation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Account\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -1,0 +1,8 @@
+﻿
+<h2>@ViewBag.Title</h2>
+
+<h3>@ViewBag.Message</h3>
+@using (Html.BeginForm("AddToQueue", "Queue", FormMethod.Post))
+{
+    <button type="submit">Join Line</button>
+}

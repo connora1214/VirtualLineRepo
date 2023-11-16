@@ -1,0 +1,24 @@
+﻿<h2>Create Account</h2>
+<h3>@ViewBag.Message</h3>
+
+@using (Html.BeginForm("CreateAccount", "AccountCreate", FormMethod.Post))
+{
+    <label for="Username">Username:</label>
+    <input type="text" id="Username" name="Username" required />
+
+    <label for="Password">Password:</label>
+    <input type="text" id="Password" name="Password" required />
+
+    <label for="ConfirmPassword">Confirm Password:</label>
+    <input type="text" id="ConfirmPassword" name="ConfirmPassword" required />
+
+    <label for="Email">Email:</label>
+    <input type="text" id="Email" name="Email" required />
+
+    <label for="Phone">Phone Number:</label>
+    <input type="text" id="Phone" name="Phone" required />
+
+    <button type="submit">Create Account</button>
+
+}
+
