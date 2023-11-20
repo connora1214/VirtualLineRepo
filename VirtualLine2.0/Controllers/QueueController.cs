@@ -16,22 +16,15 @@ using VirtualLine2._0.Models;
 
 namespace VirtualLine2._0.Controllers
 {
-   /*
-    public class QueueEntry
-    {
-        public string Username { get; set; }
-        public string Phone { get; set; }
-        public int Position { get; set; }
-    }
-   */
 
     public class QueueController : Controller
     {
-        //private static List<QueueEntry> queue = new List<QueueEntry>();
 
       private queueDBEntities3 db = new queueDBEntities3();
 
       private static string bar = "";
+
+      private static Boolean enteringBar = false; //boolean variable that is used for the remove method to change which message the user receives
 
       public ActionResult Doggies()
       {
@@ -79,9 +72,22 @@ namespace VirtualLine2._0.Controllers
         }
         public ActionResult LeaveConfirmation()
         {
+           Queue user = db.Queues.Find(User.Identity.Name);
+           ViewBag.Message = bar;
            return View();
         }
-        public ActionResult AlreadyInQueue()
+        public ActionResult EnterConfirmation()
+        {
+           Queue user = db.Queues.Find(User.Identity.Name);
+           ViewBag.Message = bar;
+           return View();
+        }
+        public ActionResult EnteringBar()
+        {
+           enteringBar = true;
+           return RedirectToAction("RemoveFromQueue", "Queue");
+        } 
+         public ActionResult AlreadyInQueue()
         {
            return View();
         }
@@ -94,11 +100,15 @@ namespace VirtualLine2._0.Controllers
            int minutes = estimatedTime % 60;
            if(hours == 0)
            {
+              if (minutes <= 15)
+              {
+                 return RedirectToAction("ReadyToEnter", "Queue");
+              }
               ViewBag.Message = "Estimated wait time for " + q.Bar + ": " + minutes + "min";             
            }
            else
            {
-            ViewBag.Message = "Estimated wait time for " + q.Bar + ": " + hours + "hr " + minutes + "min";
+              ViewBag.Message = "Estimated wait time for " + q.Bar + ": " + hours + "hr " + minutes + "min";
            }
            
            return View();
@@ -119,6 +129,7 @@ namespace VirtualLine2._0.Controllers
 
            int hours = LineLength / 60;
            int minutes = LineLength % 60;
+           
            if (hours == 0)
            {
               ViewBag.Message = "Estimated wait time for " + bar + ": " + LineLength + "min";
@@ -128,6 +139,35 @@ namespace VirtualLine2._0.Controllers
               ViewBag.Message = "Estimated wait time for " + bar + ": " + hours + "hr " + minutes + "min";
            }
            return View();
+        }
+
+        public ActionResult ReadyToEnter()
+        {
+           Queue user = db.Queues.Find(User.Identity.Name);
+           ViewBag.Title = user.Bar;
+           ViewBag.Message = user.Username + ", please arrive at " + user.Bar + " within the next " + user.Position + " minutes to gain entry.";
+           return View();
+        }
+        public ActionResult getConfirmation()
+        {
+           Queue user = db.Queues.Find(User.Identity.Name);
+           ViewBag.Title = user.Bar;
+           return View();
+        }
+         public ActionResult MyQueue()   // user clicks on the MyQueue tab
+        {
+           //if user is not logged in redirect them to the account page
+           if (User.Identity.Name == "")
+           {
+              return RedirectToAction("MyAccount", "Home");
+           }
+           //user is logged in but is not currently in a line
+           if (db.Queues.Find(User.Identity.Name) == null)
+           {
+              return RedirectToAction("NotInQueue", "Queue");
+           }
+
+           return RedirectToAction("MyQueueActive", "Queue");
         }
         public ActionResult Index()
         {
@@ -142,7 +182,7 @@ namespace VirtualLine2._0.Controllers
            {
               if(bar == "")
               {
-               return RedirectToAction("NotinQueue", "Queue");
+                 return RedirectToAction("NotinQueue", "Queue");
               }
               return RedirectToAction("MyQueueInactive", "Queue");
            }
@@ -222,12 +262,6 @@ namespace VirtualLine2._0.Controllers
 
         public ActionResult RemoveFromQueue()
         {
-            //if user is not logged in, send them to account page
-            if(User.Identity.Name == "")
-            {
-               return RedirectToAction("MyAccount", "Home");
-            }
-
             Queue user = db.Queues.Find(User.Identity.Name);
         
             if (user == null)
@@ -242,6 +276,7 @@ namespace VirtualLine2._0.Controllers
                 try
                 {
                     db.Configuration.ValidateOnSaveEnabled = false;
+                    bar = user.Bar; //make sure the bar variable is correct before removing the user; to be used by the confirmation message 
                     db.Queues.Attach(user);
                     db.Queues.Remove(user);
                     db.SaveChanges();
@@ -264,7 +299,14 @@ namespace VirtualLine2._0.Controllers
                 }
             }
 
-            return RedirectToAction("LeaveConfirmation");
+            if(enteringBar == false)
+            {
+               return RedirectToAction("LeaveConfirmation");
+            }
+            else 
+            {
+               return RedirectToAction("EnterConfirmation");
+            }
         }
     }
 }

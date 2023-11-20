@@ -219,6 +219,10 @@
     <Content Include="Views\AccountCreate\Confirmation.cshtml" />
     <Content Include="Views\AccountLogin\Confirmation.cshtml" />
     <Content Include="Views\Queue\LeaveConfirmation.cshtml" />
+    <Content Include="Views\Queue\ReadyToEnter.cshtml" />
+    <Content Include="Views\Queue\getConfirmation.cshtml" />
+    <Content Include="Views\Queue\EnterConfirmation.cshtml" />
+    <Content Include="Views\Home\AboutUs.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
