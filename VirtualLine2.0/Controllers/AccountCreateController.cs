@@ -26,6 +26,8 @@ namespace VirtualLine2._0.Controllers
       public string Password { get; set; }
       public string ConfirmPassword { get; set; }
       public string Email { get; set; }
+      public string FirstName { get; set; }
+      public string LastName { get; set; }
    } 
    public class AccountCreateController : Controller
    {
@@ -50,7 +52,6 @@ namespace VirtualLine2._0.Controllers
          }
       }
 
-
       [HttpPost]
       public ActionResult CreateAccount(AccountCreateEntry entry)
       {
@@ -65,9 +66,19 @@ namespace VirtualLine2._0.Controllers
          // Check if username already exists
          if (db.Accounts.Any(u => u.Username == entry.Username))
          {
-            //ModelState.AddModelError("", "Username already exists.");
-            //return RedirectToAction("Index", "Home");
             ViewBag.Message = "Username already exists";
+            return View(entry);
+         }
+         // Check if email already exists
+         if (db.Accounts.Any(u => u.Email == entry.Email))
+         {
+            ViewBag.Message = "An account with this email already exists";
+            return View(entry);
+         }
+         // Check if phone already exists
+         if (db.Accounts.Any(u => u.Phone == entry.Phone))
+         {
+            ViewBag.Message = "An account with this phone number already exists";
             return View(entry);
          }
 
@@ -77,10 +88,11 @@ namespace VirtualLine2._0.Controllers
          AccountUser.Phone = entry.Phone;
          AccountUser.Password = hashedPassword;
          AccountUser.Email = entry.Email;
+         AccountUser.FirstName = entry.FirstName;
+         AccountUser.LastName = entry.LastName;
          db.Accounts.Add(AccountUser);
          db.SaveChanges();
          return RedirectToAction("Confirmation", "AccountCreate");
-            //return View();                                
       }
    }
 

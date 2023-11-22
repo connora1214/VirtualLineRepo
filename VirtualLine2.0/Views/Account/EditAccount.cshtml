@@ -1,0 +1,19 @@
+﻿<h1>Edit Account</h1>
+<h3>@ViewBag.Message</h3>
+
+@using (Html.BeginForm("EditAccount", "Account", FormMethod.Post))
+{
+    <label for="FirstName">First Name:</label>
+    <input type="text" id="FirstName" name="FirstName" value="@ViewBag.FirstName" required />
+
+    <label for="LastName">Last Name:</label>
+    <input type="text" id="LastName" name="LastName" value="@ViewBag.LastName" required />
+
+    <label for="Phone">Phone Number:</label>
+    <input type="text" id="Phone" name="Phone" value="@ViewBag.Phone" required />
+
+    <button type="submit">Save Changes</button>
+}
+<h5>
+    @Html.ActionLink("Cancel", "AccountInfo", "Account")
+</h5>

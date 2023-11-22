@@ -27,7 +27,6 @@ namespace VirtualLine2._0.Controllers
 
    public class AccountLoginController : Controller
    {
-      public Account AccountUser = new Account();
 
       private queueDBEntities3 db = new queueDBEntities3();
 
@@ -38,11 +37,17 @@ namespace VirtualLine2._0.Controllers
 
       public ActionResult Confirmation()
       {
-         ViewBag.Message = "Hello, " + User.Identity.Name;
+         Account user = db.Accounts.Find(User.Identity.Name);
+         ViewBag.Message = "Hello, " + user.FirstName;
          return View();
       }
 
-      [HttpPost]
+      public ActionResult ForgotPassword(AccountLoginEntry entry)
+      {
+         return View();
+      }
+
+         [HttpPost]
       public ActionResult AccountLogin(AccountLoginEntry entry)
       {
 

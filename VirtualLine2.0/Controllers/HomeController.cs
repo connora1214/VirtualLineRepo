@@ -27,11 +27,17 @@ namespace VirtualLine2._0.Controllers
 
       public ActionResult MyAccount()
       {
-         ViewBag.Message = "My Account";
+         //user is logged in already
+         if(User.Identity.Name != "")
+         {
+            ViewBag.Message = "My Account";
+            return RedirectToAction("AccountInfo", "Account");
+         }
+         
          return View();
       }
 
-      public ActionResult AboutUs()
+         public ActionResult AboutUs()
       {
          return View();
       }
