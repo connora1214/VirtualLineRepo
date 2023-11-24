@@ -7,6 +7,7 @@
       <Diagram DiagramId="74b9939075bd44708a3a2b8a5dc70e31" Name="Diagram1">
         <EntityTypeShape EntityType="Queue.Queue" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="Queue.Account" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Queue.Establishment" Width="1.5" PointX="0.75" PointY="3.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

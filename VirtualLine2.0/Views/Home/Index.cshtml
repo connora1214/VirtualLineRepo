@@ -2,12 +2,15 @@
     <h1>Welcome to BrewQueue</h1>
     <p class="lead">Don't wait in line. Select a bar to join a virtual line and we'll let you know when to arrive!</p>
     <p>
-        <a class="btn btn-primary btn-lg" href="@Url.Action("Doggies", "Queue")">Doggies</a>
-        <a class="btn btn-primary btn-lg" href="@Url.Action("Pman", "Queue")">Pman</a>
-        <a class="btn btn-primary btn-lg" href="@Url.Action("Champs", "Queue")">Champs</a>
-        <a class="btn btn-primary btn-lg" href="@Url.Action("Shandygaff", "Queue")">Shandygaff</a>
-        <a class="btn btn-primary btn-lg" href="@Url.Action("Phyrst", "Queue")">Phyrst</a>
+        <select id="locationDropdown">
+            <option value="">Select a Location</option>
+            @foreach (var location in ViewBag.Locations)
+            {
+                <option value="@location">@location</option>
+            }
+        </select>
     </p>
+    <div id="barsList"></div>
 </div>
 <div class="row">
     <div class="col-md-4">
@@ -23,15 +26,54 @@
     </div>
     <div class="col-md-4">
         <h2>Innovative Features</h2>
-        <p>BrewQueue’s user-friendly interface allows customers to easily select a bar and secure a 
-        spot in a virtual line. The app provides real-time updates on wait times and sends notifications 
-        to users 15 minutes before their estimated arrival. With options to extend their wait time or withdraw 
-        with a partial refund, BarHop prioritizes user convenience and flexibility.</p>
+        <p>
+            BrewQueue’s user-friendly interface allows customers to easily select a bar and secure a
+            spot in a virtual line. The app provides real-time updates on wait times and sends notifications
+            to users 15 minutes before their estimated arrival. With options to extend their wait time or withdraw
+            with a partial refund, BarHop prioritizes user convenience and flexibility.
+        </p>
         <!--<p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>-->
-        </div>
+    </div>
     <div class="col-md-4">
         <h2>Learn More About US</h2>
         <p>Learn more about our team and how we strive to make the bar-going experience simpler and affordable!</p>
         <p><a class="btn btn-default" href="@Url.Action("AboutUs", "Home")">Learn more &raquo;</a></p>
     </div>
-    </div>
+</div>
+<script>
+document.getElementById('locationDropdown').addEventListener('change', function () {
+    var selectedLocation = this.value;
+    fetch('/Home/GetBarsByLocation?location=' + encodeURIComponent(selectedLocation))
+    .then(response => response.json())
+    .then(bars => {
+        var barsList = document.getElementById('barsList');
+        barsList.innerHTML = ''; // Clear existing buttons
+        bars.forEach(bar => {
+            var button = document.createElement('button');
+            button.innerText = bar.BarName;
+            button.className = 'barButton';
+            button.addEventListener('click', function () {
+                window.location.href = '@Url.Action("Index", "Queue")' + '?id=' + bar.Id;
+            });
+            barsList.appendChild(button);
+        });
+    });
+});
+</script>
+
+<style>
+    .barButton {
+        /* Your styling here, for example: */
+        margin: 5px;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+        .barButton:hover {
+            background-color: #0056b3;
+        }
+</style>
+

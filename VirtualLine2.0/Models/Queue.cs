@@ -17,6 +17,6 @@ namespace VirtualLine2._0.Models
         public string Username { get; set; }
         public string Phone { get; set; }
         public int Position { get; set; }
-        public string Bar { get; set; }
+        public int Bar { get; set; }
     }
 }

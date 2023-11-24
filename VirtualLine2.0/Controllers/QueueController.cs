@@ -22,43 +22,15 @@ namespace VirtualLine2._0.Controllers
 
       private queueDBEntities3 db = new queueDBEntities3();
 
-      private static string bar = "";
+      //private static string bar = "";
+      private static int bar = 0;
 
       private static Boolean enteringBar = false; //boolean variable that is used for the remove method to change which message the user receives
 
-      public ActionResult Doggies()
-      {
-         bar = "Doggies";
-         return RedirectToAction("Index", "Queue");
-      }
-
-      public ActionResult Pman()
-      {
-         bar = "Pman";
-         return RedirectToAction("Index", "Queue");
-      }
-
-      public ActionResult Champs()
-      {
-         bar = "Champs";
-         return RedirectToAction("Index", "Queue");
-      }
-
-      public ActionResult Shandygaff()
-      {
-         bar = "Shandygaff";
-         return RedirectToAction("Index", "Queue");
-      }
-
-      public ActionResult Phyrst()
-      {
-         bar = "Phyrst";
-         return RedirectToAction("Index", "Queue");
-      }
-
         public ActionResult Confirmation()
         {
-            ViewBag.Message = "You successfully joined the queue for " + bar;
+            Establishment e = db.Establishments.Find(bar);
+            ViewBag.Message = "You successfully joined the queue for " + e.BarName;
             return View();
         }
         
@@ -72,14 +44,14 @@ namespace VirtualLine2._0.Controllers
         }
         public ActionResult LeaveConfirmation()
         {
-           Queue user = db.Queues.Find(User.Identity.Name);
-           ViewBag.Message = bar;
+           Establishment e = db.Establishments.Find(bar);
+           ViewBag.Message = e.BarName;
            return View();
         }
         public ActionResult EnterConfirmation()
         {
-           Queue user = db.Queues.Find(User.Identity.Name);
-           ViewBag.Message = bar;
+           Establishment e = db.Establishments.Find(bar);
+           ViewBag.Message = e.BarName;
            return View();
         }
         public ActionResult EnteringBar()
@@ -94,7 +66,8 @@ namespace VirtualLine2._0.Controllers
         public ActionResult MyQueueActive()
         {
            Queue q = db.Queues.Find(User.Identity.Name);
-           ViewBag.Title = q.Bar;
+           Establishment e = db.Establishments.Find(q.Bar);
+           ViewBag.Title = e.BarName;
            int estimatedTime = q.Position;
            int hours = estimatedTime / 60;
            int minutes = estimatedTime % 60;
@@ -104,11 +77,11 @@ namespace VirtualLine2._0.Controllers
               {
                  return RedirectToAction("ReadyToEnter", "Queue");
               }
-              ViewBag.Message = "Estimated wait time for " + q.Bar + ": " + minutes + "min";             
+              ViewBag.Message = "Estimated wait time for " + e.BarName + ": " + minutes + "min";             
            }
            else
            {
-              ViewBag.Message = "Estimated wait time for " + q.Bar + ": " + hours + "hr " + minutes + "min";
+              ViewBag.Message = "Estimated wait time for " + e.BarName + ": " + hours + "hr " + minutes + "min";
            }
            
            return View();
@@ -132,11 +105,11 @@ namespace VirtualLine2._0.Controllers
            
            if (hours == 0)
            {
-              ViewBag.Message = "Estimated wait time for " + bar + ": " + LineLength + "min";
+              ViewBag.Message = "Estimated wait time for " + db.Establishments.Find(bar).BarName + ": " + LineLength + "min";
            }
            else
            {
-              ViewBag.Message = "Estimated wait time for " + bar + ": " + hours + "hr " + minutes + "min";
+              ViewBag.Message = "Estimated wait time for " + db.Establishments.Find(bar).BarName + ": " + hours + "hr " + minutes + "min";
            }
            return View();
         }
@@ -144,14 +117,15 @@ namespace VirtualLine2._0.Controllers
         public ActionResult ReadyToEnter()
         {
            Queue user = db.Queues.Find(User.Identity.Name);
-           ViewBag.Title = user.Bar;
-           ViewBag.Message = user.Username + ", please arrive at " + user.Bar + " within the next " + user.Position + " minutes to gain entry.";
+           Establishment e = db.Establishments.Find(user.Bar);
+           ViewBag.Title = e.BarName;
+           ViewBag.Message = user.Username + ", please arrive at " + e.BarName + " within the next " + user.Position + " minutes to gain entry.";
            return View();
         }
         public ActionResult getConfirmation()
         {
-           Queue user = db.Queues.Find(User.Identity.Name);
-           ViewBag.Title = user.Bar;
+           Establishment e = db.Establishments.Find(bar);
+           ViewBag.Title = e.BarName;
            return View();
         }
          public ActionResult MyQueue()   // user clicks on the MyQueue tab
@@ -169,8 +143,11 @@ namespace VirtualLine2._0.Controllers
 
            return RedirectToAction("MyQueueActive", "Queue");
         }
-        public ActionResult Index()
+        public ActionResult Index(int id)
         {
+           //Establishment e = db.Establishments.Find(id);
+           bar = id;
+
            //if user is not logged in redirect them to the account page
            if (User.Identity.Name == "")
            {
@@ -180,7 +157,8 @@ namespace VirtualLine2._0.Controllers
            //user is logged in but is not currently in a line
            if (db.Queues.Find(User.Identity.Name) == null)
            {
-              if(bar == "")
+              //if(bar == "")
+              if(bar == 0)
               {
                  return RedirectToAction("NotinQueue", "Queue");
               }

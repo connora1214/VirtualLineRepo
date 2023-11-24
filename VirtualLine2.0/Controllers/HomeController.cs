@@ -16,13 +16,22 @@ using VirtualLine2._0.Models;
 
 namespace VirtualLine2._0.Controllers
 {
-   
    public class HomeController : Controller
    {
+      private queueDBEntities3 db = new queueDBEntities3();
 
       public ActionResult Index()
       {
+
+         ViewBag.Locations = db.Establishments.Select(e => e.Location).Distinct().ToList();
          return View();
+      }
+
+      public JsonResult GetBarsByLocation(string location)
+      {
+         var barNames = db.Establishments.Where(e => e.Location == location).Select(e => new { e.Id, e.BarName }).ToList();
+
+         return Json(barNames, JsonRequestBehavior.AllowGet);
       }
 
       public ActionResult MyAccount()

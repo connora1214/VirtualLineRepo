@@ -22,7 +22,9 @@ namespace VirtualLine2._0.Controllers
    public class AccountCreateEntry
    {
       public string Username { get; set; }
-      public string Phone { get; set; }
+      public string phonePart1 { get; set; }
+      public string phonePart2 { get; set; }
+      public string phonePart3 { get; set; }
       public string Password { get; set; }
       public string ConfirmPassword { get; set; }
       public string Email { get; set; }
@@ -57,6 +59,8 @@ namespace VirtualLine2._0.Controllers
       {
          Account AccountUser = new Account();
 
+         string phone = entry.phonePart1 + entry.phonePart2 + entry.phonePart3;
+
          if (entry.Password != entry.ConfirmPassword)
          {
             ViewBag.Message = "The passwords do not match"; 
@@ -76,7 +80,7 @@ namespace VirtualLine2._0.Controllers
             return View(entry);
          }
          // Check if phone already exists
-         if (db.Accounts.Any(u => u.Phone == entry.Phone))
+         if (db.Accounts.Any(u => u.Phone == phone))
          {
             ViewBag.Message = "An account with this phone number already exists";
             return View(entry);
@@ -85,14 +89,22 @@ namespace VirtualLine2._0.Controllers
          var hashedPassword = HashPassword(entry.Password); // Use the HashPassword method as defined earlier
 
          AccountUser.Username = entry.Username;
-         AccountUser.Phone = entry.Phone;
+         AccountUser.Phone = phone;
          AccountUser.Password = hashedPassword;
          AccountUser.Email = entry.Email;
          AccountUser.FirstName = entry.FirstName;
          AccountUser.LastName = entry.LastName;
          db.Accounts.Add(AccountUser);
-         db.SaveChanges();
-         return RedirectToAction("Confirmation", "AccountCreate");
+         try
+         {
+            db.SaveChanges();
+         }
+         catch (DbEntityValidationException ex)
+         {
+            ViewBag.Message = "Invalid email or phone format";
+            return View(entry);
+         }
+            return RedirectToAction("Confirmation", "AccountCreate");
       }
    }
 

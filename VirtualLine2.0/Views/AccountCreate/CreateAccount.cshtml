@@ -3,28 +3,54 @@
 
 @using (Html.BeginForm("CreateAccount", "AccountCreate", FormMethod.Post))
 {
-    <label for="Username">Username:</label>
-    <input type="text" id="Username" name="Username" required />
+    <p>
+        <label for="Username">Username:</label>
+        <input type="text" id="Username" name="Username" required />
+    </p>
+    <p>
+        <label for="Password">Password:</label>
+        <input type="text" id="Password" name="Password" required />
+    </p>
+    <p>
+        <label for="ConfirmPassword">Confirm Password:</label>
+        <input type="text" id="ConfirmPassword" name="ConfirmPassword" required />
+    </p>
+    <p>
+        <label for="FirstName">First Name:</label>
+        <input type="text" id="FirstName" name="FirstName" required />
 
-    <label for="Password">Password:</label>
-    <input type="text" id="Password" name="Password" required />
+        <label for="LastName">Last Name:</label>
+        <input type="text" id="LastName" name="LastName" required />
+    </p>
+    <p>
+        <label for="Email">Email:</label>
+        <input type="text" id="Email" name="Email" required />
+    </p>
+    <p>
+        <label for="phonePart1">Phone Number:</label>
+        <!--<input type="text" id="Phone" name="Phone" required />-->
+        <input type="text" id="phonePart1" name="phonePart1" maxlength="3" size="3" required />
 
-    <label for="ConfirmPassword">Confirm Password:</label>
-    <input type="text" id="ConfirmPassword" name="ConfirmPassword" required />
+        <label for="phonePart2">-</label>
+        <input type="text" id="phonePart2" name="phonePart2" maxlength="3" size="3" required />
 
-    <label for="FirstName">First Name:</label>
-    <input type="text" id="FirstName" name="FirstName" required />
+        <label for="phonePart3">-</label>
+        <input type="text" id="phonePart3" name="phonePart3" maxlength="4" size="4" required />
+    </p>
+        <button type="submit">Create Account</button>
 
-    <label for="LastName">Last Name:</label>
-    <input type="text" id="LastName" name="LastName" required />
+        }
 
-    <label for="Email">Email:</label>
-    <input type="text" id="Email" name="Email" required />
+        <script>
+            document.getElementById('phonePart1').addEventListener('input', function () {
+                if (this.value.length === 3) {
+                    document.getElementById('phonePart2').focus();
+                }
+            });
 
-    <label for="Phone">Phone Number:</label>
-    <input type="text" id="Phone" name="Phone" required />
-
-    <button type="submit">Create Account</button>
-
-}
-
+            document.getElementById('phonePart2').addEventListener('input', function () {
+                if (this.value.length === 3) {
+                    document.getElementById('phonePart3').focus();
+                }
+            });
+        </script>

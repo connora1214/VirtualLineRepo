@@ -168,6 +168,9 @@
     <Compile Include="Models\Account.cs">
       <DependentUpon>Queue.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Establishment.cs">
+      <DependentUpon>Queue.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Queue.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
