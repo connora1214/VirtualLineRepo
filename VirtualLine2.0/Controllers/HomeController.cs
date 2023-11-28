@@ -22,7 +22,6 @@ namespace VirtualLine2._0.Controllers
 
       public ActionResult Index()
       {
-
          ViewBag.Locations = db.Establishments.Select(e => e.Location).Distinct().ToList();
          return View();
       }
@@ -46,7 +45,7 @@ namespace VirtualLine2._0.Controllers
          return View();
       }
 
-         public ActionResult AboutUs()
+      public ActionResult AboutUs()
       {
          return View();
       }

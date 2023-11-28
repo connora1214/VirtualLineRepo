@@ -11,15 +11,12 @@ namespace VirtualLine2._0.Models
 {
     using System;
     using System.Collections.Generic;
-   using System.ComponentModel.DataAnnotations;
-
-   public partial class Account
+    
+    public partial class Account
     {
         public string Username { get; set; }
         public string Password { get; set; }
-        [EmailAddress]
         public string Email { get; set; }
-        [Phone]
         public string Phone { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }

@@ -17,5 +17,7 @@ namespace VirtualLine2._0.Models
         public string BarName { get; set; }
         public string Location { get; set; }
         public int Id { get; set; }
+        public Nullable<decimal> Latitude { get; set; }
+        public Nullable<decimal> Longitude { get; set; }
     }
 }

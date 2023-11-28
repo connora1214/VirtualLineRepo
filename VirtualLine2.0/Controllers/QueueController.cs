@@ -20,12 +20,13 @@ namespace VirtualLine2._0.Controllers
     public class QueueController : Controller
     {
 
-      private queueDBEntities3 db = new queueDBEntities3();
+        private queueDBEntities3 db = new queueDBEntities3();
 
-      //private static string bar = "";
-      private static int bar = 0;
+        private static int bar = 0;
 
-      private static Boolean enteringBar = false; //boolean variable that is used for the remove method to change which message the user receives
+        private static DateTime startTime = DateTime.MinValue;
+
+        private static Boolean enteringBar = false; //boolean variable that is used for the remove method to change which message the user receives
 
         public ActionResult Confirmation()
         {
@@ -48,6 +49,12 @@ namespace VirtualLine2._0.Controllers
            ViewBag.Message = e.BarName;
            return View();
         }
+
+        public ActionResult GetExtendConfirmation()
+        {
+           return View();
+        }
+
         public ActionResult EnterConfirmation()
         {
            Establishment e = db.Establishments.Find(bar);
@@ -56,6 +63,7 @@ namespace VirtualLine2._0.Controllers
         }
         public ActionResult EnteringBar()
         {
+           startTime = DateTime.MinValue; // Stop the timer
            enteringBar = true;
            return RedirectToAction("RemoveFromQueue", "Queue");
         } 
@@ -119,16 +127,102 @@ namespace VirtualLine2._0.Controllers
            Queue user = db.Queues.Find(User.Identity.Name);
            Establishment e = db.Establishments.Find(user.Bar);
            ViewBag.Title = e.BarName;
+           if(user.Position < 5)
+           {             
+              return RedirectToAction("startTimer", "Queue");
+           }
            ViewBag.Message = user.Username + ", please arrive at " + e.BarName + " within the next " + user.Position + " minutes to gain entry.";
            return View();
         }
-        public ActionResult getConfirmation()
+
+        public ActionResult GrantAccess()
         {
-           Establishment e = db.Establishments.Find(bar);
+           Queue user = db.Queues.Find(User.Identity.Name);
+           Establishment e = db.Establishments.Find(user.Bar);
            ViewBag.Title = e.BarName;
            return View();
         }
-         public ActionResult MyQueue()   // user clicks on the MyQueue tab
+        public ActionResult Timer(string username)
+        {
+           Queue user = db.Queues.Find(User.Identity.Name);
+           Establishment e = db.Establishments.Find(user.Bar);
+           ViewBag.Title = e.BarName;
+           ViewBag.username = user.Username;
+           ViewBag.latitude = e.Latitude;
+           ViewBag.longitude = e.Longitude;
+           return View();
+        }
+
+        public JsonResult CheckTimer(string username)
+        {
+           //DateTime? startTime = Session["TimerStartTime"] as DateTime?;
+           if (startTime == DateTime.MinValue)
+           {
+            // Handle the case where the timer hasn't been started or session expired
+              return Json(new { timeLeft = 0, expired = true }, JsonRequestBehavior.AllowGet);
+           }
+
+           TimeSpan elapsed = DateTime.Now - startTime;
+           TimeSpan duration = TimeSpan.FromMinutes(15);
+           TimeSpan timeLeft = duration - elapsed;
+
+           if (timeLeft.Ticks < 0)
+           {
+              return Json(new { timeLeft = 0, expired = true }, JsonRequestBehavior.AllowGet);
+           }
+
+           return Json(new { timeLeft = timeLeft.TotalSeconds, expired = false }, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetUserPosition()
+        {
+           Queue user = db.Queues.Find(User.Identity.Name);
+           if (user == null)
+           {
+              return Json(new { position = -1 }, JsonRequestBehavior.AllowGet);
+           }
+
+           bool timerStarted = startTime != DateTime.MinValue;
+           return Json(new { position = user.Position }, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult startTimer()
+        {          
+           if (startTime == DateTime.MinValue)
+           {
+              startTime = DateTime.Now;
+           }
+
+           return RedirectToAction("Timer", "Queue");
+        }
+
+        public ActionResult ExtendTime()
+        {
+
+           startTime = DateTime.Now;
+
+           return RedirectToAction("Timer", "Queue");
+        }
+
+        public ActionResult ResetTimerAndGrantAccess()
+        {
+           // Reset timer 
+           startTime = DateTime.Now;
+           
+           return RedirectToAction("GrantAccess");
+        }
+
+        public ActionResult getConfirmation()
+        {
+           return View();
+        }
+
+        public ActionResult GrantAccessConfirmation()
+        {
+           return View();
+        }
+
+        public ActionResult MyQueue()   // user clicks on the MyQueue tab
         {
            //if user is not logged in redirect them to the account page
            if (User.Identity.Name == "")
@@ -279,12 +373,15 @@ namespace VirtualLine2._0.Controllers
 
             if(enteringBar == false)
             {
+               startTime = DateTime.MinValue;
                return RedirectToAction("LeaveConfirmation");
             }
             else 
             {
+               startTime = DateTime.MinValue;
                return RedirectToAction("EnterConfirmation");
             }
+
         }
     }
 }

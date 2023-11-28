@@ -274,6 +274,10 @@
     <Content Include="Views\Account\ChangePassword.cshtml" />
     <Content Include="Views\Account\Logout.cshtml" />
     <Content Include="Views\Account\LogoutConfirmation.cshtml" />
+    <Content Include="Views\Queue\Timer.cshtml" />
+    <Content Include="Views\Queue\GetExtendConfirmation.cshtml" />
+    <Content Include="Views\Queue\GrantAccess.cshtml" />
+    <Content Include="Views\Queue\GrantAccessConfirmation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

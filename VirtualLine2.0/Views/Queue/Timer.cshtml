@@ -1,0 +1,94 @@
+﻿<h2>@ViewBag.Title</h2>
+
+<h3>Your turn is coming up! You must be ready to enter by the timer expires or else your spot in line will be terminated. You will not receive a refund and you will not be permitted entry into the venue.</h3>
+
+<div id="timer"></div>
+
+<button id="checkLocationButton">I am here</button>
+
+@using (Html.BeginForm("GetExtendConfirmation", "Queue", FormMethod.Post))
+{
+    <button type="submit">Extend Time</button>
+}
+
+<script>
+    // Function to check the server timer
+    function checkServerTimer() {
+        fetch('@Url.Action("CheckTimer", "Queue", new { username = ViewBag.username })')
+            .then(response => response.json())
+            .then(data => {
+                if (data.expired) {
+                    clearInterval(timerId);
+                    window.location.href = '@Url.Action("RemoveFromQueue", "Queue", new { username = ViewBag.username })';
+                } else {
+                    updateTimerDisplay(data.timeLeft);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Function to update the timer display
+    function updateTimerDisplay(seconds) {
+        var minutes = parseInt(seconds / 60, 10);
+        var seconds = parseInt(seconds % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        document.getElementById('timer').textContent = minutes + ":" + seconds;
+    }
+
+    // Check server timer immediately when the page loads
+    checkServerTimer();
+
+    // Continue checking the server timer every second
+    var timerId = setInterval(checkServerTimer, 1000);
+</script>
+
+<script>
+    var barLatitude = @ViewBag.Latitude; 
+    var barLongitude = @ViewBag.Longitude; 
+
+    document.getElementById('checkLocationButton').addEventListener('click', function() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var userLatitude = position.coords.latitude;
+                var userLongitude = position.coords.longitude;
+                var distance = calculateDistance(userLatitude, userLongitude, barLatitude, barLongitude);
+
+                if (distance <= 0.15) {
+                    // User is within 0.15 miles of the bar, reset timer and redirect
+                    resetTimerAndRedirect();
+                } else {
+                    alert("You are not within 0.25 miles of the bar.");
+                }
+            }, function(error) {
+                alert("Error getting location: " + error.message);
+            });
+        } else {
+            alert("Geolocation is not supported by your browser.");
+        }
+    });
+
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        var R = 3958.8; // Radius of the Earth in miles
+        var dLat = (lat2 - lat1) * Math.PI / 180;
+        var dLon = (lon2 - lon1) * Math.PI / 180;
+        var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        var distance = R * c;
+        return distance;
+    }
+
+    function resetTimerAndRedirect() {
+        fetch('@Url.Action("ResetTimerAndGrantAccess", "Queue")')
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = '@Url.Action("GrantAccess", "Queue")';
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+</script>
