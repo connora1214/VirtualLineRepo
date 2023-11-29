@@ -14,12 +14,12 @@
 <script>
     // Function to check the server timer
     function checkServerTimer() {
-        fetch('@Url.Action("CheckTimer", "Queue", new { username = ViewBag.username })')
+        fetch('@Url.Action("CheckTimer", "Queue", new { isFromTimerPage = true })')
             .then(response => response.json())
             .then(data => {
                 if (data.expired) {
                     clearInterval(timerId);
-                    window.location.href = '@Url.Action("RemoveFromQueue", "Queue", new { username = ViewBag.username })';
+                    window.location.href = '@Url.Action("LeaveConfirmation", "Queue", new { username = ViewBag.username })';
                 } else {
                     updateTimerDisplay(data.timeLeft);
                 }
@@ -56,7 +56,7 @@
                 var userLongitude = position.coords.longitude;
                 var distance = calculateDistance(userLatitude, userLongitude, barLatitude, barLongitude);
 
-                if (distance <= 0.15) {
+                if (distance <= 0.75) {
                     // User is within 0.15 miles of the bar, reset timer and redirect
                     resetTimerAndRedirect();
                 } else {

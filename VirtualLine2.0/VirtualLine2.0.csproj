@@ -278,6 +278,7 @@
     <Content Include="Views\Queue\GetExtendConfirmation.cshtml" />
     <Content Include="Views\Queue\GrantAccess.cshtml" />
     <Content Include="Views\Queue\GrantAccessConfirmation.cshtml" />
+    <Content Include="Views\Queue\RemovedFromLine.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

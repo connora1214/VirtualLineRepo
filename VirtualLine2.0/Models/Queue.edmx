@@ -34,6 +34,9 @@
           <Property Name="Phone" Type="nvarchar(max)" />
           <Property Name="Position" Type="int" Nullable="false" />
           <Property Name="Bar" Type="int" Nullable="false" />
+          <Property Name="StartTime" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="timerStarted" Type="bit" Nullable="false" />
+          <Property Name="enteringBar" Type="bit" />
         </EntityType>
         <EntityContainer Name="QueueStoreContainer">
           <EntitySet Name="Account" EntityType="Self.Account" Schema="dbo" store:Type="Tables" />
@@ -52,6 +55,9 @@
           <Property Name="Phone" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Position" Type="Int32" Nullable="false" />
           <Property Name="Bar" Type="Int32" Nullable="false" />
+          <Property Name="StartTime" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="timerStarted" Type="Boolean" Nullable="false" />
+          <Property Name="enteringBar" Type="Boolean" />
         </EntityType>
         <EntityType Name="Account">
           <Key>
@@ -88,6 +94,9 @@
           <EntitySetMapping Name="Queues">
             <EntityTypeMapping TypeName="Queue.Queue">
               <MappingFragment StoreEntitySet="Queue">
+                <ScalarProperty Name="enteringBar" ColumnName="enteringBar" />
+                <ScalarProperty Name="timerStarted" ColumnName="timerStarted" />
+                <ScalarProperty Name="StartTime" ColumnName="StartTime" />
                 <ScalarProperty Name="Bar" ColumnName="Bar" />
                 <ScalarProperty Name="Username" ColumnName="Username" />
                 <ScalarProperty Name="Phone" ColumnName="Phone" />

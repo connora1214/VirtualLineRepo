@@ -18,5 +18,8 @@ namespace VirtualLine2._0.Models
         public string Phone { get; set; }
         public int Position { get; set; }
         public int Bar { get; set; }
+        public System.DateTime StartTime { get; set; }
+        public bool timerStarted { get; set; }
+        public Nullable<bool> enteringBar { get; set; }
     }
 }

@@ -24,9 +24,9 @@ namespace VirtualLine2._0.Controllers
 
         private static int bar = 0;
 
-        private static DateTime startTime = DateTime.MinValue;
+        //private static DateTime startTime = DateTime.MinValue;
 
-        private static Boolean enteringBar = false; //boolean variable that is used for the remove method to change which message the user receives
+        //private static Boolean enteringBar = false; //boolean variable that is used for the remove method to change which message the user receives
 
         public ActionResult Confirmation()
         {
@@ -63,8 +63,10 @@ namespace VirtualLine2._0.Controllers
         }
         public ActionResult EnteringBar()
         {
-           startTime = DateTime.MinValue; // Stop the timer
-           enteringBar = true;
+           Queue q = db.Queues.Find(User.Identity.Name);
+           q.StartTime = DateTime.MinValue;
+           q.enteringBar = true;
+           db.SaveChanges();
            return RedirectToAction("RemoveFromQueue", "Queue");
         } 
          public ActionResult AlreadyInQueue()
@@ -127,7 +129,7 @@ namespace VirtualLine2._0.Controllers
            Queue user = db.Queues.Find(User.Identity.Name);
            Establishment e = db.Establishments.Find(user.Bar);
            ViewBag.Title = e.BarName;
-           if(user.Position < 5)
+           if(user.Position < 6)
            {             
               return RedirectToAction("startTimer", "Queue");
            }
@@ -153,25 +155,66 @@ namespace VirtualLine2._0.Controllers
            return View();
         }
 
-        public JsonResult CheckTimer(string username)
+        public JsonResult CheckTimer(bool isFromTimerPage = false)
         {
-           //DateTime? startTime = Session["TimerStartTime"] as DateTime?;
-           if (startTime == DateTime.MinValue)
+           if (!User.Identity.IsAuthenticated)
            {
-            // Handle the case where the timer hasn't been started or session expired
-              return Json(new { timeLeft = 0, expired = true }, JsonRequestBehavior.AllowGet);
+              // User is not logged in
+              return Json(new { isAuthenticated = false }, JsonRequestBehavior.AllowGet);
            }
 
-           TimeSpan elapsed = DateTime.Now - startTime;
-           TimeSpan duration = TimeSpan.FromMinutes(15);
-           TimeSpan timeLeft = duration - elapsed;
+           Queue user = db.Queues.Find(User.Identity.Name);
 
+           if (user == null || !user.timerStarted)
+           {
+              // User is not in the queue or timer isn't started
+              return Json(new { isAuthenticated = true, isInQueue = false }, JsonRequestBehavior.AllowGet);
+           }
+
+           TimeSpan elapsed = DateTime.Now - user.StartTime;
+           TimeSpan duration = TimeSpan.FromMinutes(.5);
+           TimeSpan timeLeft = duration - elapsed;
+          
            if (timeLeft.Ticks < 0)
            {
-              return Json(new { timeLeft = 0, expired = true }, JsonRequestBehavior.AllowGet);
+              if (!isFromTimerPage)
+              {
+                 RemoveUserFromQueue(user);
+              }
+              return Json(new { isAuthenticated = true, isInQueue = true, timeLeft = 0, expired = true }, JsonRequestBehavior.AllowGet);
            }
 
-           return Json(new { timeLeft = timeLeft.TotalSeconds, expired = false }, JsonRequestBehavior.AllowGet);
+           return Json(new { isAuthenticated = true, isInQueue = true, timeLeft = timeLeft.TotalSeconds, expired = false }, JsonRequestBehavior.AllowGet);
+        }
+
+        private void RemoveUserFromQueue(Queue user)
+        {
+           bool oldValidateOnSaveEnabled = db.Configuration.ValidateOnSaveEnabled;
+
+           try
+           {
+              db.Configuration.ValidateOnSaveEnabled = false;
+              bar = user.Bar; //make sure the bar variable is correct before removing the user; to be used by the confirmation message 
+              db.Queues.Attach(user);
+              db.Queues.Remove(user);
+              db.SaveChanges();
+           }
+           finally
+           {
+              db.Configuration.ValidateOnSaveEnabled = oldValidateOnSaveEnabled;
+           }
+
+           bar = user.Bar;
+           var BarQueue = from q in db.Queues select q;
+           BarQueue = BarQueue.Where(q => q.Bar.Equals(user.Bar));
+           foreach (Queue q in BarQueue.ToArray())
+           {
+              if (q.Position > user.Position)
+              {
+                 q.Position = q.Position - 1;
+                 db.SaveChanges();
+              }
+           }
         }
 
         public JsonResult GetUserPosition()
@@ -181,16 +224,19 @@ namespace VirtualLine2._0.Controllers
            {
               return Json(new { position = -1 }, JsonRequestBehavior.AllowGet);
            }
-
-           bool timerStarted = startTime != DateTime.MinValue;
-           return Json(new { position = user.Position }, JsonRequestBehavior.AllowGet);
+           
+           return Json(new { position = user.Position, timerStarted = user.timerStarted }, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult startTimer()
-        {          
-           if (startTime == DateTime.MinValue)
+        {
+           Queue user = db.Queues.Find(User.Identity.Name);
+
+           if (user.timerStarted == false)
            {
-              startTime = DateTime.Now;
+              user.timerStarted = true;
+              user.StartTime = DateTime.Now;
+              db.SaveChanges();
            }
 
            return RedirectToAction("Timer", "Queue");
@@ -198,16 +244,20 @@ namespace VirtualLine2._0.Controllers
 
         public ActionResult ExtendTime()
         {
-
-           startTime = DateTime.Now;
+           //reset timer
+           Queue user = db.Queues.Find(User.Identity.Name);          
+           user.StartTime = DateTime.Now;
+           db.SaveChanges();
 
            return RedirectToAction("Timer", "Queue");
         }
 
         public ActionResult ResetTimerAndGrantAccess()
         {
+           Queue user = db.Queues.Find(User.Identity.Name);
            // Reset timer 
-           startTime = DateTime.Now;
+           user.StartTime = DateTime.Now;
+           db.SaveChanges();
            
            return RedirectToAction("GrantAccess");
         }
@@ -239,7 +289,6 @@ namespace VirtualLine2._0.Controllers
         }
         public ActionResult Index(int id)
         {
-           //Establishment e = db.Establishments.Find(id);
            bar = id;
 
            //if user is not logged in redirect them to the account page
@@ -251,7 +300,6 @@ namespace VirtualLine2._0.Controllers
            //user is logged in but is not currently in a line
            if (db.Queues.Find(User.Identity.Name) == null)
            {
-              //if(bar == "")
               if(bar == 0)
               {
                  return RedirectToAction("NotinQueue", "Queue");
@@ -276,7 +324,6 @@ namespace VirtualLine2._0.Controllers
         [HttpPost]
         public ActionResult AddToQueue()
         {
-
             Queue user = new Queue();
          
             //get length of db
@@ -314,6 +361,9 @@ namespace VirtualLine2._0.Controllers
                user.Username = account.Username;               
                user.Phone = account.Phone;
                user.Bar = bar;
+               user.StartTime = DateTime.MinValue;
+               user.timerStarted = false;
+               user.enteringBar = false;
 
                if (db.Queues.Find(user.Username) != null)
                {
@@ -335,7 +385,7 @@ namespace VirtualLine2._0.Controllers
         public ActionResult RemoveFromQueue()
         {
             Queue user = db.Queues.Find(User.Identity.Name);
-        
+            
             if (user == null)
             {
                ViewBag.Message = "You are not currently in line.";
@@ -343,45 +393,20 @@ namespace VirtualLine2._0.Controllers
             }
             else
             {
-                bool oldValidateOnSaveEnabled = db.Configuration.ValidateOnSaveEnabled;
+               bool? enteringBar = user.enteringBar;
+               RemoveUserFromQueue(user);
 
-                try
-                {
-                    db.Configuration.ValidateOnSaveEnabled = false;
-                    bar = user.Bar; //make sure the bar variable is correct before removing the user; to be used by the confirmation message 
-                    db.Queues.Attach(user);
-                    db.Queues.Remove(user);
-                    db.SaveChanges();
-                }
-                finally
-                {
-                    db.Configuration.ValidateOnSaveEnabled = oldValidateOnSaveEnabled;
-                }
-
-                bar = user.Bar;
-                var BarQueue = from q in db.Queues select q;
-                BarQueue = BarQueue.Where(q => q.Bar.Equals(user.Bar));
-                foreach (Queue q in BarQueue.ToArray())
-                {
-                    if (q.Position > user.Position)
-                    {
-                        q.Position = q.Position - 1;
-                        db.SaveChanges();
-                    }
-                }
+               if (enteringBar == false)
+               {
+                  //startTime = DateTime.MinValue;
+                  return RedirectToAction("LeaveConfirmation");
+               }
+               else
+               {
+                  //startTime = DateTime.MinValue;
+                  return RedirectToAction("EnterConfirmation");
+               }
             }
-
-            if(enteringBar == false)
-            {
-               startTime = DateTime.MinValue;
-               return RedirectToAction("LeaveConfirmation");
-            }
-            else 
-            {
-               startTime = DateTime.MinValue;
-               return RedirectToAction("EnterConfirmation");
-            }
-
         }
     }
 }

@@ -39,12 +39,13 @@
     @RenderSection("scripts", required: false)
 </body>
 </html>
+
 <script>
     function checkUserPosition() {
         fetch('@Url.Action("GetUserPosition", "Queue")')
             .then(response => response.json())
             .then(data => {
-                if (data.position >= 0 && data.position < 5 && !data.timerStarted) {
+                if (data.position >= 0 && data.position < 6 && !data.timerStarted) {
                     clearInterval(positionCheckInterval);
                     window.location.href = '@Url.Action("startTimer", "Queue")';
                 }
@@ -52,5 +53,35 @@
             .catch(error => console.error('Error:', error));
     }
 
-    var positionCheckInterval = setInterval(checkUserPosition, 10000); // Check every 30 seconds
+    var positionCheckInterval = setInterval(checkUserPosition, 10000); // Check every 10 seconds
+</script>
+
+<script>
+    function checkServerTimer() {
+        fetch('@Url.Action("CheckTimer", "Queue", new { isFromTimerPage = false }))')
+            .then(response => response.json())
+            .then(data => {
+                if (!data.isAuthenticated) {
+                    // User is not authenticated, stop checking
+                    clearInterval(timerId);
+                    return;
+                }
+
+                if (!data.isInQueue) {
+                    // User is not in the queue or timer isn't running
+                    clearInterval(timerId);
+                    return;
+                }
+
+                if (data.expired) {
+                    clearInterval(timerId);
+                    window.location.href = '@Url.Action("LeaveConfirmation", "Queue")';
+                }
+
+                // Update timer display as needed
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    var timerId = setInterval(checkServerTimer, 1000); // Check every second
 </script>
