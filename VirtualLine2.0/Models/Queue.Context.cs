@@ -28,5 +28,6 @@ namespace VirtualLine2._0.Models
         public virtual DbSet<Queue> Queues { get; set; }
         public virtual DbSet<Account> Accounts { get; set; }
         public virtual DbSet<Establishment> Establishments { get; set; }
+        public virtual DbSet<EnteredUser> EnteredUsers { get; set; }
     }
 }

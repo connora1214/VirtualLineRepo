@@ -75,7 +75,7 @@
 
                 if (data.expired) {
                     clearInterval(timerId);
-                    window.location.href = '@Url.Action("LeaveConfirmation", "Queue")';
+                    window.location.href = '@Url.Action("RemovedFromLine", "Queue")';
                 }
 
                 // Update timer display as needed
