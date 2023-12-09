@@ -1,8 +1,15 @@
-﻿
+﻿@{
+   var numberList = new SelectList(Enumerable.Range(1, 5), "1");
+}
+
 <h2>@ViewBag.Title</h2>
 
 <h3>@ViewBag.Message</h3>
 @using (Html.BeginForm("AddToQueue", "Queue", FormMethod.Post))
 {
+
+    <label for="numberSelect">Select a Quantity:</label>
+    @Html.DropDownList("numberSelect", numberList)
+
     <button type="submit">Join Line</button>
 }

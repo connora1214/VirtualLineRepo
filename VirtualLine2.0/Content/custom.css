@@ -1,0 +1,69 @@
+body, h1, h2, h3, h4, h5, h6, p, div, label, input {
+    font-family: 'Lato', sans-serif;
+}
+
+.navbar-default {
+    background-color: rgb(96 0 255 / 0.4);
+    border-color: #480087;
+}
+
+.purple-accent {
+    color: #480087; /* Purple color for accents */
+    font-family: 'Lato', sans-serif
+}
+
+    .purple-accent:hover {
+        color: #8700ff; /* Darker purple for hover state */
+    }
+
+.navbar-brand.purple-accent,
+.navbar-nav > li > a.purple-accent {
+    color: rgb(96 0 255 / 0.4);
+}
+
+.navbar-default {
+    background-color: #FFFFFF; /* or any desired color */
+    border-color: #E7E7E7;
+}
+
+    .navbar-default .navbar-brand,
+    .navbar-default .navbar-nav > li > a {
+        color: #FFFFFF; /* Change text color to white */
+    }
+
+        .navbar-default .navbar-brand:hover,
+        .navbar-default .navbar-nav > li > a:hover {
+            color: rgb(96 0 255 / 0.4); /* Lighter shade for hover state, adjust as needed */
+        }
+
+.outlined-text {
+    color: #f3f3f0; /* Fill color */
+    text-shadow: -2px -2px 0 #f3f3f0, 2px -2px 0 #f3f3f0, -2px 2px 0 #f3f3f0, 2px 2px 0 #f3f3f0; /* Black outline */
+}
+
+.jumbotron {
+    margin-bottom: 30px;
+    padding: 30px;
+    border-radius: 6px;
+    font-family: 'Lato', sans-serif;
+    font-weight: 100;
+}
+
+.footer {
+    color: #5D5D9E;
+    padding: 10px 0;
+    border-top: 1px solid #800080; /* Purple top border */
+}
+
+/* Purple buttons */
+.btn-purple {
+    color: white;
+    background-color: #480087;
+    border-bottom: 4px solid #FFFFFF;
+    border-top: 4px solid #FFFFFF;
+}
+
+    .btn-purple:hover {
+        background-color: #8700ff;
+        border-color: #5D005D;
+    }

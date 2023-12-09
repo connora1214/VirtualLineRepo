@@ -168,6 +168,9 @@
     <Compile Include="Models\Account.cs">
       <DependentUpon>Queue.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\AdminAccount.cs">
+      <DependentUpon>Queue.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\EnteredUser.cs">
       <DependentUpon>Queue.tt</DependentUpon>
     </Compile>
@@ -192,9 +195,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Queue.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\QueueTime.cs">
+      <DependentUpon>Queue.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\custom.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -282,6 +289,7 @@
     <Content Include="Views\Queue\GrantAccess.cshtml" />
     <Content Include="Views\Queue\GrantAccessConfirmation.cshtml" />
     <Content Include="Views\Queue\RemovedFromLine.cshtml" />
+    <Content Include="Views\Queue\QueueNotOpen.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

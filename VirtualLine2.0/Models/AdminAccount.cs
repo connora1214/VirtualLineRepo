@@ -12,15 +12,16 @@ namespace VirtualLine2._0.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Queue
+    public partial class AdminAccount
     {
-        public string Username { get; set; }
+        public string Name { get; set; }
+        public string Password { get; set; }
+        public string Email { get; set; }
         public string Phone { get; set; }
-        public int Position { get; set; }
-        public int Bar { get; set; }
-        public System.DateTime StartTime { get; set; }
-        public bool timerStarted { get; set; }
-        public Nullable<bool> enteringBar { get; set; }
-        public int Quantity { get; set; }
+        public int Id { get; set; }
+        public decimal Latitude { get; set; }
+        public decimal Longitude { get; set; }
+        public string AdminUsername { get; set; }
+        public string City { get; set; }
     }
 }

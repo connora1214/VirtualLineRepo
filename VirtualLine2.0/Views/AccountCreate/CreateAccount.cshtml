@@ -39,18 +39,18 @@
     </p>
         <button type="submit">Create Account</button>
 
+}
+
+<script>
+    document.getElementById('phonePart1').addEventListener('input', function () {
+        if (this.value.length === 3) {
+            document.getElementById('phonePart2').focus();
         }
+    });
 
-        <script>
-            document.getElementById('phonePart1').addEventListener('input', function () {
-                if (this.value.length === 3) {
-                    document.getElementById('phonePart2').focus();
-                }
-            });
-
-            document.getElementById('phonePart2').addEventListener('input', function () {
-                if (this.value.length === 3) {
-                    document.getElementById('phonePart3').focus();
-                }
-            });
-        </script>
+    document.getElementById('phonePart2').addEventListener('input', function () {
+        if (this.value.length === 3) {
+            document.getElementById('phonePart3').focus();
+        }
+    });
+</script>

@@ -24,10 +24,6 @@ namespace VirtualLine2._0.Controllers
 
       private static int bar = 0;
 
-      //private static DateTime startTime = DateTime.MinValue;
-
-      //private static Boolean enteringBar = false; //boolean variable that is used for the remove method to change which message the user receives
-
       public ActionResult Confirmation()
       {
          Establishment e = db.Establishments.Find(bar);
@@ -51,6 +47,16 @@ namespace VirtualLine2._0.Controllers
       }
 
       public ActionResult GetExtendConfirmation()
+      {
+         return View();
+      }
+
+      public ActionResult QueueNotOpen()
+      {
+         return View();
+      }
+
+      public ActionResult RemovedFromLine()
       {
          return View();
       }
@@ -79,7 +85,7 @@ namespace VirtualLine2._0.Controllers
          Establishment e = db.Establishments.Find(q.Bar);
          ViewBag.Title = e.BarName;
 
-         int estimatedTime = calculateWaitTime(q.Position);
+         int estimatedTime = calculateWaitTime(q.Position); 
          int hours = estimatedTime / 60;
          int minutes = estimatedTime % 60;
 
@@ -102,6 +108,7 @@ namespace VirtualLine2._0.Controllers
       {
          var BarQueue = from q in db.Queues select q;
          BarQueue = BarQueue.Where(q => q.Bar.Equals(bar));
+
          int LineLength = 0;
 
          if (db.Queues.ToArray() != null)
@@ -135,7 +142,7 @@ namespace VirtualLine2._0.Controllers
             bar = q.Bar;
          }
 
-         if (db.EnteredUsers.ToArray().Length > 0)
+         if (db.EnteredUsers.ToArray().Length > 15) //only use the algorithm if more than 15 people have already entered the bar that night
          {
             int numRecentEntriesSixty = 0;
             int numRecentEntriesThirty = 0;
@@ -175,10 +182,7 @@ namespace VirtualLine2._0.Controllers
                int estimatedTime = (int)(length / enterPerMinuteWeighted);
 
                return estimatedTime;
-            }
-            
-
-            
+            }            
          }
 
          //probably will only enter this if statement if no one from the queue has entered yet for the night
@@ -237,12 +241,12 @@ namespace VirtualLine2._0.Controllers
          }
 
          TimeSpan elapsed = DateTime.Now - user.StartTime;
-         TimeSpan duration = TimeSpan.FromMinutes(120);
+         TimeSpan duration = TimeSpan.FromMinutes(.25);
          TimeSpan timeLeft = duration - elapsed;
 
          if (timeLeft.Ticks < 0)
          {
-            if (!isFromTimerPage)
+            if (!isFromTimerPage && user.enteringBar == false) //make sure the expired timer message only comes up when the user is not entering the bar
             {
                RemoveUserFromQueue(user);
             }
@@ -259,10 +263,15 @@ namespace VirtualLine2._0.Controllers
          try
          {
             db.Configuration.ValidateOnSaveEnabled = false;
-            bar = user.Bar; //make sure the bar variable is correct before removing the user; to be used by the confirmation message 
-            db.Queues.Attach(user);
-            db.Queues.Remove(user);
-            db.SaveChanges();
+
+            if (db.Queues.Find(user.Username)!=null)
+            {
+               bar = user.Bar; //make sure the bar variable is correct before removing the user; to be used by the confirmation message 
+               db.Queues.Attach(user);
+               db.Queues.Remove(user);
+               db.SaveChanges();
+            }
+            
          }
          finally
          {
@@ -276,7 +285,7 @@ namespace VirtualLine2._0.Controllers
          {
             if (q.Position > user.Position)
             {
-               q.Position = q.Position - 1;
+               q.Position = q.Position - user.Quantity;
                db.SaveChanges();
             }
          }
@@ -352,9 +361,216 @@ namespace VirtualLine2._0.Controllers
 
          return RedirectToAction("MyQueueActive", "Queue");
       }
+
+      public Boolean checkQueueOpen(int id)
+      {
+         QueueTime qt = db.QueueTimes.Find(id);
+
+         if (qt != null)
+         {
+            var today = DateTime.Now.DayOfWeek;
+            TimeSpan currentTime = DateTime.Now.TimeOfDay;
+
+            if (today == DayOfWeek.Sunday)
+            {
+               // Handle the case where the current time is early in the day but before the previous night's closing time
+               if (qt.SaturdayClose < qt.SaturdayOpen)
+               {
+                  if (currentTime < qt.SundayClose)
+                  {
+                     return true;
+                  }
+               }
+
+               // Check if closing time is on the next day
+               if (qt.SundayClose < qt.SundayOpen)
+               {
+                  // It's still "open hours" if the current time is after the opening time or before midnight.
+                  // Additionally, if the current time is after midnight but before the closing time, it's also open.
+                  if (currentTime >= qt.SundayOpen || currentTime < qt.SundayClose)
+                  {
+                     return true;
+                  }
+               }
+               else
+               {
+                  // Normal scenario where closing time is after opening time on the same day
+                  if (currentTime >= qt.SundayOpen && currentTime <= qt.SundayClose)
+                  {
+                     return true;
+                  }
+               }
+            }
+            else if (today == DayOfWeek.Monday)
+            {
+               if (qt.SundayClose < qt.SundayOpen)
+               {
+                  if (currentTime < qt.SundayClose)
+                  {
+                     return true;
+                  }
+               }
+
+               if (qt.MondayClose < qt.MondayOpen)
+               {
+                  if (currentTime >= qt.MondayOpen || currentTime < qt.MondayClose)
+                  {
+                     return true;
+                  }
+               }
+               else
+               {
+                  if (currentTime >= qt.MondayOpen && currentTime <= qt.MondayClose)
+                  {
+                     return true;
+                  }
+               }
+            }
+            else if (today == DayOfWeek.Tuesday)
+            {
+               if (qt.MondayClose < qt.MondayOpen)
+               {
+                  if (currentTime < qt.MondayClose)
+                  {
+                     return true;
+                  }
+               }
+
+               if (qt.TuesdayClose < qt.TuesdayOpen)
+               {
+                  if (currentTime >= qt.TuesdayOpen || currentTime < qt.TuesdayClose)
+                  {
+                     return true;
+                  }
+               }
+               else
+               {
+                  if (currentTime >= qt.TuesdayOpen && currentTime <= qt.TuesdayClose)
+                  {
+                     return true;
+                  }
+               }
+            }
+            else if (today == DayOfWeek.Wednesday)
+            {
+               if (qt.TuesdayClose < qt.TuesdayOpen)
+               {
+                  if (currentTime < qt.TuesdayClose)
+                  {
+                     return true;
+                  }
+               }
+
+               if (qt.WednesdayClose < qt.WednesdayOpen)
+               {
+                  if (currentTime >= qt.WednesdayOpen || currentTime < qt.WednesdayClose)
+                  {
+                     return true;
+                  }
+               }
+               else
+               {
+                  if (currentTime >= qt.WednesdayOpen && currentTime <= qt.WednesdayClose)
+                  {
+                     return true;
+                  }
+               }
+            }
+            else if (today == DayOfWeek.Thursday)
+            {
+               if (qt.WednesdayClose < qt.WednesdayOpen)
+               {
+                  if (currentTime < qt.WednesdayClose)
+                  {
+                     return true;
+                  }
+               }
+
+               /*
+               if (qt.ThursdayClose < qt.ThursdayOpen)
+               {
+                  if (currentTime >= qt.ThursdayOpen || currentTime < qt.ThursdayClose)
+                  {
+                     return true;
+                  }
+               }
+               else
+               {
+                  if (currentTime >= qt.ThursdayOpen && currentTime <= qt.ThursdayClose)
+                  {
+                     return true;
+                  }
+               }*/
+
+               if (currentTime >= qt.ThursdayOpen && currentTime <= qt.ThursdayClose)
+               {
+                  return true;
+               }
+            }
+            else if (today == DayOfWeek.Friday)
+            {
+               if (qt.ThursdayClose < qt.ThursdayOpen)
+               {
+                  if (currentTime < qt.ThursdayClose)
+                  {
+                     return true;
+                  }                 
+               }
+
+               if (qt.FridayClose < qt.FridayOpen)
+               {
+                  if (currentTime >= qt.FridayOpen || currentTime < qt.FridayClose)
+                  {
+                     return true;
+                  }
+               }
+               else
+               {
+                  if (currentTime >= qt.FridayOpen || currentTime < qt.FridayClose)
+                  {
+                     return true;
+                  }
+               }
+            }
+            else
+            {
+               if (qt.FridayClose < qt.FridayOpen)
+               {
+                  if (currentTime < qt.FridayClose)
+                  {
+                     return true;
+                  }
+               }
+
+               if (qt.SaturdayClose < qt.SaturdayOpen)
+               {
+                  if (currentTime >= qt.SaturdayOpen || currentTime < qt.SaturdayClose)
+                  {
+                     return true;
+                  }
+               }
+               else
+               {
+                  if (currentTime >= qt.SaturdayOpen && currentTime <= qt.SaturdayClose)
+                  {
+                     return true;
+                  }
+               }
+            }
+         }
+
+         return false;
+      }
+
       public ActionResult Index(int id)
       {
          bar = id;
+
+         if (checkQueueOpen(id) == false)
+         {
+            return RedirectToAction("QueueNotOpen", "Queue");
+         }
+
 
          //if user is not logged in redirect them to the account page
          if (User.Identity.Name == "")
@@ -387,23 +603,24 @@ namespace VirtualLine2._0.Controllers
       }
 
       [HttpPost]
-      public ActionResult AddToQueue()
+      public ActionResult AddToQueue(string numberSelect)
       {
          Queue user = new Queue();
 
          //get length of db
          int LineLength = 0;
+         //int lastUserPos = 0;
 
          //select only the queue entries of the bar that the user is joining the queue of
          var BarQueue = from q in db.Queues select q;
          BarQueue = BarQueue.Where(q => q.Bar.Equals(bar));
 
-
          if (db.Queues.ToArray() != null)
          {
             foreach (Queue q in BarQueue.ToArray())
             {
-               LineLength += 1;
+               LineLength += q.Quantity;
+               //lastUserPos = q.Position;
             }
          }
 
@@ -415,7 +632,11 @@ namespace VirtualLine2._0.Controllers
          //not first on the queue
          else
          {
-            user.Position = LineLength + 1;
+            //var BarQueue = from q in db.Queues select q;
+            int lastPos = db.Queues.Max(q => q.Position);
+            Queue lastUser = db.Queues.FirstOrDefault(q => q.Position.Equals(lastPos));
+            
+            user.Position = lastUser.Position + lastUser.Quantity;
          }
 
          //user is logged in
@@ -427,6 +648,7 @@ namespace VirtualLine2._0.Controllers
             user.Phone = account.Phone;
             user.Bar = bar;
             user.StartTime = DateTime.MinValue;
+            user.Quantity = Int32.Parse(numberSelect);
             user.timerStarted = false;
             user.enteringBar = false;
 
@@ -444,7 +666,6 @@ namespace VirtualLine2._0.Controllers
          {
             return RedirectToAction("MyAccount", "Home");
          }
-
       }
 
       public ActionResult RemoveFromQueue()
@@ -473,12 +694,10 @@ namespace VirtualLine2._0.Controllers
 
             if (enteringBar == false)
             {
-               //startTime = DateTime.MinValue;
                return RedirectToAction("LeaveConfirmation");
             }
             else
             {
-               //startTime = DateTime.MinValue;
                return RedirectToAction("EnterConfirmation");
             }
          }

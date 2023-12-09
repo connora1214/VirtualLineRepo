@@ -4,11 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - BrewQueue</title>
+    <link href="~/Content/custom.css" rel="stylesheet" />
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar navbar-inverse navbar-fixed-top" style=" background-color: #480087">
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -16,12 +17,12 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                @Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "navbar-brand purple-accent", @style = " color: #FFFFFF" })
             </div>
             <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">                    
-                    <li>@Html.ActionLink("My Queue", "MyQueue", "Queue")</li>
-                    <li>@Html.ActionLink("MyAccount", "MyAccount", "Home")</li>
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("My Queue", "MyQueue", "Queue", null, new { @class = "nav-link", @style = " color: #FFFFFF" })</li>
+                    <li>@Html.ActionLink("MyAccount", "MyAccount", "Home", null, new { @class = "nav-link", @style = " color: #FFFFFF" })</li>
                 </ul>
             </div>
         </div>
@@ -29,11 +30,10 @@
     <div class="container body-content">
         @RenderBody()
         <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - BrewQueue</p>
-        </footer>
     </div>
-
+    <footer>
+        <p class="text-center purple-accent">&copy; @DateTime.Now.Year - BrewQueue</p>
+    </footer>
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)

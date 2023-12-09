@@ -16,6 +16,20 @@
           <Property Name="FirstName" Type="nvarchar(max)" Nullable="false" />
           <Property Name="LastName" Type="nvarchar(max)" Nullable="false" />
         </EntityType>
+        <EntityType Name="AdminAccount">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Password" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Email" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Phone" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Latitude" Type="decimal" Precision="9" Scale="6" Nullable="false" />
+          <Property Name="Longitude" Type="decimal" Precision="9" Scale="6" Nullable="false" />
+          <Property Name="AdminUsername" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="City" Type="nvarchar(max)" Nullable="false" />
+        </EntityType>
         <EntityType Name="EnteredUsers">
           <Key>
             <PropertyRef Name="Id" />
@@ -46,12 +60,35 @@
           <Property Name="StartTime" Type="datetime2" Precision="7" Nullable="false" />
           <Property Name="timerStarted" Type="bit" Nullable="false" />
           <Property Name="enteringBar" Type="bit" />
+          <Property Name="Quantity" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="QueueTimes">
+          <Key>
+            <PropertyRef Name="VenueId" />
+          </Key>
+          <Property Name="VenueId" Type="int" Nullable="false" />
+          <Property Name="SundayOpen" Type="time" Precision="4" />
+          <Property Name="MondayOpen" Type="time" Precision="4" />
+          <Property Name="TuesdayOpen" Type="time" Precision="4" />
+          <Property Name="WednesdayOpen" Type="time" Precision="4" />
+          <Property Name="ThursdayOpen" Type="time" Precision="4" />
+          <Property Name="FridayOpen" Type="time" Precision="4" />
+          <Property Name="SaturdayOpen" Type="time" Precision="4" />
+          <Property Name="SundayClose" Type="time" Precision="4" />
+          <Property Name="MondayClose" Type="time" Precision="4" />
+          <Property Name="TuesdayClose" Type="time" Precision="4" />
+          <Property Name="WednesdayClose" Type="time" Precision="4" />
+          <Property Name="ThursdayClose" Type="time" Precision="4" />
+          <Property Name="FridayClose" Type="time" Precision="4" />
+          <Property Name="SaturdayClose" Type="time" Precision="4" />
         </EntityType>
         <EntityContainer Name="QueueStoreContainer">
           <EntitySet Name="Account" EntityType="Self.Account" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AdminAccount" EntityType="Self.AdminAccount" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EnteredUsers" EntityType="Self.EnteredUsers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Establishments" EntityType="Self.Establishments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Queue" EntityType="Self.Queue" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="QueueTimes" EntityType="Self.QueueTimes" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
@@ -68,6 +105,7 @@
           <Property Name="StartTime" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="timerStarted" Type="Boolean" Nullable="false" />
           <Property Name="enteringBar" Type="Boolean" />
+          <Property Name="Quantity" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="Account">
           <Key>
@@ -85,6 +123,8 @@
           <EntitySet Name="Accounts" EntityType="Self.Account" />
           <EntitySet Name="Establishments" EntityType="Queue.Establishment" />
           <EntitySet Name="EnteredUsers" EntityType="Queue.EnteredUser" />
+          <EntitySet Name="AdminAccounts" EntityType="Queue.AdminAccount" />
+          <EntitySet Name="QueueTimes" EntityType="Queue.QueueTime" />
         </EntityContainer>
         <EntityType Name="Establishment">
           <Key>
@@ -105,6 +145,40 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="VenueId" Type="Int32" Nullable="false" />
         </EntityType>
+        <EntityType Name="AdminAccount">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Phone" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Latitude" Type="Decimal" Nullable="false" Precision="9" Scale="6" />
+          <Property Name="Longitude" Type="Decimal" Nullable="false" Precision="9" Scale="6" />
+          <Property Name="AdminUsername" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="City" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="QueueTime">
+          <Key>
+            <PropertyRef Name="VenueId" />
+          </Key>
+          <Property Name="VenueId" Type="Int32" Nullable="false" />
+          <Property Name="SundayOpen" Type="Time" Precision="4" />
+          <Property Name="MondayOpen" Type="Time" Precision="4" />
+          <Property Name="TuesdayOpen" Type="Time" Precision="4" />
+          <Property Name="WednesdayOpen" Type="Time" Precision="4" />
+          <Property Name="ThursdayOpen" Type="Time" Precision="4" />
+          <Property Name="FridayOpen" Type="Time" Precision="4" />
+          <Property Name="SaturdayOpen" Type="Time" Precision="4" />
+          <Property Name="SundayClose" Type="Time" Precision="4" />
+          <Property Name="MondayClose" Type="Time" Precision="4" />
+          <Property Name="TuesdayClose" Type="Time" Precision="4" />
+          <Property Name="WednesdayClose" Type="Time" Precision="4" />
+          <Property Name="ThursdayClose" Type="Time" Precision="4" />
+          <Property Name="FridayClose" Type="Time" Precision="4" />
+          <Property Name="SaturdayClose" Type="Time" Precision="4" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -114,6 +188,7 @@
           <EntitySetMapping Name="Queues">
             <EntityTypeMapping TypeName="Queue.Queue">
               <MappingFragment StoreEntitySet="Queue">
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
                 <ScalarProperty Name="enteringBar" ColumnName="enteringBar" />
                 <ScalarProperty Name="timerStarted" ColumnName="timerStarted" />
                 <ScalarProperty Name="StartTime" ColumnName="StartTime" />
@@ -154,6 +229,42 @@
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="TimeStamp" ColumnName="TimeStamp" />
                 <ScalarProperty Name="VenueName" ColumnName="VenueName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AdminAccounts">
+            <EntityTypeMapping TypeName="Queue.AdminAccount">
+              <MappingFragment StoreEntitySet="AdminAccount">
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="AdminUsername" ColumnName="AdminUsername" />
+                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="QueueTimes">
+            <EntityTypeMapping TypeName="Queue.QueueTime">
+              <MappingFragment StoreEntitySet="QueueTimes">
+                <ScalarProperty Name="SaturdayClose" ColumnName="SaturdayClose" />
+                <ScalarProperty Name="FridayClose" ColumnName="FridayClose" />
+                <ScalarProperty Name="ThursdayClose" ColumnName="ThursdayClose" />
+                <ScalarProperty Name="WednesdayClose" ColumnName="WednesdayClose" />
+                <ScalarProperty Name="TuesdayClose" ColumnName="TuesdayClose" />
+                <ScalarProperty Name="MondayClose" ColumnName="MondayClose" />
+                <ScalarProperty Name="SundayClose" ColumnName="SundayClose" />
+                <ScalarProperty Name="SaturdayOpen" ColumnName="SaturdayOpen" />
+                <ScalarProperty Name="FridayOpen" ColumnName="FridayOpen" />
+                <ScalarProperty Name="ThursdayOpen" ColumnName="ThursdayOpen" />
+                <ScalarProperty Name="WednesdayOpen" ColumnName="WednesdayOpen" />
+                <ScalarProperty Name="TuesdayOpen" ColumnName="TuesdayOpen" />
+                <ScalarProperty Name="MondayOpen" ColumnName="MondayOpen" />
+                <ScalarProperty Name="SundayOpen" ColumnName="SundayOpen" />
+                <ScalarProperty Name="VenueId" ColumnName="VenueId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

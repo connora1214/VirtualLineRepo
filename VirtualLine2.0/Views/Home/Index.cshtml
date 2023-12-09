@@ -1,20 +1,24 @@
-﻿<div class="jumbotron">
-    <h1>Welcome to BrewQueue</h1>
+﻿<head>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<div class="jumbotron text-center" style="background-color: #fff; color: #333; ">
+    <h1 class="purple-accent" style=" color: #480087">Welcome to BrewQueue</h1>
     <p class="lead">Don't wait in line. Select a bar to join a virtual line and we'll let you know when to arrive!</p>
     <p>
-        <select id="locationDropdown">
+        <select id="locationDropdown" style="font-family: 'Lato', sans-serif ">
             <option value="">Select a Location</option>
             @foreach (var location in ViewBag.Locations)
             {
-                <option value="@location">@location</option>
+                <option style="font-family: 'Lato', sans-serif " value="@location">@location</option>
             }
         </select>
     </p>
-    <div id="barsList"></div>
+    <div style="font-family: 'Lato', sans-serif " id="barsList"></div>
 </div>
-<div class="row">
+<div class="row text-center" style="font-family: 'Lato', sans-serif ">
     <div class="col-md-4">
-        <h2>The BrewQueue Advantage</h2>
+        <h2 class="purple-accent">BrewQueue Advantage</h2>
         <p>
             BrewQueue is a revolutionary mobile application designed to redefine
             the nightlife experience in college towns and beyond. Our mission is
@@ -22,22 +26,20 @@
             for bar-goers to avoid long queues, while simultaneously offering bars an
             additional stream of revenue and a way to manage crowds more effectively.
         </p>
-        <!--<p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>-->
     </div>
     <div class="col-md-4">
-        <h2>Innovative Features</h2>
+        <h2 class="purple-accent">Innovative Features</h2>
         <p>
             BrewQueue’s user-friendly interface allows customers to easily select a bar and secure a
             spot in a virtual line. The app provides real-time updates on wait times and sends notifications
             to users 15 minutes before their estimated arrival. With options to extend their wait time or withdraw
-            with a partial refund, BarHop prioritizes user convenience and flexibility.
+            with a partial refund, BrewQueue prioritizes user convenience and flexibility.
         </p>
-        <!--<p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>-->
     </div>
     <div class="col-md-4">
-        <h2>Learn More About US</h2>
+        <h2 class="purple-accent">Learn More About Us</h2>
         <p>Learn more about our team and how we strive to make the bar-going experience simpler and affordable!</p>
-        <p><a class="btn btn-default" href="@Url.Action("AboutUs", "Home")">Learn more &raquo;</a></p>
+        <p><a class="btn btn-purple" href="@Url.Action("AboutUs", "Home")">Learn more &raquo;</a></p>
     </div>
 </div>
 <script>
@@ -63,10 +65,9 @@ document.getElementById('locationDropdown').addEventListener('change', function 
 
 <style>
     .barButton {
-        /* Your styling here, for example: */
+        background-color: #480087;
         margin: 5px;
         padding: 10px;
-        background-color: #007bff;
         color: white;
         border: none;
         border-radius: 5px;
