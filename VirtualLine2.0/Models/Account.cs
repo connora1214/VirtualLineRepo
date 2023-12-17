@@ -20,5 +20,7 @@ namespace VirtualLine2._0.Models
         public string Phone { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string ResetToken { get; set; }
+        public Nullable<System.DateTime> ResetTokenExpires { get; set; }
     }
 }

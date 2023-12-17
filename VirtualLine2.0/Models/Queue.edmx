@@ -15,6 +15,8 @@
           <Property Name="Phone" Type="nchar" MaxLength="10" Nullable="false" />
           <Property Name="FirstName" Type="nvarchar(max)" Nullable="false" />
           <Property Name="LastName" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="ResetToken" Type="nvarchar(max)" />
+          <Property Name="ResetTokenExpires" Type="datetime2" Precision="7" />
         </EntityType>
         <EntityType Name="AdminAccount">
           <Key>
@@ -117,6 +119,8 @@
           <Property Name="Phone" Type="String" MaxLength="10" FixedLength="true" Unicode="true" Nullable="false" />
           <Property Name="FirstName" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="LastName" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ResetToken" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ResetTokenExpires" Type="DateTime" Precision="7" />
         </EntityType>
         <EntityContainer Name="queueDBEntities3" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Queues" EntityType="Self.Queue" />
@@ -202,6 +206,8 @@
           <EntitySetMapping Name="Accounts">
             <EntityTypeMapping TypeName="Queue.Account">
               <MappingFragment StoreEntitySet="Account">
+                <ScalarProperty Name="ResetTokenExpires" ColumnName="ResetTokenExpires" />
+                <ScalarProperty Name="ResetToken" ColumnName="ResetToken" />
                 <ScalarProperty Name="LastName" ColumnName="LastName" />
                 <ScalarProperty Name="FirstName" ColumnName="FirstName" />
                 <ScalarProperty Name="Username" ColumnName="Username" />

@@ -290,6 +290,7 @@
     <Content Include="Views\Queue\GrantAccessConfirmation.cshtml" />
     <Content Include="Views\Queue\RemovedFromLine.cshtml" />
     <Content Include="Views\Queue\QueueNotOpen.cshtml" />
+    <Content Include="Views\AccountLogin\ForgotPassword.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
