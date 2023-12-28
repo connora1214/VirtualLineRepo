@@ -1,8 +1,8 @@
 ﻿@{
-   var numberList = new SelectList(Enumerable.Range(1, 5), "1");
+    var numberList = new SelectList(Enumerable.Range(1, 5), "1");
 }
 
-<h2>@ViewBag.Title</h2>
+<h2 class="blue-accent" style=" color: #2f4d5a">@ViewBag.Title</h2>
 
 <h3>@ViewBag.Message</h3>
 @using (Html.BeginForm("AddToQueue", "Queue", FormMethod.Post))
@@ -11,5 +11,20 @@
     <label for="numberSelect">Select a Quantity:</label>
     @Html.DropDownList("numberSelect", numberList)
 
-    <button type="submit">Join Line</button>
+    <button class="btn btn-blue-md" type="submit">Join Line</button>
 }
+
+<style>
+    .btn-blue-md {
+        padding: 14px 20px;
+        font-size: 14px;
+        line-height: 1.333333;
+        color: white;
+        background-color: #2f4d5a;
+        border-bottom: 4px solid #FFFFFF;
+        border-top: 4px solid #FFFFFF;
+        border-left: 4px solid #FFFFFF;
+        border-right: 4px solid #FFFFFF;
+        border-radius: 75px;
+    }
+</style>

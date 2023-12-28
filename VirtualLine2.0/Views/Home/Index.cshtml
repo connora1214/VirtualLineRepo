@@ -2,15 +2,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
-<div class="jumbotron text-center" style="background-color: #fff; color: #333; ">
-    <h1 class="purple-accent" style=" color: #480087">Welcome to BrewQueue</h1>
+<div class="jumbotron text-center" style="background-color: #2f4d5a; color: #FFFFFF">
+    <h1 class="blue-accent" style=" color: #FFFFFF">Welcome to BrewQueue</h1>
     <p class="lead">Don't wait in line. Select a bar to join a virtual line and we'll let you know when to arrive!</p>
     <p>
-        <select id="locationDropdown" style="font-family: 'Lato', sans-serif ">
+        <select id="locationDropdown" style="font-family: 'Lato', sans-serif; background-color: #2f4d5a">
             <option value="">Select a Location</option>
             @foreach (var location in ViewBag.Locations)
             {
-                <option style="font-family: 'Lato', sans-serif " value="@location">@location</option>
+                <option style="font-family: 'Lato', sans-serif" value="@location">@location</option>
             }
         </select>
     </p>
@@ -68,13 +68,16 @@ document.getElementById('locationDropdown').addEventListener('change', function 
 
 <style>
     .barButton {
-        background-color: #480087;
-        margin: 5px;
-        padding: 10px;
+        padding: 14px 20px;
+        font-size: 14px;
+        line-height: 1.333333;
         color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
+        background-color: #2f4d5a;
+        border-bottom: 4px solid #FFFFFF;
+        border-top: 4px solid #FFFFFF;
+        border-left: 4px solid #FFFFFF;
+        border-right: 4px solid #FFFFFF;
+        border-radius: 75px;
     }
 
         .barButton:hover {

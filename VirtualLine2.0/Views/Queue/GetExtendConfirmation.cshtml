@@ -1,5 +1,21 @@
-﻿<h2>Are you sure you want to extend your time?</h2>
+﻿<h2 class="blue-accent" style=" color: #2f4d5a">Are you sure you want to extend your time?</h2>
 <h6>You will be charged $2.50 if you select Yes</h6>
 
-<a class="btn btn-purple btn-lg" href="@Url.Action("ExtendTime", "Queue")">Yes</a>
-<a class="btn btn-purple btn-lg" href="@Url.Action("Timer", "Queue")">No</a>
+<a class="btn btn-blue-md" href="@Url.Action("ExtendTime", "Queue")">Yes</a>
+<a class="btn btn-blue-md" href="@Url.Action("Timer", "Queue")">No</a>
+
+
+<style>
+    .btn-blue-md {
+        padding: 14px 20px;
+        font-size: 14px;
+        line-height: 1.333333;
+        color: white;
+        background-color: #2f4d5a;
+        border-bottom: 4px solid #FFFFFF;
+        border-top: 4px solid #FFFFFF;
+        border-left: 4px solid #FFFFFF;
+        border-right: 4px solid #FFFFFF;
+        border-radius: 75px;
+    }
+</style>

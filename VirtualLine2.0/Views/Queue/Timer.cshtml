@@ -4,11 +4,11 @@
 
 <div id="timer"></div>
 
-<button id="checkLocationButton">I am here</button>
+<button class="btn btn-blue-md" id="checkLocationButton">I am here</button>
 
 @using (Html.BeginForm("GetExtendConfirmation", "Queue", FormMethod.Post))
 {
-    <button type="submit">Extend Time</button>
+    <button class="btn btn-blue-md" type="submit">Extend Time</button>
 }
 
 <script>
@@ -46,8 +46,8 @@
 </script>
 
 <script>
-    var barLatitude = @ViewBag.Latitude; 
-    var barLongitude = @ViewBag.Longitude; 
+    var barLatitude = @ViewBag.Latitude;
+    var barLongitude = @ViewBag.Longitude;
 
     document.getElementById('checkLocationButton').addEventListener('click', function() {
         if (navigator.geolocation) {
@@ -92,3 +92,18 @@
             .catch(error => console.error('Error:', error));
     }
 </script>
+
+<style>
+    .btn-blue-md {
+        padding: 14px 20px;
+        font-size: 14px;
+        line-height: 1.333333;
+        color: white;
+        background-color: #2f4d5a;
+        border-bottom: 4px solid #FFFFFF;
+        border-top: 4px solid #FFFFFF;
+        border-left: 4px solid #FFFFFF;
+        border-right: 4px solid #FFFFFF;
+        border-radius: 75px;
+    }
+</style>

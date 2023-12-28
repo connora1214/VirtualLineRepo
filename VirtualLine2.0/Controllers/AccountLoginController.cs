@@ -16,6 +16,7 @@ using VirtualLine2._0.Models;
 using System.Web.Security;
 using System.Security.Cryptography;
 using System.Text;
+using System.Net.Mail;
 
 namespace VirtualLine2._0.Controllers
 {
@@ -42,12 +43,21 @@ namespace VirtualLine2._0.Controllers
          return View();
       }
 
+      public ActionResult ResetEmailSent()
+      {
+         return View();
+      }
       public ActionResult ForgotPassword(AccountLoginEntry entry)
       {
          return View();
       }
 
-         [HttpPost]
+      public ActionResult ResetSuccessful()
+      {
+         return View();
+      }
+
+      [HttpPost]
       public ActionResult AccountLogin(AccountLoginEntry entry)
       {
 
@@ -89,39 +99,77 @@ namespace VirtualLine2._0.Controllers
          {
             // Generate token
             var token = GeneratePasswordResetToken();
+            token = HttpUtility.UrlEncode(token);
             user.ResetToken = token;
-            user.ResetTokenExpires = DateTime.Now.AddHours(1);
+            user.ResetTokenExpires = DateTime.UtcNow.AddHours(6);            
             db.SaveChanges();
 
             // Send email
-            SendResetEmail(user.Email, token); // Implement this method
+            SendResetEmail(user.Email, token);
+            return View("ResetEmailSent"); // Inform the user that an email has been sent
          }
 
-         return View("ResetEmailSent"); // Inform the user that an email has been sent
+         ViewBag.Message = "An account with email does not exist";
+         return View(email);
       }
 
       private void SendResetEmail(string email, string token)
       {
-         var resetLink = "https://localhost:44322/AccountLogin/ResetPassword" + token;
+         var resetLink = "http://brew-queue.com/AccountLogin/ResetPassword?token=" + token;
+         //var resetLink = "http://brew-queue.com/AccountLogin/ResetPassword";
+         //var resetLink = "https://localhost:44322/AccountLogin/ResetPassword?token=" + token;
          var body = $"Please reset your password by clicking on this link: {resetLink}";
-         // Code to send email (SMTP, SendGrid, etc.)
+         // Code to send email
+
+         var smtpClient = new SmtpClient("mail.smtp2go.com")
+         {
+            Port = 2525, // 587 or 465
+            Credentials = new NetworkCredential("brew-queue.com", "HappyValley2023!"),
+            EnableSsl = true,
+         };
+
+         var mailMessage = new MailMessage
+         {
+            From = new MailAddress("admin@brew-queue.com"),
+            Subject = "Password Reset",
+            Body = body,
+            IsBodyHtml = true,
+         };
+
+         mailMessage.To.Add(email);
+
+         smtpClient.Send(mailMessage);
       }
 
-      [HttpPost]
-      public ActionResult ResetPassword(string token, string newPassword)
+      //[Route("AccountLogin/ResetPassword{token}")]
+      [HttpGet]
+      public ActionResult ResetPassword(string token)
       {
-         var user = db.Accounts.FirstOrDefault(u => u.ResetToken == token && u.ResetTokenExpires > DateTime.Now);
-         if (user != null)
+         ViewBag.Token = token;
+         return View();
+      }
+
+
+      //[Route("AccountLogin/ResetPassword/{token}")]
+      [HttpPost]
+      public ActionResult ResetPassword(string token, string newPassword, string newPasswordConfirmation)
+      {
+         token = HttpUtility.UrlEncode(token);
+         var user = db.Accounts.FirstOrDefault(u => u.ResetToken == token && u.ResetTokenExpires > DateTime.UtcNow);
+
+         if (user != null && newPassword == newPasswordConfirmation)
          {
-            // Update password
-            user.Password = HashPassword(newPassword); // Implement password hashing
-            user.ResetToken = null; // Clear the token
+            user.Password = HashPassword(newPassword);
+            user.ResetToken = null; // Clear the token in the database
+            user.ResetTokenExpires = null; // Clear the expiration time
             db.SaveChanges();
 
             return RedirectToAction("ResetSuccessful");
          }
 
-         return View("ResetFailed");
+
+         ViewBag.Message = "Password reset failed. Either the passwords do not match or your session has expired.";
+         return View(); // Return the same view with the error message
       }
 
       private string GeneratePasswordResetToken()

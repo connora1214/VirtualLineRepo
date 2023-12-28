@@ -1,8 +1,23 @@
 ﻿
-<h2>@ViewBag.Title</h2>
+<h2 class="blue-accent" style=" color: #2f4d5a">@ViewBag.Title</h2>
 
 <h3>@ViewBag.Message</h3>
 @using (Html.BeginForm("RemoveFromQueue", "Queue", FormMethod.Post))
 {
-    <button type="submit">Leave Line</button>
+    <button class="btn btn-blue-lg" type="submit">Leave Line</button>
 }
+
+<style>
+    .btn-blue-lg {
+        padding: 14px 20px;
+        font-size: 24px;
+        line-height: 1.333333;
+        color: white;
+        background-color: #2f4d5a;
+        border-bottom: 4px solid #FFFFFF;
+        border-top: 4px solid #FFFFFF;
+        border-left: 4px solid #FFFFFF;
+        border-right: 4px solid #FFFFFF;
+        border-radius: 75px;
+    }
+</style>

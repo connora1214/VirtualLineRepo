@@ -1,34 +1,72 @@
 ﻿
-<div class="jumbotron">
+<div style="background-color: #FFFFFF" class="jumbotron text-center">
     <h2>@ViewBag.Name</h2>
-    <div class="row">
-        <a class="btn btn-purple col-md-2" href="@Url.Action("EditAccount", "Account")">Edit Profile</a>
-    </div>
-    <div class="row">
-        <a class="btn btn-purple col-md-2" href="@Url.Action("ChangePassword", "Account")">Change Password</a>
-    </div>
-    <div class="row">
-        <a class="btn btn-purple col-md-2" href="@Url.Action("LogoutConfirmation", "Account")">Logout</a>
+    <div style="display: flex; flex-direction: column; align-items: center;">
+        <div class="row" style="margin-bottom: 10px;">
+            <a class="btn btn-blue-md" href="@Url.Action("EditAccount", "Account")">Edit Profile</a>
+        </div>
+        <div class="row" style="margin-bottom: 10px;">
+            <a class="btn btn-blue-md" href="@Url.Action("ChangePassword", "Account")">Change Password</a>
+        </div>
+        <div class="row">
+            <a class="btn btn-blue-md" href="@Url.Action("LogoutConfirmation", "Account")">Logout</a>
+        </div>
     </div>
 </div>
 
-<div class="jumbotron">
+<div style="background-color: #FFFFFF" class="jumbotron text-center">
     <h2>Help Center</h2>
     <div class="row">
-        <a class="btn btn-purple col-md-2" href="https://go.microsoft.com/fwlink/?LinkId=301866">Contact Us</a>
+        <a class="btn btn-blue-md col-md-2" href="https://go.microsoft.com/fwlink/?LinkId=301866">Contact Us</a>
     </div>
     <div class="row">
-        <a class="btn btn-purple col-md-2" href="https://go.microsoft.com/fwlink/?LinkId=301866">Privacy Policy</a>
+        <a class="btn btn-blue-md col-md-2" href="https://go.microsoft.com/fwlink/?LinkId=301866">Privacy Policy</a>
     </div>
     <div class="row">
-        <a class="btn btn-purple col-md-2" href="https://go.microsoft.com/fwlink/?LinkId=301866">Terms & Conditions</a>
+        <a class="btn btn-blue-md col-md-2" href="https://go.microsoft.com/fwlink/?LinkId=301866">Terms & Conditions</a>
     </div>
 </div>
 
-<div class="jumbotron">
+<div style="background-color: #FFFFFF" class="jumbotron text-center">
     <h2>Follow Us</h2>
     <div class="row">
-        <a class="btn btn-purple col-md-2" href="https://www.instagram.com/connoranderson100/">Instagram</a>
+        <a class="btn btn-blue-md col-md-2" href="https://www.instagram.com/connoranderson100/">Instagram</a>
     </div>
 </div>
 
+<style>
+    .btn-blue-lg {
+        padding: 14px 20px;
+        font-size: 24px;
+        line-height: 1.333333;
+        color: white;
+        background-color: #2f4d5a;
+        border-bottom: 4px solid #FFFFFF;
+        border-top: 4px solid #FFFFFF;
+        border-left: 4px solid #FFFFFF;
+        border-right: 4px solid #FFFFFF;
+        border-radius: 75px;
+    }
+
+    .vertical-center {
+        margin: 0;
+        top: 50%;
+        -ms-transform: translateY(-50%);
+        transform: translateY(-50%);
+    }
+</style>
+
+<style>
+    .btn-blue-md {
+        padding: 14px 20px;
+        font-size: 14px;
+        line-height: 1.333333;
+        color: white;
+        background-color: #2f4d5a;
+        border-bottom: 4px solid #FFFFFF;
+        border-top: 4px solid #FFFFFF;
+        border-left: 4px solid #FFFFFF;
+        border-right: 4px solid #FFFFFF;
+        border-radius: 75px;
+    }
+</style>

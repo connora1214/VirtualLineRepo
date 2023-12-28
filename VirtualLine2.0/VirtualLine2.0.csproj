@@ -235,7 +235,6 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
-    <None Include="Properties\PublishProfiles\FTPProfile.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -291,9 +290,13 @@
     <Content Include="Views\Queue\RemovedFromLine.cshtml" />
     <Content Include="Views\Queue\QueueNotOpen.cshtml" />
     <Content Include="Views\AccountLogin\ForgotPassword.cshtml" />
+    <Content Include="Views\AccountLogin\ResetPassword.cshtml" />
+    <Content Include="Views\AccountLogin\ResetEmailSent.cshtml" />
+    <Content Include="Views\AccountLogin\ResetSuccessful.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Properties\PublishProfiles\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

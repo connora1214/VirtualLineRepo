@@ -1,4 +1,4 @@
-﻿<h2 class="purple-accent" style=" color: #480087">Account Login</h2>
+﻿<h2 class="blue-accent" style=" color: #2f4d5a">Account Login</h2>
 <h3>@ViewBag.Message</h3>
 
 @using (Html.BeginForm("AccountLogin", "AccountLogin", FormMethod.Post))
@@ -7,12 +7,27 @@
     <input type="text" id="Username" name="Username" required />
 
     <label for="Password">Password:</label>
-    <input type="text" id="Password" name="Password" required />
+    <input type="password" id="Password" name="Password" required />
 
-    <button type="submit">Submit</button>
-
+    <button class="btn btn-blue-md" type="submit">Submit</button>
 }
 
 <h5>
     @Html.ActionLink("Forgot Password", "ForgotPassword", "AccountLogin")
 </h5>
+
+
+<style>
+    .btn-blue-md {
+        padding: 14px 20px;
+        font-size: 14px;
+        line-height: 1.333333;
+        color: white;
+        background-color: #2f4d5a;
+        border-bottom: 4px solid #FFFFFF;
+        border-top: 4px solid #FFFFFF;
+        border-left: 4px solid #FFFFFF;
+        border-right: 4px solid #FFFFFF;
+        border-radius: 75px;
+    }
+</style>

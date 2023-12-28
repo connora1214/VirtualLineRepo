@@ -148,14 +148,14 @@ namespace VirtualLine2._0.Controllers
             int numRecentEntriesThirty = 0;
             int numRecentEntriesFifteen = 0;
 
-            var sixtyMinutesAgo = DateTime.Now.AddMinutes(-60);
+            var sixtyMinutesAgo = DateTime.UtcNow.AddMinutes(-60);
 
             var recentEntriesSixty = db.EnteredUsers.Where(e => e.VenueId.Equals(bar) && e.TimeStamp > sixtyMinutesAgo).ToList();
 
             if (recentEntriesSixty.Count > 0)
             {
                //if there are enteries from 1 hour ago, check entries from 30 minutes to get a more specific wait time
-               var thirtyMinutesAgo = DateTime.Now.AddMinutes(-30);
+               var thirtyMinutesAgo = DateTime.UtcNow.AddMinutes(-30);
                var recentEntriesThirty = db.EnteredUsers.Where(e => e.VenueId.Equals(bar) && e.TimeStamp > thirtyMinutesAgo).ToList();
 
                if (recentEntriesThirty.Count > 0) 
@@ -163,7 +163,7 @@ namespace VirtualLine2._0.Controllers
                   //if there are enteries from 30 minutes ago, check entries from 15 minutes to get a more specific wait time
                   numRecentEntriesThirty = recentEntriesThirty.Count;
 
-                  var FifteenMinutesAgo = DateTime.Now.AddMinutes(-15);
+                  var FifteenMinutesAgo = DateTime.UtcNow.AddMinutes(-15);
                   var recentEntriesFifteen = db.EnteredUsers.Where(e => e.VenueId.Equals(bar) && e.TimeStamp > FifteenMinutesAgo).ToList();
 
                   if (recentEntriesFifteen.Count > 0)
@@ -240,8 +240,8 @@ namespace VirtualLine2._0.Controllers
             return Json(new { isAuthenticated = true, isInQueue = false }, JsonRequestBehavior.AllowGet);
          }
 
-         TimeSpan elapsed = DateTime.Now - user.StartTime;
-         TimeSpan duration = TimeSpan.FromMinutes(.25);
+         TimeSpan elapsed = DateTime.UtcNow - user.StartTime;
+         TimeSpan duration = TimeSpan.FromMinutes(15);
          TimeSpan timeLeft = duration - elapsed;
 
          if (timeLeft.Ticks < 0)
@@ -309,7 +309,7 @@ namespace VirtualLine2._0.Controllers
          if (user.timerStarted == false)
          {
             user.timerStarted = true;
-            user.StartTime = DateTime.Now;
+            user.StartTime = DateTime.UtcNow;
             db.SaveChanges();
          }
 
@@ -320,7 +320,7 @@ namespace VirtualLine2._0.Controllers
       {
          //reset timer
          Queue user = db.Queues.Find(User.Identity.Name);
-         user.StartTime = DateTime.Now;
+         user.StartTime = DateTime.UtcNow;
          db.SaveChanges();
 
          return RedirectToAction("Timer", "Queue");
@@ -330,7 +330,7 @@ namespace VirtualLine2._0.Controllers
       {
          Queue user = db.Queues.Find(User.Identity.Name);
          // Reset timer 
-         user.StartTime = DateTime.Now;
+         user.StartTime = DateTime.UtcNow;
          db.SaveChanges();
 
          return RedirectToAction("GrantAccess");
@@ -368,8 +368,8 @@ namespace VirtualLine2._0.Controllers
 
          if (qt != null)
          {
-            var today = DateTime.Now.DayOfWeek;
-            TimeSpan currentTime = DateTime.Now.TimeOfDay;
+            var today = DateTime.UtcNow.DayOfWeek;
+            TimeSpan currentTime = DateTime.UtcNow.TimeOfDay;
 
             if (today == DayOfWeek.Sunday)
             {
@@ -685,7 +685,7 @@ namespace VirtualLine2._0.Controllers
             {
                EnteredUser u = new EnteredUser();
                u.VenueName = db.Establishments.Find(user.Bar).BarName;
-               u.TimeStamp = DateTime.Now;
+               u.TimeStamp = DateTime.UtcNow;
                u.VenueId = user.Bar;
                db.EnteredUsers.Add(u);
                db.SaveChanges();
