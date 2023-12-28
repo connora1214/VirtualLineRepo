@@ -8,7 +8,7 @@
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
-<body style="background-color: #2f4d5a ">
+<body style="background-color: #2f4d5a">
     <div class="navbar navbar-inverse navbar-fixed-bottom" style="background-color: #2f4d5a; border-color: #FFFFFF">
         <div class="container">
             <div class="navbar-header">
@@ -17,11 +17,11 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                
+
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-center">
-                    <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "navbar-brand purple-accent", @style = " color: #FFFFFF" })</li>
+                    <li>@Html.ActionLink("Home", "Index", "Home", null, new { @class = "nav-link", @style = " color: #FFFFFF" })</li>
                     <li>@Html.ActionLink("My Queue", "MyQueue", "Queue", null, new { @class = "nav-link", @style = " color: #FFFFFF" })</li>
                     <li>@Html.ActionLink("My Account", "MyAccount", "Home", null, new { @class = "nav-link", @style = " color: #FFFFFF" })</li>
                 </ul>
@@ -30,11 +30,7 @@
     </div>
     <div class="container body-content">
         @RenderBody()
-        <hr />
     </div>
-    <footer>
-        <p style="color: #FFFFFF" class="text-center">&copy; @DateTime.UtcNow.Year - BrewQueue</p>
-    </footer>
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)

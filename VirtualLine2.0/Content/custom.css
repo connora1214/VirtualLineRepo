@@ -1,5 +1,10 @@
 body, h1, h2, h3, h4, h5, h6, p, div, label, input {
     font-family: 'Lato', sans-serif;
+    color: #FFFFFF
+}
+
+body {
+    background: linear-gradient(to top, #2f4d5a, #0056b3);
 }
 
 .navbar-default {
@@ -59,6 +64,8 @@ body, h1, h2, h3, h4, h5, h6, p, div, label, input {
     color: #f3f3f0; /* Fill color */
     text-shadow: -2px -2px 0 #f3f3f0, 2px -2px 0 #f3f3f0, -2px 2px 0 #f3f3f0, 2px 2px 0 #f3f3f0; /* Black outline */
 }
+
+
 
 .jumbotron {
     background-color: #FFFFFF;

@@ -1,8 +1,9 @@
-﻿<h2>@ViewBag.Title</h2>
-
-<h3>Your turn is coming up! You must be ready to enter by the timer expires or else your spot in line will be terminated. You will not receive a refund and you will not be permitted entry into the venue.</h3>
-
-<div id="timer"></div>
+﻿<div class="jumbotron text-center" style="background-color: #2f4d5a; color: #FFFFFF; border-color: #2f4d5a">
+    <h1 class="blue-accent" style=" color: #FFFFFF">@ViewBag.Title</h1>
+    <!--<p class="lead">Don't wait in line. Select a bar to join a virtual line and we'll let you know when to arrive!</p>-->
+    <h3>Your turn is coming up! You must be ready to enter by the timer expires or else your spot in line will be terminated. You will not receive a refund and you will not be permitted entry into the venue.</h3>
+    <h1 id="timer"></h1>
+</div>
 
 <button class="btn btn-blue-md" id="checkLocationButton">I am here</button>
 
@@ -95,15 +96,16 @@
 
 <style>
     .btn-blue-md {
+        display: block; /* Makes each button a block-level element */
+        width: 100%; /* Ensures each button stretches to the full width of its container */
         padding: 14px 20px;
         font-size: 14px;
         line-height: 1.333333;
         color: white;
         background-color: #2f4d5a;
-        border-bottom: 4px solid #FFFFFF;
-        border-top: 4px solid #FFFFFF;
-        border-left: 4px solid #FFFFFF;
-        border-right: 4px solid #FFFFFF;
+        border: 4px solid #FFFFFF;
         border-radius: 75px;
+        margin-bottom: 10px; /* Adds space between the buttons */
+        text-align: center; /* Center the text in the button */
     }
 </style>

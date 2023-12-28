@@ -1,40 +1,40 @@
-﻿<h2 class="blue-accent" style=" color: #2f4d5a">Create Account</h2>
+﻿<h2 style=" color: #FFFFFF">Create Account</h2>
 <h3>@ViewBag.Message</h3>
 
 @using (Html.BeginForm("CreateAccount", "AccountCreate", FormMethod.Post))
 {
     <p>
-        <label for="Username">Username:</label>
+        <label style="color:#FFFFFF" for="Username">Username:</label>
         <input type="text" id="Username" name="Username" required />
     </p>
     <p>
-        <label for="Password">Password:</label>
+        <label style="color:#FFFFFF" for="Password">Password:</label>
         <input type="password" id="Password" name="Password" required />
     </p>
     <p>
-        <label for="ConfirmPassword">Confirm Password:</label>
+        <label style="color:#FFFFFF" for="ConfirmPassword">Confirm Password:</label>
         <input type="password" id="ConfirmPassword" name="ConfirmPassword" required />
     </p>
     <p>
-        <label for="FirstName">First Name:</label>
+        <label style="color:#FFFFFF" for="FirstName">First Name:</label>
         <input type="text" id="FirstName" name="FirstName" required />
     </p>
     <p>
-        <label for="LastName">Last Name:</label>
+        <label style="color:#FFFFFF" for="LastName">Last Name:</label>
         <input type="text" id="LastName" name="LastName" required />
     </p>
     <p>
-        <label for="Email">Email:</label>
+        <label style="color:#FFFFFF" for="Email">Email:</label>
         <input type="text" id="Email" name="Email" required />
     </p>
     <p>
-        <label for="phonePart1">Phone Number:</label>
+        <label style="color:#FFFFFF" for="phonePart1">Phone Number:</label>
         <input type="text" id="phonePart1" name="phonePart1" maxlength="3" size="3" required />
 
-        <label for="phonePart2">-</label>
+        <label style="color:#FFFFFF" for="phonePart2">-</label>
         <input type="text" id="phonePart2" name="phonePart2" maxlength="3" size="3" required />
 
-        <label for="phonePart3">-</label>
+        <label style="color:#FFFFFF" for="phonePart3">-</label>
         <input type="text" id="phonePart3" name="phonePart3" maxlength="4" size="4" required />
     </p>
     <button class="btn btn-blue-md" type="submit">Create Account</button>
@@ -56,31 +56,17 @@
 </script>
 
 <style>
-    .btn-blue-lg {
-        padding: 14px 20px;
-        font-size: 24px;
-        line-height: 1.333333;
-        color: white;
-        background-color: #2f4d5a;
-        border-bottom: 4px solid #FFFFFF;
-        border-top: 4px solid #FFFFFF;
-        border-left: 4px solid #FFFFFF;
-        border-right: 4px solid #FFFFFF;
-        border-radius: 75px;
-    }
-</style>
-
-<style>
     .btn-blue-md {
+        display: block; /* Makes each button a block-level element */
+        width: 100%; /* Ensures each button stretches to the full width of its container */
         padding: 14px 20px;
         font-size: 14px;
         line-height: 1.333333;
         color: white;
         background-color: #2f4d5a;
-        border-bottom: 4px solid #FFFFFF;
-        border-top: 4px solid #FFFFFF;
-        border-left: 4px solid #FFFFFF;
-        border-right: 4px solid #FFFFFF;
+        border: 4px solid #FFFFFF;
         border-radius: 75px;
+        margin-bottom: 10px; /* Adds space between the buttons */
+        text-align: center; /* Center the text in the button */
     }
 </style>
