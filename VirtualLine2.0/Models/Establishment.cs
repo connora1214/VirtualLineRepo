@@ -19,5 +19,7 @@ namespace VirtualLine2._0.Models
         public int Id { get; set; }
         public Nullable<decimal> Latitude { get; set; }
         public Nullable<decimal> Longitude { get; set; }
+        public string ProfilePicture { get; set; }
+        public string BannerPicture { get; set; }
     }
 }

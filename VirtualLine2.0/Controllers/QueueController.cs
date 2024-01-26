@@ -26,6 +26,11 @@ namespace VirtualLine2._0.Controllers
 
       public ActionResult Confirmation()
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
+
          Establishment e = db.Establishments.Find(bar);
          ViewBag.Message = "You successfully joined the queue for " + e.BarName;
          return View();
@@ -33,14 +38,26 @@ namespace VirtualLine2._0.Controllers
 
       public ActionResult NotInQueue()
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
          return View();
       }
       public ActionResult AlreadyInAnotherQueue()
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
          return View();
       }
       public ActionResult LeaveConfirmation()
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
          Establishment e = db.Establishments.Find(bar);
          ViewBag.Message = e.BarName;
          return View();
@@ -48,27 +65,47 @@ namespace VirtualLine2._0.Controllers
 
       public ActionResult GetExtendConfirmation()
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
          return View();
       }
 
       public ActionResult QueueNotOpen()
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
          return View();
       }
 
       public ActionResult RemovedFromLine()
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
          return View();
       }
 
       public ActionResult EnterConfirmation()
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
          Establishment e = db.Establishments.Find(bar);
          ViewBag.Message = e.BarName;
          return View();
       }
       public ActionResult EnteringBar()
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
          Queue q = db.Queues.Find(User.Identity.Name);
          q.StartTime = DateTime.MinValue;
          q.enteringBar = true;
@@ -77,10 +114,19 @@ namespace VirtualLine2._0.Controllers
       }
       public ActionResult AlreadyInQueue()
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
          return View();
       }
       public ActionResult MyQueueActive()
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
+
          Queue q = db.Queues.Find(User.Identity.Name);
          Establishment e = db.Establishments.Find(q.Bar);
          ViewBag.Title = e.BarName;
@@ -95,17 +141,26 @@ namespace VirtualLine2._0.Controllers
             {
                return RedirectToAction("ReadyToEnter", "Queue");
             }
-            ViewBag.Message = "Estimated wait time for " + e.BarName + ": " + minutes + "min";
+            ViewBag.Message = "Estimated wait time: " + minutes + "min";
          }
          else
          {
-            ViewBag.Message = "Estimated wait time for " + e.BarName + ": " + hours + "hr " + minutes + "min";
+            ViewBag.Message = "Estimated wait time: " + hours + "hr " + minutes + "min";
          }
+         ViewBag.Venue = e.BarName;
+         ViewBag.ProfilePicturePath = e.ProfilePicture;
+         ViewBag.BannerPicturePath = e.BannerPicture;
+         ViewBag.DefaultProfilePicturePath = "/Content/Images/BrewQueueLogo.jpg";
 
          return View();
       }
       public ActionResult MyQueueInactive()
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
+
          var BarQueue = from q in db.Queues select q;
          BarQueue = BarQueue.Where(q => q.Bar.Equals(bar));
 
@@ -125,12 +180,18 @@ namespace VirtualLine2._0.Controllers
 
          if (hours == 0)
          {
-            ViewBag.Message = "Estimated wait time for " + db.Establishments.Find(bar).BarName + ": " + estimatedTime + "min";
+            ViewBag.Message = "Estimated wait time: " + estimatedTime + "min";
          }
          else
          {
-            ViewBag.Message = "Estimated wait time for " + db.Establishments.Find(bar).BarName + ": " + hours + "hr " + minutes + "min";
+            ViewBag.Message = "Estimated wait time: " + hours + "hr " + minutes + "min";
          }
+
+         var e = db.Establishments.Find(bar);
+         ViewBag.Venue = e.BarName;
+         ViewBag.ProfilePicturePath = e.ProfilePicture;
+         ViewBag.BannerPicturePath = e.BannerPicture;
+         ViewBag.DefaultProfilePicturePath = "/Content/Images/BrewQueueLogo.jpg";
          return View();
       }
 
@@ -148,14 +209,14 @@ namespace VirtualLine2._0.Controllers
             int numRecentEntriesThirty = 0;
             int numRecentEntriesFifteen = 0;
 
-            var sixtyMinutesAgo = DateTime.UtcNow.AddMinutes(-60);
+            var sixtyMinutesAgo = DateTime.Now.AddMinutes(-60);
 
             var recentEntriesSixty = db.EnteredUsers.Where(e => e.VenueId.Equals(bar) && e.TimeStamp > sixtyMinutesAgo).ToList();
 
             if (recentEntriesSixty.Count > 0)
             {
                //if there are enteries from 1 hour ago, check entries from 30 minutes to get a more specific wait time
-               var thirtyMinutesAgo = DateTime.UtcNow.AddMinutes(-30);
+               var thirtyMinutesAgo = DateTime.Now.AddMinutes(-30);
                var recentEntriesThirty = db.EnteredUsers.Where(e => e.VenueId.Equals(bar) && e.TimeStamp > thirtyMinutesAgo).ToList();
 
                if (recentEntriesThirty.Count > 0) 
@@ -163,7 +224,7 @@ namespace VirtualLine2._0.Controllers
                   //if there are enteries from 30 minutes ago, check entries from 15 minutes to get a more specific wait time
                   numRecentEntriesThirty = recentEntriesThirty.Count;
 
-                  var FifteenMinutesAgo = DateTime.UtcNow.AddMinutes(-15);
+                  var FifteenMinutesAgo = DateTime.Now.AddMinutes(-15);
                   var recentEntriesFifteen = db.EnteredUsers.Where(e => e.VenueId.Equals(bar) && e.TimeStamp > FifteenMinutesAgo).ToList();
 
                   if (recentEntriesFifteen.Count > 0)
@@ -195,19 +256,30 @@ namespace VirtualLine2._0.Controllers
 
       public ActionResult ReadyToEnter()
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
+
          Queue user = db.Queues.Find(User.Identity.Name);
+         Account account = db.Accounts.Find(User.Identity.Name);
          Establishment e = db.Establishments.Find(user.Bar);
          ViewBag.Title = e.BarName;
          if (user.Position < 6)
          {
             return RedirectToAction("startTimer", "Queue");
          }
-         ViewBag.Message = user.Username + ", please arrive at " + e.BarName + " within the next " + user.Position + " minutes to gain entry.";
+         ViewBag.Message = account.FirstName + ", please arrive at " + e.BarName + " within the next " + user.Position + " minutes to gain entry.";
          return View();
       }
 
       public ActionResult GrantAccess()
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
+
          Queue user = db.Queues.Find(User.Identity.Name);
          Establishment e = db.Establishments.Find(user.Bar);
          ViewBag.Title = e.BarName;
@@ -215,6 +287,11 @@ namespace VirtualLine2._0.Controllers
       }
       public ActionResult Timer(string username)
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
+
          Queue user = db.Queues.Find(User.Identity.Name);
          Establishment e = db.Establishments.Find(user.Bar);
          ViewBag.Title = e.BarName;
@@ -224,7 +301,7 @@ namespace VirtualLine2._0.Controllers
          return View();
       }
 
-      public JsonResult CheckTimer(bool isFromTimerPage = false)
+      public JsonResult CheckTimer(bool isFromTimerPage)
       {
          if (!User.Identity.IsAuthenticated)
          {
@@ -240,7 +317,7 @@ namespace VirtualLine2._0.Controllers
             return Json(new { isAuthenticated = true, isInQueue = false }, JsonRequestBehavior.AllowGet);
          }
 
-         TimeSpan elapsed = DateTime.UtcNow - user.StartTime;
+         TimeSpan elapsed = DateTime.Now - user.StartTime;
          TimeSpan duration = TimeSpan.FromMinutes(15);
          TimeSpan timeLeft = duration - elapsed;
 
@@ -304,12 +381,17 @@ namespace VirtualLine2._0.Controllers
 
       public ActionResult startTimer()
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
+
          Queue user = db.Queues.Find(User.Identity.Name);
 
          if (user.timerStarted == false)
          {
             user.timerStarted = true;
-            user.StartTime = DateTime.UtcNow;
+            user.StartTime = DateTime.Now;
             db.SaveChanges();
          }
 
@@ -318,9 +400,13 @@ namespace VirtualLine2._0.Controllers
 
       public ActionResult ExtendTime()
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
          //reset timer
          Queue user = db.Queues.Find(User.Identity.Name);
-         user.StartTime = DateTime.UtcNow;
+         user.StartTime = DateTime.Now;
          db.SaveChanges();
 
          return RedirectToAction("Timer", "Queue");
@@ -328,9 +414,13 @@ namespace VirtualLine2._0.Controllers
 
       public ActionResult ResetTimerAndGrantAccess()
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
          Queue user = db.Queues.Find(User.Identity.Name);
          // Reset timer 
-         user.StartTime = DateTime.UtcNow;
+         user.StartTime = DateTime.Now;
          db.SaveChanges();
 
          return RedirectToAction("GrantAccess");
@@ -338,11 +428,19 @@ namespace VirtualLine2._0.Controllers
 
       public ActionResult getConfirmation()
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
          return View();
       }
 
       public ActionResult GrantAccessConfirmation()
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
          return View();
       }
 
@@ -368,8 +466,8 @@ namespace VirtualLine2._0.Controllers
 
          if (qt != null)
          {
-            var today = DateTime.UtcNow.DayOfWeek;
-            TimeSpan currentTime = DateTime.UtcNow.TimeOfDay;
+            var today = DateTime.Now.DayOfWeek;
+            TimeSpan currentTime = DateTime.Now.TimeOfDay;
 
             if (today == DayOfWeek.Sunday)
             {
@@ -486,7 +584,6 @@ namespace VirtualLine2._0.Controllers
                   }
                }
 
-               /*
                if (qt.ThursdayClose < qt.ThursdayOpen)
                {
                   if (currentTime >= qt.ThursdayOpen || currentTime < qt.ThursdayClose)
@@ -500,11 +597,6 @@ namespace VirtualLine2._0.Controllers
                   {
                      return true;
                   }
-               }*/
-
-               if (currentTime >= qt.ThursdayOpen && currentTime <= qt.ThursdayClose)
-               {
-                  return true;
                }
             }
             else if (today == DayOfWeek.Friday)
@@ -564,6 +656,11 @@ namespace VirtualLine2._0.Controllers
 
       public ActionResult Index(int id)
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
+
          bar = id;
 
          if (checkQueueOpen(id) == false)
@@ -605,6 +702,11 @@ namespace VirtualLine2._0.Controllers
       [HttpPost]
       public ActionResult AddToQueue(string numberSelect)
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
+
          Queue user = new Queue();
 
          //get length of db
@@ -620,7 +722,6 @@ namespace VirtualLine2._0.Controllers
             foreach (Queue q in BarQueue.ToArray())
             {
                LineLength += q.Quantity;
-               //lastUserPos = q.Position;
             }
          }
 
@@ -632,7 +733,6 @@ namespace VirtualLine2._0.Controllers
          //not first on the queue
          else
          {
-            //var BarQueue = from q in db.Queues select q;
             int lastPos = db.Queues.Max(q => q.Position);
             Queue lastUser = db.Queues.FirstOrDefault(q => q.Position.Equals(lastPos));
             
@@ -657,6 +757,11 @@ namespace VirtualLine2._0.Controllers
                return RedirectToAction("AlreadyInQueue");
             }
 
+            if (user.Quantity == 1)
+            {
+               RedirectToAction("Pay5", "Queue");
+            }
+
             db.Queues.Add(user);
             db.SaveChanges();
             return RedirectToAction("Confirmation", "Queue");
@@ -668,8 +773,16 @@ namespace VirtualLine2._0.Controllers
          }
       }
 
+      //[Route("https://pay.brew-queue.com/queuepass5")]
+      //public ActionResult
+
       public ActionResult RemoveFromQueue()
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
+
          Queue user = db.Queues.Find(User.Identity.Name);
 
          if (user == null)
@@ -683,11 +796,16 @@ namespace VirtualLine2._0.Controllers
 
             if (enteringBar == true)
             {
-               EnteredUser u = new EnteredUser();
-               u.VenueName = db.Establishments.Find(user.Bar).BarName;
-               u.TimeStamp = DateTime.UtcNow;
-               u.VenueId = user.Bar;
-               db.EnteredUsers.Add(u);
+               int num = 0;
+               while(num < user.Quantity)
+               {
+                  EnteredUser u = new EnteredUser();
+                  u.VenueName = db.Establishments.Find(user.Bar).BarName;
+                  u.TimeStamp = DateTime.Now;
+                  u.VenueId = user.Bar;
+                  db.EnteredUsers.Add(u);
+                  num += 1;
+               }             
                db.SaveChanges();
             }
             RemoveUserFromQueue(user);

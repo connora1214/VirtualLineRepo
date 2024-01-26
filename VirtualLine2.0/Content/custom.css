@@ -1,10 +1,10 @@
 body, h1, h2, h3, h4, h5, h6, p, div, label, input {
     font-family: 'Lato', sans-serif;
-    color: #FFFFFF
+    color: #FFFFFF;
 }
 
 body {
-    background: linear-gradient(to top, #2f4d5a, #0056b3);
+    background: linear-gradient(to top, #18303c, #2f4d5a);
 }
 
 .navbar-default {
@@ -119,15 +119,30 @@ body {
 }
 
 .btn-blue-md {
+    display: block; /* Makes each button a block-level element */
+    width: 100%; /* Ensures each button stretches to the full width of its container */
     padding: 14px 20px;
     font-size: 14px;
     line-height: 1.333333;
     color: white;
     background-color: #2f4d5a;
-    border-bottom: 4px solid #FFFFFF;
-    border-top: 4px solid #FFFFFF;
-    border-left: 4px solid #FFFFFF;
-    border-right: 4px solid #FFFFFF;
+    border: 4px solid #FFFFFF;
     border-radius: 75px;
+    margin-bottom: 10px; /* Adds space between the buttons */
+    text-align: center; /* Center the text in the button */
+}
+
+.btn-red-md {
+    display: block; /* Makes each button a block-level element */
+    width: 100%; /* Ensures each button stretches to the full width of its container */
+    padding: 14px 20px;
+    font-size: 14px;
+    line-height: 1.333333;
+    color: white;
+    background-color: #b60606;
+    border: 4px solid #ff0000;
+    border-radius: 75px;
+    margin-bottom: 10px; /* Adds space between the buttons */
+    text-align: center; /* Center the text in the button */
 }
 

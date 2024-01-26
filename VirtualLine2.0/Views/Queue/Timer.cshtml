@@ -1,16 +1,21 @@
-﻿<div class="jumbotron text-center" style="background-color: #2f4d5a; color: #FFFFFF; border-color: #2f4d5a">
-    <h1 class="blue-accent" style=" color: #FFFFFF">@ViewBag.Title</h1>
+﻿<div class="jumbotron text-center" style="background-color: transparent; color: #FFFFFF; border-color: transparent; font-family: 'Lato', sans-serif">
+    <h1 class="blue-accent" style="font-family: 'Lato', sans-serif; color: #FFFFFF">@ViewBag.Title</h1>
     <!--<p class="lead">Don't wait in line. Select a bar to join a virtual line and we'll let you know when to arrive!</p>-->
-    <h3>Your turn is coming up! You must be ready to enter by the timer expires or else your spot in line will be terminated. You will not receive a refund and you will not be permitted entry into the venue.</h3>
-    <h1 id="timer"></h1>
+    <h3 style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; color: #FFFFFF">Your turn is coming up! You must be ready to enter before the timer expires or else your spot in line will be terminated.</h3>
+    <h4 style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; color: #FFFFFF">You will not receive a refund and you will not be permitted entry into the venue.</h4>
+    <h1 style="margin-top: 7.5%; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; color: #FFFFFF" id="timer"></h1>
+
+    <div style="margin-top: 7.5%">
+        <button class="btn btn-blue-md" id="checkLocationButton">I am here</button>
+
+        @using (Html.BeginForm("GetExtendConfirmation", "Queue", FormMethod.Post))
+        {
+            <button class="btn btn-blue-md" type="submit">Extend Time</button>
+        }
+    </div>
 </div>
 
-<button class="btn btn-blue-md" id="checkLocationButton">I am here</button>
 
-@using (Html.BeginForm("GetExtendConfirmation", "Queue", FormMethod.Post))
-{
-    <button class="btn btn-blue-md" type="submit">Extend Time</button>
-}
 
 <script>
     // Function to check the server timer
@@ -92,6 +97,10 @@
             })
             .catch(error => console.error('Error:', error));
     }
+
+    window.addEventListener('load', function () {
+        window.scrollTo(0, document.body.scrollHeight);
+    });
 </script>
 
 <style>

@@ -36,13 +36,6 @@ namespace VirtualLine2._0.Controllers
           return View();
       }
 
-      public ActionResult Confirmation()
-      {
-         Account user = db.Accounts.Find(User.Identity.Name);
-         ViewBag.Message = "Hello, " + user.FirstName;
-         return View();
-      }
-
       public ActionResult ResetEmailSent()
       {
          return View();
@@ -61,18 +54,18 @@ namespace VirtualLine2._0.Controllers
       public ActionResult AccountLogin(AccountLoginEntry entry)
       {
 
-         using (var context = new queueDBEntities3())  
+         using (var context = new queueDBEntities3())
          {
-               // hash the password
-            string hashedPassword = HashPassword(entry.Password);  
+            // hash the password
+            string hashedPassword = HashPassword(entry.Password);
 
-               // Check if the user exists with the provided username and hashed password
-            var user = context.Accounts.FirstOrDefault(u => u.Username == entry.Username && u.Password == hashedPassword);
+            // Check if the user exists with the provided username/email and hashed password
+            var user = context.Accounts.FirstOrDefault(u => (u.Username == entry.Username || u.Email == entry.Username) && u.Password == hashedPassword);
 
             if (user != null)
             {
-               FormsAuthentication.SetAuthCookie(entry.Username, false);
-               return RedirectToAction("Confirmation", "AccountLogin");
+               FormsAuthentication.SetAuthCookie(user.Username, false);
+               return RedirectToAction("AccountInfo", "Account");
             }
             else
             {
@@ -115,11 +108,9 @@ namespace VirtualLine2._0.Controllers
 
       private void SendResetEmail(string email, string token)
       {
-         var resetLink = "http://brew-queue.com/AccountLogin/ResetPassword?token=" + token;
-         //var resetLink = "http://brew-queue.com/AccountLogin/ResetPassword";
-         //var resetLink = "https://localhost:44322/AccountLogin/ResetPassword?token=" + token;
+         var resetLink = "http://brew-queue.com/AccountLogin/ChangePassword?token=" + token;
+
          var body = $"Please reset your password by clicking on this link: {resetLink}";
-         // Code to send email
 
          var smtpClient = new SmtpClient("mail.smtp2go.com")
          {
@@ -141,7 +132,6 @@ namespace VirtualLine2._0.Controllers
          smtpClient.Send(mailMessage);
       }
 
-      //[Route("AccountLogin/ResetPassword{token}")]
       [HttpGet]
       public ActionResult ResetPassword(string token)
       {
@@ -149,8 +139,6 @@ namespace VirtualLine2._0.Controllers
          return View();
       }
 
-
-      //[Route("AccountLogin/ResetPassword/{token}")]
       [HttpPost]
       public ActionResult ResetPassword(string token, string newPassword, string newPasswordConfirmation)
       {

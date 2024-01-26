@@ -1,12 +1,11 @@
-﻿<h2 style=" color: #FFFFFF">BrewQueue Account</h2>
+﻿<div class="form-container">
+    <div class="jumbotron text-center" style="background-color: transparent; color: #FFFFFF">
+        <h1 style=" color: #FFFFFF">BrewQueue</h1>
+    </div>
 
-<div class="jumbotron" style="background-color: #2f4d5a">
-    <p>
-        <a class="btn btn-blue-lg" href="@Url.Action("CreateAccount", "AccountCreate")">Create a New Account</a>
-        <a class="btn btn-blue-lg" href="@Url.Action("AccountLogin", "AccountLogin")">Login to Existing Account</a>
-    </p>
+    <a class="btn btn-blue-lg" href="@Url.Action("CreateAccount", "AccountCreate")">Create Account</a>
+    <a class="btn btn-blue-lg" href="@Url.Action("AccountLogin", "AccountLogin")">Login</a>
 </div>
-
 <style>
     .btn-blue-lg {
         display: block; /* Makes each button a block-level element */
@@ -21,4 +20,21 @@
         margin-bottom: 10px; /* Adds space between the buttons */
         text-align: center; /* Center the text in the button */
     }
+
+    .form-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh; /* Set the minimum height to 100% of the viewport height */
+        margin: 0 auto; /* Centers the container horizontally */
+        max-width: 100%; /* Adjust the maximum width as needed */
+        width: 100%;
+    }
 </style>
+<script>
+    // Scroll to the bottom of the page when the page is loaded
+    window.addEventListener('load', function () {
+        window.scrollTo(0, document.body.scrollHeight);
+    });
+</script>

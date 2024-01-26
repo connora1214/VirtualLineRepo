@@ -1,8 +1,10 @@
-﻿<h2 style=" color: #FFFFFF">@ViewBag.Title</h2>
+﻿<div class="jumbotron text-center" style="background-color: transparent; color: #FFFFFF">
+    <h1 style=" color: #FFFFFF">@ViewBag.Title</h1>
+</div>
 
 @using (Html.BeginForm("GrantAccessConfirmation", "Queue", FormMethod.Post))
 {
-    <button class="btn btn-blue-lg" type="submit">Grant Access</button>
+    <button class="btn btn-blue-lg" type="submit">I am the doorman and I permit entry</button>
 }
 
 <style>

@@ -1,4 +1,28 @@
-﻿<h2 style=" color: #FFFFFF">Email sent successfully.</h2>
-<h3>
-    @Html.ActionLink("Home", "Index", "Home", null, new { @class = "nav-link", @style = "color: #FFFFFF" })
-</h3>
+﻿<div class="form-container">
+    <div class="jumbotron text-center" style="background-color: transparent; color: #FFFFFF">
+        <h2 style=" color: #FFFFFF">Email sent successfully.</h2>
+        <h3>
+            @Html.ActionLink("Home", "Index", "Home", null, new { @class = "nav-link", @style = "color: #E5E5E5" })
+        </h3>
+    </div>
+</div>
+
+<style>
+    .form-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh; /* Set the height to 100% of the viewport height */
+        margin: 0 auto; /* Centers the container horizontally */
+        max-width: 100%; /* Adjust the maximum width as needed */
+        width: 100%;
+    }
+</style>
+
+<script>
+    // Scroll to the bottom of the page when the page is loaded
+    window.addEventListener('load', function () {
+        window.scrollTo(0, document.body.scrollHeight);
+    });
+</script>

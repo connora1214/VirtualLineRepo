@@ -31,5 +31,7 @@ namespace VirtualLine2._0.Models
         public virtual DbSet<EnteredUser> EnteredUsers { get; set; }
         public virtual DbSet<AdminAccount> AdminAccounts { get; set; }
         public virtual DbSet<QueueTime> QueueTimes { get; set; }
+        public virtual DbSet<VenueEntry> VenueEntries { get; set; }
+        public virtual DbSet<Verification> Verifications { get; set; }
     }
 }

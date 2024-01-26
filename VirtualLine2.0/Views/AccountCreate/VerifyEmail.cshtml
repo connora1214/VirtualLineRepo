@@ -1,0 +1,79 @@
+﻿<div class="jumbotron text-center" style="background-color: transparent; color: #FFFFFF">
+    <h2 style=" color: #FFFFFF">Verify Email</h2>
+    <h4 style="margin-bottom: 5%; color: #FFFFFF">A code has been sent to your email. Enter the code to finish creating your account.</h4>
+
+    <div class="form-container">
+        @using (Html.BeginForm("VerifyEmail", "AccountCreate", FormMethod.Post))
+        {
+            <div class="floating-label-group">
+                <input style="font-size: 13px" type="text" id="UserCode" name="UserCode" required />
+                <label for="UserCode">Code</label>
+            </div>
+
+            <input type="hidden" name="email" value="@ViewBag.Email">
+
+            <button class="btn btn-blue-md" type="submit">Submit</button>
+        }
+    </div>
+</div>
+
+<style>
+    .btn-blue-md {
+        padding: 14px 20px;
+        font-size: 14px;
+        line-height: 1.333333;
+        color: white;
+        background-color: #2f4d5a;
+        border-bottom: 4px solid #FFFFFF;
+        border-top: 4px solid #FFFFFF;
+        border-left: 4px solid #FFFFFF;
+        border-right: 4px solid #FFFFFF;
+        border-radius: 75px;
+    }
+
+    .form-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        max-width: 100%; /* Adjust this value based on your design requirements */
+        margin: 0 auto; /* Centers the container */
+    }
+
+    .floating-label-group {
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+        .floating-label-group input {
+            font-size: 14px;
+            color: #FFFFFF;
+            background-color: #2f4d5a;
+            border: 1px solid #FFFFFF;
+            padding: 10px 10px 10px 5px;
+            display: block;
+            width: 100%;
+        }
+
+        .floating-label-group label {
+            color: #FFFFFF;
+            pointer-events: none;
+            position: absolute;
+            top: 10px;
+            left: 5px;
+            transition: all 0.2s ease;
+        }
+
+        .floating-label-group input:focus ~ label,
+        .floating-label-group input:not(:placeholder-shown) ~ label,
+        .floating-label-group input.filled ~ label {
+            top: -14px;
+            font-size: 12px;
+        }
+</style>
+<script>
+    // Scroll to the bottom of the page when the page is loaded
+    window.addEventListener('load', function () {
+        window.scrollTo(0, document.body.scrollHeight);
+    });
+</script>

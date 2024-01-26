@@ -1,25 +1,29 @@
-﻿<h2 style=" color: #FFFFFF">Edit Account</h2>
-<h3>@ViewBag.Message</h3>
+﻿<div class="jumbotron text-center" style="background-color: transparent; color: #FFFFFF">
+    <h2 style=" color: #FFFFFF">Edit Account</h2>
+    <h4 style="margin-bottom: 20px">@ViewBag.Message</h4>
 
-@using (Html.BeginForm("EditAccount", "Account", FormMethod.Post))
-{
-<p>
-    <label style="color:#FFFFFF" for="FirstName">First Name:</label>
-    <input type="text" id="FirstName" name="FirstName" value="@ViewBag.FirstName" required />
-</p>
-<p>
-    <label style="color:#FFFFFF" for="LastName">Last Name:</label>
-    <input type="text" id="LastName" name="LastName" value="@ViewBag.LastName" required />
-</p>
-<p>
-    <label style="color:#FFFFFF" for="Phone">Phone Number:</label>
-    <input type="text" id="Phone" name="Phone" value="@ViewBag.Phone" required />
-</p>
-    <button class="btn btn-blue-md" type="submit">Save Changes</button>
-}
-<h5>
-    @Html.ActionLink("Cancel", "AccountInfo", "Account", null, new { @class = "nav-link", @style = "color: #FFFFFF" })
-</h5>
+    <div class="form-container">
+        @using (Html.BeginForm("EditAccount", "Account", FormMethod.Post))
+        {
+            <div class="floating-label-group">
+                <input style="font-size: 13px" type="text" id="FirstName" name="FirstName" value="@ViewBag.FirstName" required />
+                <label for="FirstName">First Name</label>
+            </div>
+            <div class="floating-label-group">
+                <input style="font-size: 13px" type="text" id="LastName" name="LastName" value="@ViewBag.LastName" required />
+                <label for="LastName">Last Name</label>
+            </div>
+            <div class="floating-label-group">
+                <input style="font-size: 13px" type="text" id="Phone" name="Phone" value="@ViewBag.Phone" required />
+                <label for="Phone">Phone</label>
+            </div>
+            <button class="btn btn-blue-md" type="submit">Save Changes</button>
+        }
+        <h5>
+            @Html.ActionLink("Cancel", "AccountInfo", "Account", null, new { @class = "nav-link", @style = "color: #E5E5E5" })
+        </h5>
+    </div>
+</div>
 
 <style>
     .btn-blue-md {
@@ -35,4 +39,44 @@
         margin-bottom: 10px; /* Adds space between the buttons */
         text-align: center; /* Center the text in the button */
     }
+
+    .form-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        max-width: 100%; /* Adjust this value based on your design requirements */
+        margin: 0 auto; /* Centers the container */
+    }
+
+    .floating-label-group {
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+        .floating-label-group input {
+            font-size: 14px;
+            color: #FFFFFF;
+            background-color: #2f4d5a;
+            border: 1px solid #FFFFFF;
+            padding: 10px 10px 10px 5px;
+            display: block;
+            width: 100%;
+        }
+
+        .floating-label-group label {
+            color: #FFFFFF;
+            pointer-events: none;
+            position: absolute;
+            top: 10px;
+            left: 5px;
+            transition: all 0.2s ease;
+        }
+
+        .floating-label-group input:focus ~ label,
+        .floating-label-group input:not(:placeholder-shown) ~ label,
+        .floating-label-group input.filled ~ label {
+            top: -14px;
+            font-size: 12px;
+        }
 </style>

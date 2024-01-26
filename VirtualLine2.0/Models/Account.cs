@@ -22,5 +22,6 @@ namespace VirtualLine2._0.Models
         public string LastName { get; set; }
         public string ResetToken { get; set; }
         public Nullable<System.DateTime> ResetTokenExpires { get; set; }
+        public string ProfilePicture { get; set; }
     }
 }

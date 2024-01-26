@@ -1,0 +1,91 @@
+﻿<div class="jumbotron text-center" style="background-color: rgb(82 110 122 / 0.55); color: #FFFFFF; min-width: 300px;">
+    @using (Html.BeginForm("SetProfilePicture", "Account", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <label for="file" style="cursor: pointer;">
+            <div id="profile-preview" style="cursor: pointer;">
+                <img id="profile-image" src="@ViewBag.ProfilePicturePath" alt="Profile Picture"
+                     style="@(String.IsNullOrEmpty(ViewBag.ProfilePicturePath) ? "display: none;" : "") max-width: 100%; max-height: 100px; border-radius: 50%;" />
+                @if (String.IsNullOrEmpty(ViewBag.ProfilePicturePath))
+                {
+                    <div id="name-placeholder" style="width: 100px; height: 100px; background-color: #2f4d5a; color: #FFFFFF; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px;">
+                        @ViewBag.Name
+                    </div>
+                }
+            </div>
+        </label>
+        <input type="file" name="file" id="file" style="display: none;" onchange="updateImagePreview(this)" />
+        <p>
+            <button style="margin-top: 5%" class="btn btn-blue-md" type="submit">Submit</button>
+        </p>
+    }
+    <h5>
+        @Html.ActionLink("Cancel", "AccountInfo", "Account", null, new { @class = "nav-link", @style = "color: #E5E5E5" })
+    </h5>
+</div>
+
+<script>
+    var cropper;
+
+    function updateImagePreview(input) {
+        var preview = document.getElementById("profile-image");
+        var file = input.files[0];
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            preview.src = e.target.result;
+            preview.onload = function () {
+                // Initialize Cropper.js on the new image
+                if (cropper) {
+                    cropper.destroy(); // Destroy the old cropper instance
+                }
+                cropper = new Cropper(preview, {
+                    aspectRatio: 1, // Circle shape
+                    viewMode: 1,
+                    // Other cropper options as needed
+                });
+            };
+        };
+
+        reader.readAsDataURL(file);
+    }
+
+    function submitProfilePicture() {
+        if (cropper) {
+            // Get cropped image data
+            var croppedDataUrl = cropper.getCroppedCanvas().toDataURL();
+
+            // Create a hidden input to hold the base64 data
+            var input = document.createElement("input");
+            input.setAttribute("type", "hidden");
+            input.setAttribute("name", "croppedImage");
+            input.setAttribute("value", croppedDataUrl);
+
+            // Append it to the form and submit
+            var form = document.querySelector("form");
+            form.appendChild(input);
+            form.submit();
+        }
+    }
+</script>
+
+<style>
+    .btn-blue-md {
+        width: 100%; /* Make the button stretch to the full width */
+        padding: 14px 20px;
+        font-size: 14px;
+        line-height: 1.333333;
+        color: white;
+        background-color: #2f4d5a;
+        border: 4px solid #FFFFFF;
+        border-radius: 75px;
+        margin-bottom: 10px; /* Adds space between the buttons */
+        text-align: center; /* Center the text in the button */
+    }
+
+    #profile-image {
+        max-width: 100%;
+        max-height: 100px;
+        border-radius: 50%;
+        object-fit: cover; /* Crop the image to fit the circle */
+    }
+</style>

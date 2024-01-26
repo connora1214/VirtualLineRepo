@@ -1,23 +1,47 @@
-﻿
-<div style="background-color: #2f4d5a; color: #FFFFFF" class="jumbotron text-center">
-    <h2>@ViewBag.Name</h2>
-    <div class="row">
-        <a style="align-self: center" class="btn btn-blue-md col-md-2" href="@Url.Action("EditAccount", "Account")">Edit Profile</a>
+﻿<div class="jumbotron text-center" style="background-color: rgb(82 110 122 / 0.55); color: #FFFFFF ">
+    <div class="profile-container">
+        @if (!String.IsNullOrEmpty(ViewBag.ProfilePicturePath))
+        {
+            <img src="@ViewBag.ProfilePicturePath" alt="Profile Picture" class="profile-image" />
+        }
+        else
+        {
+            <div class="initials-container">
+                @ViewBag.Initial
+            </div>
+        }
     </div>
-    <div class="row">
-        <a class="btn btn-blue-md col-md-2" href="@Url.Action("ChangePassword", "Account")">Change Password</a>
-    </div>
-    <div class="row">
-        <a class="btn btn-blue-md col-md-2" href="@Url.Action("LogoutConfirmation", "Account")">Logout</a>
+    <div>
+        <h1 class="name-header" style="color:#FFFFFF">@ViewBag.Name</h1>
     </div>
 </div>
 
-<div style="background-color: #2f4d5a; color: #FFFFFF " class="jumbotron text-center">
+<p style="visibility:hidden">-----------------------------------------------------------------------------------------------------</p>
+<div style="background-color: rgb(82 110 122 / 0.55); color: #FFFFFF " class="jumbotron">
+    <h2 style="text-align: left">My Account</h2>
+    <p style="border-bottom: 1px solid rgb(255 255 255 / 0.05)" class="row">
+        <a class="btn btn-blue-md col-md-2" href="@Url.Action("EditAccount", "Account")">Edit Profile</a>
+    </p>
+    <p style="border-bottom: 1px solid rgb(255 255 255 / 0.05)" class="row">
+        <a class="btn btn-blue-md col-md-2" href="@Url.Action("SetProfilePicture", "Account")">Set Profile Picture</a>
+    </p>
+    <p style="border-bottom: 1px solid rgb(255 255 255 / 0.05)" class="row">
+        <a class="btn btn-blue-md col-md-2" href="@Url.Action("ChangePassword", "Account")">Change Password</a>
+    </p>
+    <p class="row">
+        <a class="btn btn-blue-md col-md-2" href="@Url.Action("LogoutConfirmation", "Account")">Logout</a>
+    </p>
+</div>
+
+<div style="background-color: rgb(82 110 122 / 0.55); color: #FFFFFF " class="jumbotron">
     <h2>Help Center</h2>
-    <div class="row">
+    <div style="border-bottom: 1px solid rgb(255 255 255 / 0.05)" class="row">
+        <a class="btn btn-blue-md col-md-2" href="http://www.brew-queue.com/Home/About">About Us</a>
+    </div>
+    <div style="border-bottom: 1px solid rgb(255 255 255 / 0.05)" class="row">
         <a class="btn btn-blue-md col-md-2" href="https://go.microsoft.com/fwlink/?LinkId=301866">Contact Us</a>
     </div>
-    <div class="row">
+    <div style="border-bottom: 1px solid rgb(255 255 255 / 0.05)" class="row">
         <a class="btn btn-blue-md col-md-2" href="https://go.microsoft.com/fwlink/?LinkId=301866">Privacy Policy</a>
     </div>
     <div class="row">
@@ -25,10 +49,16 @@
     </div>
 </div>
 
-<div style="background-color: #2f4d5a; color: #FFFFFF " class="jumbotron text-center">
+<div style="background-color: rgb(82 110 122 / 0.55); color: #FFFFFF " class="jumbotron">
     <h2>Follow Us</h2>
     <div class="row">
-        <a class="btn btn-blue-md col-md-2" href="https://www.instagram.com/connoranderson100/">Instagram</a>
+        <a class="btn btn-blue-md col-md-2" href="https://www.instagram.com/brewqueue/">Instagram</a>
+    </div>
+</div>
+
+<div style="background-color: transparent; color: #FFFFFF" class="jumbotron text-center">
+    <div class="row">
+        <a class="btn btn-red-md col-md-2" style="background: linear-gradient(to top, #cf0303, #ff0000, #cf0303) " href="@Url.Action("DeleteAccount", "Account")">Delete Account</a>
     </div>
 </div>
 
@@ -40,10 +70,50 @@
         font-size: 14px;
         line-height: 1.333333;
         color: white;
-        background-color: #2f4d5a;
-        border: 4px solid #FFFFFF;
+        background-color: transparent;
+        border: 0px;
+        text-align: left; /* Center the text in the button */
+    }
+
+    .btn-red-md {
+        display: block; /* Makes each button a block-level element */
+        width: 100%; /* Ensures each button stretches to the full width of its container */
+        padding: 14px 20px;
+        font-size: 14px;
+        line-height: 1.333333;
+        color: white;
+        background-color: #b60606;
+        border: 0.5px solid #cf0303;
         border-radius: 75px;
         margin-bottom: 10px; /* Adds space between the buttons */
         text-align: center; /* Center the text in the button */
+    }
+
+    .profile-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+
+    .profile-image {
+        max-width: 100px;
+        max-height: 100px;
+        border-radius: 50%;
+    }
+
+    .initials-container {
+        width: 100px;
+        height: 100px;
+        background-color: #2f4d5a;
+        color: #FFFFFF;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 24px;
+    }
+
+    .name-header {
+        color: #000000;
     }
 </style>

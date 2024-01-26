@@ -17,6 +17,7 @@
           <Property Name="LastName" Type="nvarchar(max)" Nullable="false" />
           <Property Name="ResetToken" Type="nvarchar(max)" />
           <Property Name="ResetTokenExpires" Type="datetime2" Precision="7" />
+          <Property Name="ProfilePicture" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="AdminAccount">
           <Key>
@@ -31,6 +32,10 @@
           <Property Name="Longitude" Type="decimal" Precision="9" Scale="6" Nullable="false" />
           <Property Name="AdminUsername" Type="nvarchar(max)" Nullable="false" />
           <Property Name="City" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="ResetToken" Type="nvarchar(max)" />
+          <Property Name="ResetTokenExpires" Type="datetime2" Precision="7" />
+          <Property Name="ProfilePicture" Type="nvarchar(max)" />
+          <Property Name="BannerPicture" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="EnteredUsers">
           <Key>
@@ -50,6 +55,8 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Latitude" Type="decimal" Precision="9" Scale="6" />
           <Property Name="Longitude" Type="decimal" Precision="9" Scale="6" />
+          <Property Name="ProfilePicture" Type="nvarchar(max)" />
+          <Property Name="BannerPicture" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="Queue">
           <Key>
@@ -84,6 +91,29 @@
           <Property Name="FridayClose" Type="time" Precision="4" />
           <Property Name="SaturdayClose" Type="time" Precision="4" />
         </EntityType>
+        <EntityType Name="VenueEntries">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="VenueName" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="TimeStamp" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="VenueId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Verification">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Username" Type="nvarchar(max)" />
+          <Property Name="Password" Type="nvarchar(max)" />
+          <Property Name="Email" Type="nvarchar(max)" />
+          <Property Name="Phone" Type="nvarchar(max)" />
+          <Property Name="FirstName" Type="nvarchar(max)" />
+          <Property Name="LastName" Type="nvarchar(max)" />
+          <Property Name="Code" Type="nvarchar(max)" />
+          <Property Name="CodeExpires" Type="datetime2" Precision="7" />
+        </EntityType>
         <EntityContainer Name="QueueStoreContainer">
           <EntitySet Name="Account" EntityType="Self.Account" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AdminAccount" EntityType="Self.AdminAccount" Schema="dbo" store:Type="Tables" />
@@ -91,6 +121,8 @@
           <EntitySet Name="Establishments" EntityType="Self.Establishments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Queue" EntityType="Self.Queue" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="QueueTimes" EntityType="Self.QueueTimes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="VenueEntries" EntityType="Self.VenueEntries" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Verification" EntityType="Self.Verification" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
@@ -121,6 +153,7 @@
           <Property Name="LastName" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="ResetToken" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="ResetTokenExpires" Type="DateTime" Precision="7" />
+          <Property Name="ProfilePicture" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityContainer Name="queueDBEntities3" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Queues" EntityType="Self.Queue" />
@@ -129,6 +162,8 @@
           <EntitySet Name="EnteredUsers" EntityType="Queue.EnteredUser" />
           <EntitySet Name="AdminAccounts" EntityType="Queue.AdminAccount" />
           <EntitySet Name="QueueTimes" EntityType="Queue.QueueTime" />
+          <EntitySet Name="VenueEntries" EntityType="Queue.VenueEntry" />
+          <EntitySet Name="Verifications" EntityType="Queue.Verification" />
         </EntityContainer>
         <EntityType Name="Establishment">
           <Key>
@@ -139,6 +174,8 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Latitude" Type="Decimal" Precision="9" Scale="6" />
           <Property Name="Longitude" Type="Decimal" Precision="9" Scale="6" />
+          <Property Name="ProfilePicture" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="BannerPicture" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="EnteredUser">
           <Key>
@@ -162,6 +199,10 @@
           <Property Name="Longitude" Type="Decimal" Nullable="false" Precision="9" Scale="6" />
           <Property Name="AdminUsername" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="City" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ResetToken" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ResetTokenExpires" Type="DateTime" Precision="7" />
+          <Property Name="ProfilePicture" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="BannerPicture" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="QueueTime">
           <Key>
@@ -182,6 +223,29 @@
           <Property Name="ThursdayClose" Type="Time" Precision="4" />
           <Property Name="FridayClose" Type="Time" Precision="4" />
           <Property Name="SaturdayClose" Type="Time" Precision="4" />
+        </EntityType>
+        <EntityType Name="VenueEntry">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="VenueName" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TimeStamp" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="VenueId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Verification">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Username" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Phone" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="FirstName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="LastName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Code" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CodeExpires" Type="DateTime" Precision="7" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -206,6 +270,7 @@
           <EntitySetMapping Name="Accounts">
             <EntityTypeMapping TypeName="Queue.Account">
               <MappingFragment StoreEntitySet="Account">
+                <ScalarProperty Name="ProfilePicture" ColumnName="ProfilePicture" />
                 <ScalarProperty Name="ResetTokenExpires" ColumnName="ResetTokenExpires" />
                 <ScalarProperty Name="ResetToken" ColumnName="ResetToken" />
                 <ScalarProperty Name="LastName" ColumnName="LastName" />
@@ -220,6 +285,8 @@
           <EntitySetMapping Name="Establishments">
             <EntityTypeMapping TypeName="Queue.Establishment">
               <MappingFragment StoreEntitySet="Establishments">
+                <ScalarProperty Name="BannerPicture" ColumnName="BannerPicture" />
+                <ScalarProperty Name="ProfilePicture" ColumnName="ProfilePicture" />
                 <ScalarProperty Name="Longitude" ColumnName="Longitude" />
                 <ScalarProperty Name="Latitude" ColumnName="Latitude" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
@@ -241,6 +308,10 @@
           <EntitySetMapping Name="AdminAccounts">
             <EntityTypeMapping TypeName="Queue.AdminAccount">
               <MappingFragment StoreEntitySet="AdminAccount">
+                <ScalarProperty Name="BannerPicture" ColumnName="BannerPicture" />
+                <ScalarProperty Name="ProfilePicture" ColumnName="ProfilePicture" />
+                <ScalarProperty Name="ResetTokenExpires" ColumnName="ResetTokenExpires" />
+                <ScalarProperty Name="ResetToken" ColumnName="ResetToken" />
                 <ScalarProperty Name="City" ColumnName="City" />
                 <ScalarProperty Name="AdminUsername" ColumnName="AdminUsername" />
                 <ScalarProperty Name="Longitude" ColumnName="Longitude" />
@@ -271,6 +342,31 @@
                 <ScalarProperty Name="MondayOpen" ColumnName="MondayOpen" />
                 <ScalarProperty Name="SundayOpen" ColumnName="SundayOpen" />
                 <ScalarProperty Name="VenueId" ColumnName="VenueId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="VenueEntries">
+            <EntityTypeMapping TypeName="Queue.VenueEntry">
+              <MappingFragment StoreEntitySet="VenueEntries">
+                <ScalarProperty Name="VenueId" ColumnName="VenueId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="TimeStamp" ColumnName="TimeStamp" />
+                <ScalarProperty Name="VenueName" ColumnName="VenueName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Verifications">
+            <EntityTypeMapping TypeName="Queue.Verification">
+              <MappingFragment StoreEntitySet="Verification">
+                <ScalarProperty Name="CodeExpires" ColumnName="CodeExpires" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

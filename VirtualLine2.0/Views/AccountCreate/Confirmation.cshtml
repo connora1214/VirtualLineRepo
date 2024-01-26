@@ -1,5 +1,13 @@
-﻿<h2 style=" color: #FFFFFF">Your account was successfully created</h2>
-<h3>
-    Please proceed to
-    @Html.ActionLink("Login", "AccountLogin", "AccountLogin", null, new { @class = "nav-link", @style = "color: #FFFFFF" })
-</h3>
+﻿<div class="jumbotron text-center" style="background-color: transparent; color: #FFFFFF">
+    <h2 style=" color: #FFFFFF">Your account was successfully created</h2>
+    <h3>
+        Please proceed to @Html.ActionLink("Login", "AccountLogin", "AccountLogin", null, new { @class = "nav-link", @style = "color: #E5E5E5" })
+    </h3>
+</div>
+
+<script>
+    // Scroll to the bottom of the page when the page is loaded
+    window.addEventListener('load', function () {
+        window.scrollTo(0, document.body.scrollHeight);
+    });
+</script>

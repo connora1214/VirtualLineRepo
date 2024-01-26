@@ -1,22 +1,31 @@
-﻿<h2 style=" color: #FFFFFF">Account Login</h2>
-<h3>@ViewBag.Message</h3>
+﻿<div class="form-container" style="width:100%">
+    <div class="jumbotron text-center" style="background-color: transparent; color: #FFFFFF">
+        <h2 style=" color: #FFFFFF">Account Login</h2>
+        <h4 style="margin-bottom: 20px">@ViewBag.Message</h4>
 
-@using (Html.BeginForm("AccountLogin", "AccountLogin", FormMethod.Post))
-{
-    <div class="floating-label-group">
-        <input type="text" id="Username" name="Username" required />
-        <label for="Username">Username</label>
-    </div>
-    <div class="floating-label-group">
-        <input type="password" id="Password" name="Password" required />
-        <label for="Password">Password</label>
-    </div>
-    <button class="btn btn-blue-md" type="submit">Submit</button>
-}
+        @using (Html.BeginForm("AccountLogin", "AccountLogin", FormMethod.Post))
+        {
+            <div class="floating-label-group" style="width:100%">
+                <input type="text" id="Username" name="Username" required />
+                <label for="Username">Username or Email</label>
+            </div>
+            <div class="floating-label-group">
+                <div class="input-without-icon">
+                    <input type="password" id="Password" name="Password" maxlength="15" required />
+                    <label for="Password">Password</label>
+                </div>
+            </div>
 
-<h5>
-    @Html.ActionLink("Forgot Password", "ForgotPassword", "AccountLogin", null, new { @class = "nav-link", @style = "color: #FFFFFF" })
-</h5>
+            <button class="btn btn-blue-md" type="submit">Submit</button>
+
+            <h5>
+                @Html.ActionLink("Forgot Password", "ForgotPassword", "AccountLogin", null, new { @class = "nav-link", @style = "color: #FFFFFF" })
+            </h5>
+
+        }
+    </div>
+</div>
+
 
 
 <style>
@@ -34,19 +43,58 @@
         text-align: center; /* Center the text in the button */
     }
 
+    .form-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh; /* Set the height to 100% of the viewport height */
+        margin: 0 auto; /* Centers the container horizontally */
+        max-width: 100%; /* Adjust the maximum width as needed */
+        width: 100%;
+    }
+
+    .input-with-icon {
+        display: flex;
+        align-items: center;
+        width: 106.5%;
+    }
+
+    .input-without-icon {
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    .info-icon {
+        cursor: pointer;
+        margin-left: 10px;
+        /* Removed position absolute and related properties */
+    }
+
+    .show-icon {
+        cursor: pointer;
+        position: absolute;
+        right: 0; /* Align the icon to the right side */
+        margin-right: 10px;
+        top: 50%;
+        transform: translateY(-50%); /* Center vertically */
+    }
+
     .floating-label-group {
         position: relative;
         margin-bottom: 20px;
+        width: 100%;
     }
 
         .floating-label-group input {
-            font-size: 14px;
+            font-size: 15px;
             color: #FFFFFF;
             background-color: #2f4d5a;
             border: 1px solid #FFFFFF;
             padding: 10px 10px 10px 5px;
             display: block;
-            width: 100%;
+            width: 100%; /* Full width of its parent */
         }
 
         .floating-label-group label {
@@ -56,32 +104,21 @@
             top: 10px;
             left: 5px;
             transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
         }
 
         .floating-label-group input:focus ~ label,
         .floating-label-group input:not(:placeholder-shown) ~ label,
         .floating-label-group input.filled ~ label {
-            top: -14px;
-            font-size: 12px;
+            top: -16px;
+            font-size: 14px;
         }
 </style>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var inputElements = document.querySelectorAll('.floating-label-group input');
-
-        inputElements.forEach(function (input) {
-            input.addEventListener('focus', toggleLabel);
-            input.addEventListener('blur', toggleLabel);
-            toggleLabel.call(input); // Initialize on page load
-        });
-
-        function toggleLabel() {
-            if (this.value !== '') {
-                this.classList.add('filled');
-            } else {
-                this.classList.remove('filled');
-            }
-        }
+    // Scroll to the bottom of the page when the page is loaded
+    window.addEventListener('load', function () {
+        window.scrollTo(0, document.body.scrollHeight);
     });
 </script>

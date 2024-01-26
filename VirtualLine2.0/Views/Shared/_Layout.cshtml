@@ -4,40 +4,33 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - BrewQueue</title>
-    <link href="~/Content/custom.css" rel="stylesheet" />
+    <link href="~/Content/custom.css" rel="stylesheet" type="text/css" />
+
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
-<body style="background-color: #2f4d5a">
-    <div class="navbar navbar-inverse navbar-fixed-bottom" style="background-color: #2f4d5a; border-color: #FFFFFF">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav navbar-center">
-                    <li>@Html.ActionLink("Home", "Index", "Home", null, new { @class = "nav-link", @style = " color: #FFFFFF" })</li>
-                    <li>@Html.ActionLink("My Queue", "MyQueue", "Queue", null, new { @class = "nav-link", @style = " color: #FFFFFF" })</li>
-                    <li>@Html.ActionLink("My Account", "MyAccount", "Home", null, new { @class = "nav-link", @style = " color: #FFFFFF" })</li>
-                </ul>
+<body class="full-page-gradient">
+    
+        <div class="navbar-container">
+            <div class="navbar navbar-inverse navbar-fixed-bottom" style="background: #142730; border-color: #FFFFFF; width: 100%;">
+                <div class="container-fluid">
+                    <ul class="nav navbar-nav navbar-center">
+                        <li>@Html.ActionLink("Home", "Index", "Home", null, new { @class = "nav-link", @style = "color: #FFFFFF" })</li>
+                        <li>@Html.ActionLink("My Queue", "MyQueue", "Queue", null, new { @class = "nav-link", @style = "color: #FFFFFF" })</li>
+                        <li>@Html.ActionLink("My Account", "MyAccount", "Home", null, new { @class = "nav-link", @style = "color: #FFFFFF" })</li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="container body-content">
+    
+    <div class="container body-content" style="background-color: transparent">
         @RenderBody()
     </div>
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
-</body>
-</html>
 
-<script>
+    <script>
     function checkUserPosition() {
         fetch('@Url.Action("GetUserPosition", "Queue")')
             .then(response => response.json())
@@ -51,42 +44,73 @@
     }
 
     var positionCheckInterval = setInterval(checkUserPosition, 10000); // Check every 10 seconds
-</script>
+    </script>
 
-<script>
+    <script>
     function checkServerTimer() {
-        fetch('@Url.Action("CheckTimer", "Queue", new { isFromTimerPage = false }))')
+        fetch('@Url.Action("CheckTimer", "Queue", new { isFromTimerPage = false })')
             .then(response => response.json())
             .then(data => {
                 if (!data.isAuthenticated) {
-                    // User is not authenticated, stop checking
                     clearInterval(timerId);
                     return;
                 }
-
                 if (!data.isInQueue) {
-                    // User is not in the queue or timer isn't running
                     clearInterval(timerId);
                     return;
                 }
-
                 if (data.expired) {
                     clearInterval(timerId);
                     window.location.href = '@Url.Action("RemovedFromLine", "Queue")';
                 }
-
-                // Update timer display as needed
             })
             .catch(error => console.error('Error:', error));
     }
 
     var timerId = setInterval(checkServerTimer, 1000); // Check every second
-</script>
+    </script>
 
-<style>
-    .navbar-center {
-        display: flex;
-        justify-content: center;
-        width: 100%;
-    }
-</style>
+    <script>
+        function adjustBackgroundSize() {
+            var screenHeight = window.innerHeight;
+            document.body.style.backgroundSize = '100% ' + screenHeight + 'px';
+        }
+
+        window.onload = adjustBackgroundSize;
+        window.onresize = adjustBackgroundSize;
+    </script>
+
+    <style>
+        .navbar-container {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            background: #142730
+        }
+
+        .navbar {
+            border-color: #FFFFFF;
+            flex-basis: auto; /* Adjust as needed */
+        }
+
+        .navbar-center {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .full-page-gradient {
+            background-attachment: fixed;
+            background: #142730;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh; /*Set the height to 100% of the viewport height */
+            margin: 0 auto; /* Centers the container horizontally */
+            max-width: 95%; /* Adjust the maximum width as needed */
+            width: 100%;
+        }
+    </style>
+</body>
+</html>

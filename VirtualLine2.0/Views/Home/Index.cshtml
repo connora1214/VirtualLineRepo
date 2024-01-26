@@ -1,60 +1,159 @@
 ﻿<head>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
-<div class="jumbotron text-center" style="background-color: #2f4d5a; color: #FFFFFF; border-color: #2f4d5a">
-    <h1 class="blue-accent" style=" color: #FFFFFF">BrewQueue</h1>
-    <!--<p class="lead">Don't wait in line. Select a bar to join a virtual line and we'll let you know when to arrive!</p>-->
+<div class="jumbotron text-center" style="background-color: transparent; color: #FFFFFF; margin-bottom: -50px">
+    <h1 class="blue-accent" style="transform: translateY(-15px); font-size: 50px; text-shadow: 0 0 10px rgba(255, 255, 255, 0.9); color: #FFFFFF ">BrewQueue</h1>
+</div>
+<div class="jumbotron text-center" style="font-family: 'Lato', sans-serif; background-color: transparent; color: #FFFFFF">  
     <p>
-        <select id="locationDropdown" style="font-family: 'Lato', sans-serif; background-color: #2f4d5a; border-color: #FFFFFF">
+        <select id="locationDropdown" style="font-family: 'Lato', sans-serif; background-color: transparent; text-align:center; border-color: #FFFFFF">
             <option value="">Select a Location</option>
             @foreach (var location in ViewBag.Locations)
             {
-                <option style="font-family: 'Lato', sans-serif" value="@location">@location</option>
+                <option style="font-family: 'Lato', sans-serif; background-color: transparent; color: #2f4d5a" value="@location">@location</option>
             }
         </select>
     </p>
-    <div style="font-family: 'Lato', sans-serif; border-color: #2f4d5a" id="barsList"></div>
+    <div id="barsList"></div>
 </div>
 
 <script>
-document.getElementById('locationDropdown').addEventListener('change', function () {
-    var selectedLocation = this.value;
-    fetch('/Home/GetBarsByLocation?location=' + encodeURIComponent(selectedLocation))
-    .then(response => response.json())
-    .then(bars => {
-        var barsList = document.getElementById('barsList');
-        barsList.innerHTML = ''; // Clear existing buttons
-        bars.forEach(bar => {
-            var button = document.createElement('button');
-            button.innerText = bar.BarName;
-            button.className = 'barButton';
-            button.addEventListener('click', function () {
-                window.location.href = '@Url.Action("Index", "Queue")' + '?id=' + bar.Id;
+    document.getElementById('locationDropdown').addEventListener('change', function () {
+        var selectedLocation = this.value;
+        fetch('/Home/GetBarsByLocation?location=' + encodeURIComponent(selectedLocation))
+        .then(response => response.json())
+        .then(bars => {
+            var barsList = document.getElementById('barsList');
+            barsList.innerHTML = ''; // Clear existing buttons
+            bars.forEach(bar => {
+                var button = document.createElement('button');
+                button.className = 'barButton';
+
+                var backgroundImageDiv = document.createElement('div');
+                backgroundImageDiv.className = 'buttonBackground';
+                backgroundImageDiv.style.backgroundImage = `url('${bar.BannerPicturePath}')`;
+
+                var img = document.createElement('img');
+                img.src = bar.ProfilePicturePath;
+                img.className = 'barProfilePicture';
+
+                var textSpan = document.createElement('span');
+                textSpan.innerText = bar.BarName;
+                textSpan.className = 'barButtonText';
+
+                button.appendChild(backgroundImageDiv);
+                button.appendChild(img);
+                button.appendChild(textSpan);
+
+                button.addEventListener('click', function () {
+                    window.location.href = '@Url.Action("Index", "Queue")' + '?id=' + bar.Id;
+                });
+                barsList.appendChild(button);
             });
-            barsList.appendChild(button);
         });
     });
-});
-</script>
 
-<style>
-    .barButton {
-        display: block; /* Makes each button a block-level element */
-        width: 100%; /* Ensures each button stretches to the full width of its container */
-        padding: 14px 20px;
-        font-size: 14px;
-        line-height: 1.333333;
-        color: white;
-        background-color: #2f4d5a;
-        border: 4px solid #FFFFFF;
-        border-radius: 75px;
-        margin-bottom: 10px; /* Adds space between the buttons */
-        text-align: center; /* Center the text in the button */
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition, showError);
+        } else {
+            console.log("Geolocation is not supported by this browser.");
+        }
     }
 
-        .barButton:hover {
-            background-color: #0056b3;
+    function showPosition(position) {
+        var latitude = position.coords.latitude;
+        var longitude = position.coords.longitude;
+        // Call the server to find the nearest location
+        FindNearestLocation(latitude, longitude);
+    }
+
+    function showError(error) {
+        switch (error.code) {
+            case error.PERMISSION_DENIED:
+                console.log("User denied the request for Geolocation.");
+                break;
+            case error.POSITION_UNAVAILABLE:
+                console.log("Location information is unavailable.");
+                break;
+            case error.TIMEOUT:
+                console.log("The request to get user location timed out.");
+                break;
+            case error.UNKNOWN_ERROR:
+                console.log("An unknown error occurred.");
+                break;
         }
+    }
+
+    function FindNearestLocation(latitude, longitude) {
+        fetch('/Home/FindNearestLocation?latitude=' + latitude + '&longitude=' + longitude)
+            .then(response => response.json())
+            .then(data => {
+                var locationDropdown = document.getElementById('locationDropdown');
+                if (data.nearestLocation) {
+                    for (var i = 0; i < locationDropdown.options.length; i++) {
+                        if (locationDropdown.options[i].value == data.nearestLocation) {
+                            locationDropdown.selectedIndex = i;
+                            break;
+                        }
+                    }
+                }
+            });
+    }
+
+    // Call getLocation when the page loads
+    window.onload = getLocation;
+</script>
+
+<style>  
+
+    .barButton {
+        display: flex; /* Use flexbox for layout */
+        align-items: center; /* Align items vertically */
+        justify-content: flex-start; /* Align content to the left */
+        width: 100%;
+        padding: 10px;
+        font-size: 30px;
+        color: white;
+        background-color: #FFFFFF;
+        border: 4px solid #FFFFFF;
+        border-radius: 75px;
+        margin-bottom: 10px;
+        position: relative; /* Needed for background positioning */
+        overflow: hidden; /* Ensure contents stay within the button */
+    }
+
+    .buttonBackground {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        opacity: 0.4; /* 40% opacity */
+        z-index: 1; /* Below the content */
+    }
+
+    .barProfilePicture {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        margin-right: 10px; /* Space between image and text */
+        z-index: 2; /* Above the background */
+    }
+
+    .barButtonText {
+        text-align: left;
+        color: #000000;
+        text-shadow: 0 0 15px rgba(255, 255, 255); /* Increased contrast and opacity */
+        z-index: 2; /* Ensure text is above the background */
+    }
+
+    .barButton:hover {
+        background-color: #2f4d5a;
+    }
 </style>
 

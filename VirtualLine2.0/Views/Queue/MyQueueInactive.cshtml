@@ -2,17 +2,38 @@
     var numberList = new SelectList(Enumerable.Range(1, 5), "1");
 }
 
-<h2 style=" color: #FFFFFF">@ViewBag.Title</h2>
+<div class="jumbotron text-center banner-background"
+     style="@(String.IsNullOrEmpty(ViewBag.BannerPicturePath) ?
+             "min-width: 300px;" :
+             $"")">
+    <div style="margin-bottom: 10px">
+        @if (!String.IsNullOrEmpty(ViewBag.ProfilePicturePath))
+        {
+            <img src="@ViewBag.ProfilePicturePath" alt="Profile Picture" style="max-width: 100px; max-height: 100px; border-radius: 50%;" />
+        }
+        else
+        {
+            <img src="@ViewBag.DefaultProfilePicturePath" alt="Profile Picture" style="max-width: 100px; max-height: 100px; border-radius: 50%;" />
+        }
+    </div>
+    <div>
+        <h1 style="color: #000000; text-shadow: 0 0 15px rgb(255 255 255);">@ViewBag.Venue</h1>
+    </div>
+</div>
 
-<h3 style="color: #FFFFFF">@ViewBag.Message</h3>
-@using (Html.BeginForm("AddToQueue", "Queue", FormMethod.Post))
-{
+<div class="jumbotron text-center" style="background-color: transparent">
+    <div style="margin-top:5%">
+        <h3 style="color: #FFFFFF">@ViewBag.Message</h3>
+        @using (Html.BeginForm("AddToQueue", "Queue", FormMethod.Post))
+        {
 
-    <label for="numberSelect" style="color: #FFFFFF; background-color: #2f4d5a">Select a Quantity:</label>
-    @Html.DropDownList("numberSelect", numberList)
+            <label for="numberSelect" style="margin-top: 5%; margin-bottom: 5%; color: #FFFFFF">Select a Quantity:</label>
+            @Html.DropDownList("numberSelect", numberList, null, new { @style = " color: #2f4d5a" })
 
-    <button class="btn btn-blue-md" type="submit">Join Line</button>
-}
+            <button class="btn btn-blue-md" type="submit">Join Line</button>
+        }
+    </div>
+</div>
 
 <style>
     .btn-blue-md {
@@ -22,10 +43,40 @@
         font-size: 14px;
         line-height: 1.333333;
         color: white;
-        background-color: #2f4d5a;
+        background-color: transparent;
         border: 4px solid #FFFFFF;
         border-radius: 75px;
         margin-bottom: 10px; /* Adds space between the buttons */
         text-align: center; /* Center the text in the button */
     }
+
+    .jumbotron.banner-background {
+        position: relative;
+        background-color: #FFFFFF;
+        min-width: 300px;
+        color: #FFFFFF;
+        z-index: -1;
+    }
+
+    .jumbotron.banner-background::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url('@ViewBag.BannerPicturePath');
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        opacity: 0.5; /* 50% Transparency */
+        z-index: -1; /* Ensure the content is above the background */
+    }
 </style>
+
+<script>
+    // Scroll to the bottom of the page when the page is loaded
+    window.addEventListener('load', function () {
+        window.scrollTo(0, document.body.scrollHeight);
+    });
+</script>

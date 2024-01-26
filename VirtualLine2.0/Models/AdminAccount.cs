@@ -23,5 +23,9 @@ namespace VirtualLine2._0.Models
         public decimal Longitude { get; set; }
         public string AdminUsername { get; set; }
         public string City { get; set; }
+        public string ResetToken { get; set; }
+        public Nullable<System.DateTime> ResetTokenExpires { get; set; }
+        public string ProfilePicture { get; set; }
+        public string BannerPicture { get; set; }
     }
 }

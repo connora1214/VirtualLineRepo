@@ -16,6 +16,7 @@ using VirtualLine2._0.Models;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web.Security;
+using System.IO;
 
 namespace VirtualLine2._0.Controllers
 {
@@ -31,43 +32,160 @@ namespace VirtualLine2._0.Controllers
       public string NewPassword { get; set; }
       public string NewPasswordConfirmation { get; set; }
    }
+
+   public class DeleteAccountEntry
+   {
+      public string Username { get; set; }
+      public string Password { get; set; }
+   }
+
    public class AccountController : Controller
    {
       private queueDBEntities3 db = new queueDBEntities3();
       // GET: Account
       public ActionResult Index()
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
+
          return View();
       }
 
       public ActionResult EditConfirmation()
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
+
          return View();
       }
+
+      public ActionResult DeleteConfirmation()
+      {
+         return View();
+      }
+
       public ActionResult Logout()
       {
          FormsAuthentication.SignOut();
          return View();
       }
       public ActionResult LogoutConfirmation()
-      {
+      {        
          return View();
       }
       public ActionResult ChangePassword()
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
          return View();
       }
 
       public ActionResult AccountInfo()
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
          Account user = db.Accounts.Find(User.Identity.Name);
          ViewBag.Name = user.FirstName + " " + user.LastName;
          ViewBag.Email = user.Email;
+         ViewBag.ProfilePicturePath = user.ProfilePicture;
+
+         return View();
+      }
+
+      public ActionResult SetProfilePicture()
+      {
+         var user = db.Accounts.Find(User.Identity.Name);
+         ViewBag.Name = user.FirstName[0] + user.LastName[0];
+         ViewBag.ProfilePicturePath = user.ProfilePicture;
+
+         return View();
+      }
+
+      [HttpPost]
+      public ActionResult SetProfilePicture(HttpPostedFileBase file)
+      {
+         if (file != null && file.ContentLength > 0)
+         {
+            var user = db.Accounts.Find(User.Identity.Name);
+
+            // Extract file name from whatever was posted by browser
+            var fileName = Path.GetFileName(file.FileName);
+
+            // Combine the base path with the file name
+            var relativePath = Path.Combine("~/Content/Images/", fileName);
+
+            // Map the relative path to physical path
+            var serverPath = Server.MapPath(relativePath);
+
+            // Save the file to the server path
+            file.SaveAs(serverPath);
+
+            // Save the relative URL (e.g., /Content/Images/fileName.jpg) in the database
+            user.ProfilePicture = relativePath.Substring(1); // Remove '~'
+            db.Entry(user).State = EntityState.Modified;
+            db.SaveChanges();
+
+            return RedirectToAction("AccountInfo");
+         }
+         return View();
+      }
+
+      public ActionResult DeleteAccount()
+      {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
+         return View();
+      }
+
+      [HttpPost]
+      public ActionResult DeleteAccount(DeleteAccountEntry entry)
+      {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
+
+         Account user = db.Accounts.Find(User.Identity.Name);
+
+         string hashedPassword = HashPassword(entry.Password);
+
+         if (user.Password == hashedPassword && user.Username == entry.Username)
+         {
+            //remove user from queue if in any
+            Queue user2 = db.Queues.Find(user.Username);
+            if (user2 != null)
+            {
+               RemoveUserFromQueue(user2);
+            }
+
+            db.Accounts.Remove(user);
+            db.SaveChanges();
+
+            FormsAuthentication.SignOut();
+
+            return RedirectToAction("DeleteConfirmation");
+         }
+
+         ViewBag.Message = "Incorrect Credentials";
          return View();
       }
 
       public ActionResult EditAccount()
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
          Account user = db.Accounts.Find(User.Identity.Name);
          ViewBag.FirstName = user.FirstName;
          ViewBag.LastName = user.LastName;
@@ -78,6 +196,11 @@ namespace VirtualLine2._0.Controllers
       [HttpPost]
       public ActionResult EditAccount(AccountEditEntry entry)
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
+
          Account user = db.Accounts.Find(User.Identity.Name);
 
          //user to prefill the input boxes
@@ -116,6 +239,19 @@ namespace VirtualLine2._0.Controllers
       [HttpPost]
       public ActionResult ChangePassword(ChangePasswordEntry entry)
       {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
+
+         //check if password fits constraint
+         var passwordRegex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*[1234567890!?@#$%^&*()_+]).{6,15}$");
+         if (!passwordRegex.IsMatch(entry.NewPassword))
+         {
+            ViewBag.Message = "Password must be 6 - 15 characters long and contain at least one uppercase letter, one lowercase letter, and one special character.";
+            return View(entry);
+         }
+
          Account user = db.Accounts.Find(User.Identity.Name);
          string hashedPassword = HashPassword(entry.OldPassword);
          if (hashedPassword == user.Password)
@@ -135,6 +271,39 @@ namespace VirtualLine2._0.Controllers
 
          ViewBag.Message = "Password Incorrect";
          return View(entry);
+      }
+
+      private void RemoveUserFromQueue(Queue user)
+      {
+         bool oldValidateOnSaveEnabled = db.Configuration.ValidateOnSaveEnabled;
+
+         try
+         {
+            db.Configuration.ValidateOnSaveEnabled = false;
+
+            if (db.Queues.Find(user.Username) != null)
+            {
+               db.Queues.Attach(user);
+               db.Queues.Remove(user);
+               db.SaveChanges();
+            }
+
+         }
+         finally
+         {
+            db.Configuration.ValidateOnSaveEnabled = oldValidateOnSaveEnabled;
+         }
+
+         var BarQueue = from q in db.Queues select q;
+         BarQueue = BarQueue.Where(q => q.Bar.Equals(user.Bar));
+         foreach (Queue q in BarQueue.ToArray())
+         {
+            if (q.Position > user.Position)
+            {
+               q.Position = q.Position - user.Quantity;
+               db.SaveChanges();
+            }
+         }
       }
 
       private string HashPassword(string password)
