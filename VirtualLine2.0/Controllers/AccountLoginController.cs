@@ -108,7 +108,7 @@ namespace VirtualLine2._0.Controllers
 
       private void SendResetEmail(string email, string token)
       {
-         var resetLink = "http://brew-queue.com/AccountLogin/ChangePassword?token=" + token;
+         var resetLink = "http://brew-queue.com/AccountLogin/ResetPassword?token=" + token;
 
          var body = $"Please reset your password by clicking on this link: {resetLink}";
 

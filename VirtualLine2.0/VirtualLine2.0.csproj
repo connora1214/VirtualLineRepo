@@ -429,7 +429,6 @@
     <Content Include="Scripts\jquery-3.4.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.4.1.min.map" />
     <Content Include="Views\Queue\NotInQueue.cshtml" />
-    <Content Include="Views\Queue\Confirmation.cshtml" />
     <Content Include="Views\Queue\AlreadyInAnotherQueue.cshtml" />
     <Content Include="Views\AccountCreate\CreateAccount.cshtml" />
     <Content Include="Views\AccountLogin\AccountLogin.cshtml" />
@@ -459,7 +458,6 @@
     <Content Include="Views\AccountLogin\ResetSuccessful.cshtml" />
     <Content Include="Views\AccountCreate\VerifyEmail.cshtml" />
     <Content Include="Views\Account\DeleteAccount.cshtml" />
-    <Content Include="Views\Account\DeleteConfirmation.cshtml" />
     <Content Include="Views\Account\SetProfilePicture.cshtml" />
   </ItemGroup>
   <ItemGroup>

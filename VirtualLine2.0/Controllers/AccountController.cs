@@ -62,12 +62,6 @@ namespace VirtualLine2._0.Controllers
 
          return View();
       }
-
-      public ActionResult DeleteConfirmation()
-      {
-         return View();
-      }
-
       public ActionResult Logout()
       {
          FormsAuthentication.SignOut();
@@ -173,7 +167,7 @@ namespace VirtualLine2._0.Controllers
 
             FormsAuthentication.SignOut();
 
-            return RedirectToAction("DeleteConfirmation");
+            return RedirectToAction("MyAccount", "Home");
          }
 
          ViewBag.Message = "Incorrect Credentials";

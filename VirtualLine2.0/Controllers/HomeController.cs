@@ -27,8 +27,11 @@ namespace VirtualLine2._0.Controllers
          {
             return RedirectToAction("MyAccount", "Home");
          }
+
          ViewBag.Locations = db.Establishments.Select(e => e.Location).Distinct().ToList();
          return View();
+
+         
       }
 
       public JsonResult FindNearestLocation(double userLatitude, double userLongitude)

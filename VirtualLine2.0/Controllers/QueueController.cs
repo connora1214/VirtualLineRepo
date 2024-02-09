@@ -24,18 +24,6 @@ namespace VirtualLine2._0.Controllers
 
       private static int bar = 0;
 
-      public ActionResult Confirmation()
-      {
-         if (User.Identity.Name == "")
-         {
-            return RedirectToAction("MyAccount", "Home");
-         }
-
-         Establishment e = db.Establishments.Find(bar);
-         ViewBag.Message = "You successfully joined the queue for " + e.BarName;
-         return View();
-      }
-
       public ActionResult NotInQueue()
       {
          if (User.Identity.Name == "")
@@ -764,7 +752,7 @@ namespace VirtualLine2._0.Controllers
 
             db.Queues.Add(user);
             db.SaveChanges();
-            return RedirectToAction("Confirmation", "Queue");
+            return RedirectToAction("MyQueue", "Queue");
          }
          //if user is not logged in direct them to the login page
          else
