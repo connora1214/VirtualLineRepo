@@ -1,9 +1,13 @@
-﻿<div class="jumbotron text-center" style="background-color: transparent; color: #FFFFFF; border-color: transparent; font-family: 'Lato', sans-serif">
-    <h1 class="blue-accent" style="font-family: 'Lato', sans-serif; color: #FFFFFF">@ViewBag.Title</h1>
+﻿<head>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<div class="jumbotron text-center" style="background-color: transparent; color: #FFFFFF; border-color: transparent; font-family: 'Comfortaa'">
+    <h1 class="blue-accent" style="font-family: 'Comfortaa'; color: #FFFFFF">@ViewBag.Title</h1>
     <!--<p class="lead">Don't wait in line. Select a bar to join a virtual line and we'll let you know when to arrive!</p>-->
-    <h3 style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; color: #FFFFFF">Your turn is coming up! You must be ready to enter before the timer expires or else your spot in line will be terminated.</h3>
-    <h4 style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; color: #FFFFFF">You will not receive a refund and you will not be permitted entry into the venue.</h4>
-    <h1 style="margin-top: 7.5%; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; color: #FFFFFF" id="timer"></h1>
+    <h3 style="font-family: 'Comfortaa'; color: #FFFFFF">Your turn is coming up!</h3>
+    <h5 style="font-family: 'Comfortaa'; color: #FFFFFF">You must be ready to enter before the timer expires or else your spot in line will be terminated. You will not receive a refund and you will not be permitted entry into the venue.</h5>
+    <h1 style="margin-top: 7.5%; font-family: 'Comfortaa'; color: #FFFFFF" id="timer"></h1>
 
     <div style="margin-top: 7.5%">
         <button class="btn btn-blue-md" id="checkLocationButton">I am here</button>
@@ -116,5 +120,6 @@
         border-radius: 75px;
         margin-bottom: 10px; /* Adds space between the buttons */
         text-align: center; /* Center the text in the button */
+        font-family: 'Comfortaa'
     }
 </style>

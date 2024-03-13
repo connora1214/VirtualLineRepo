@@ -53,6 +53,11 @@ namespace VirtualLine2._0.Controllers
          return View();
       }
 
+      public ActionResult Privacy()
+      {
+         return View();
+      }
+
       public ActionResult EditConfirmation()
       {
          if (User.Identity.Name == "")
@@ -113,17 +118,17 @@ namespace VirtualLine2._0.Controllers
             // Extract file name from whatever was posted by browser
             var fileName = Path.GetFileName(file.FileName);
 
-            // Combine the base path with the file name
-            var relativePath = Path.Combine("~/Content/Images/", fileName);
+            var newFileName = user.Username + "_Profile" + Path.GetExtension(fileName);
 
-            // Map the relative path to physical path
-            var serverPath = Server.MapPath(relativePath);
+            var sharedFolderPath = @"C:\inetpub\wwwroot\Images";
 
-            // Save the file to the server path
-            file.SaveAs(serverPath);
+            // Combine the shared folder path with the new file name
+            var fullPath = Path.Combine(sharedFolderPath, newFileName);
 
-            // Save the relative URL (e.g., /Content/Images/fileName.jpg) in the database
-            user.ProfilePicture = relativePath.Substring(1); // Remove '~'
+            // Save the file to the shared folder
+            file.SaveAs(fullPath);
+
+            user.ProfilePicture = "https://thebrewqueue.com/Images/" + newFileName;
             db.Entry(user).State = EntityState.Modified;
             db.SaveChanges();
 

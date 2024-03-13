@@ -1,18 +1,18 @@
 ﻿<head>
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
 <div class="jumbotron text-center" style="background-color: transparent; color: #FFFFFF; margin-bottom: -50px">
-    <h1 class="blue-accent" style="transform: translateY(-15px); font-size: 50px; text-shadow: 0 0 10px rgba(255, 255, 255, 0.9); color: #FFFFFF ">BrewQueue</h1>
+    <h1 style="transform: translateY(-15px); font-family: 'Comfortaa'; font-size: 50px; text-shadow: 0 0 10px rgba(255, 255, 255, 0.9); color: #FFFFFF ">BrewQueue</h1>
 </div>
-<div class="jumbotron text-center" style="font-family: 'Lato', sans-serif; background-color: transparent;">  
+<div class="jumbotron text-center" style="font-family: 'Comfortaa', sans-serif; background-color: transparent;">
     <p>
-        <select id="locationDropdown" style="font-family: 'Lato', sans-serif; background-color: transparent; text-align: center; border-color: #ffffff;">
+        <select id="locationDropdown" style="font-family: 'Comfortaa', sans-serif; background-color: transparent; text-align: center; border-color: #ffffff;">
             <option value="">Select a Location</option>
             @foreach (var location in ViewBag.Locations)
             {
-                <option style="font-family: 'Lato', sans-serif; background-color: transparent; color: #2f4d5a" value="@location">@location</option>
+                <option style="font-family: 'Comfortaa', sans-serif; background-color: transparent; color: #2f4d5a" value="@location">@location</option>
             }
         </select>
     </p>
@@ -20,6 +20,32 @@
 </div>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var userLatitude = position.coords.latitude;
+                var userLongitude = position.coords.longitude;
+
+                fetch('/Home/FindNearestLocation?userLatitude=' + userLatitude + '&userLongitude=' + userLongitude)
+                    .then(response => response.json())
+                    .then(data => {
+                        var nearestLocation = data.nearestLocation;
+                        var locationDropdown = document.getElementById('locationDropdown');
+                        for (var i = 0; i < locationDropdown.options.length; i++) {
+                            if (locationDropdown.options[i].value === nearestLocation) {
+                                locationDropdown.selectedIndex = i;
+                                locationDropdown.dispatchEvent(new Event('change'));
+                                break;
+                            }
+                        }
+                    });
+            }, function () {
+                console.error('Geolocation is not supported by this browser or user has denied the permission.');
+            });
+        }
+    });
+
+
     document.getElementById('locationDropdown').addEventListener('change', function () {
         var selectedLocation = this.value;
         fetch('/Home/GetBarsByLocation?location=' + encodeURIComponent(selectedLocation))
@@ -53,58 +79,7 @@
                 barsList.appendChild(button);
             });
         });
-    });
-
-    function getLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(showPosition, showError);
-        } else {
-            console.log("Geolocation is not supported by this browser.");
-        }
-    }
-
-    function showPosition(position) {
-        var latitude = position.coords.latitude;
-        var longitude = position.coords.longitude;
-        // Call the server to find the nearest location
-        FindNearestLocation(latitude, longitude);
-    }
-
-    function showError(error) {
-        switch (error.code) {
-            case error.PERMISSION_DENIED:
-                console.log("User denied the request for Geolocation.");
-                break;
-            case error.POSITION_UNAVAILABLE:
-                console.log("Location information is unavailable.");
-                break;
-            case error.TIMEOUT:
-                console.log("The request to get user location timed out.");
-                break;
-            case error.UNKNOWN_ERROR:
-                console.log("An unknown error occurred.");
-                break;
-        }
-    }
-
-    function FindNearestLocation(latitude, longitude) {
-        fetch('/Home/FindNearestLocation?latitude=' + latitude + '&longitude=' + longitude)
-            .then(response => response.json())
-            .then(data => {
-                var locationDropdown = document.getElementById('locationDropdown');
-                if (data.nearestLocation) {
-                    for (var i = 0; i < locationDropdown.options.length; i++) {
-                        if (locationDropdown.options[i].value == data.nearestLocation) {
-                            locationDropdown.selectedIndex = i;
-                            break;
-                        }
-                    }
-                }
-            });
-    }
-
-    // Call getLocation when the page loads
-    window.onload = getLocation;
+    });    
 </script>
 
 <style>  
@@ -148,6 +123,7 @@
     .barButtonText {
         text-align: left;
         color: #000000;
+        font-family: 'Comfortaa';
         text-shadow: 0 0 15px rgba(255, 255, 255); /* Increased contrast and opacity */
         z-index: 2; /* Ensure text is above the background */
     }

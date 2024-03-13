@@ -27,16 +27,30 @@ namespace VirtualLine2._0.Controllers
          {
             return RedirectToAction("MyAccount", "Home");
          }
+         
+         /*for (int i = 1; i<20; i++)
+         {
+            String s = i.ToString();
+            Queue user = new Queue();
+            user.Position = i;
+            user.Username = "u" + s;
+            user.Bar = 4;
+            user.StartTime = DateTime.MinValue;
+            user.Quantity = 1;
+            user.timerStarted = false;
+            user.enteringBar = false;
+            user.ExtendTime = 0;
+            db.Queues.Add(user);
+            db.SaveChanges();
+         }*/
+
 
          ViewBag.Locations = db.Establishments.Select(e => e.Location).Distinct().ToList();
-         return View();
-
-         
+         return View();         
       }
 
       public JsonResult FindNearestLocation(double userLatitude, double userLongitude)
       {
-
          var establishments = db.Establishments.ToList(); // Or a more selective query
 
          Establishment nearestEstablishment = null;

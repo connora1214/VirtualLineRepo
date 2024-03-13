@@ -103,12 +103,12 @@ namespace VirtualLine2._0.Controllers
          }
 
          ViewBag.Message = "An account with email does not exist";
-         return View(email);
+         return View();
       }
 
       private void SendResetEmail(string email, string token)
       {
-         var resetLink = "http://brew-queue.com/AccountLogin/ResetPassword?token=" + token;
+         var resetLink = "https://brew-queue.com/AccountLogin/ResetPassword?token=" + token;
 
          var body = $"Please reset your password by clicking on this link: {resetLink}";
 

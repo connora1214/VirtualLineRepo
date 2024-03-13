@@ -1,4 +1,8 @@
-﻿<div class="jumbotron text-center" style="background-color: rgb(82 110 122 / 0.55); color: #FFFFFF ">
+﻿<head>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<div class="jumbotron text-center" style="font-family: 'Comfortaa'; background-color: rgb(82 110 122 / 0.55); color: #FFFFFF ">
     <div class="profile-container">
         @if (!String.IsNullOrEmpty(ViewBag.ProfilePicturePath))
         {
@@ -12,12 +16,12 @@
         }
     </div>
     <div>
-        <h1 class="name-header" style="color:#FFFFFF">@ViewBag.Name</h1>
+        <h1 class="name-header" style="font-family: 'Comfortaa'; color:#FFFFFF">@ViewBag.Name</h1>
     </div>
 </div>
 
 <p style="visibility:hidden">-----------------------------------------------------------------------------------------------------</p>
-<div style="background-color: rgb(82 110 122 / 0.55); color: #FFFFFF " class="jumbotron">
+<div style="font-family: 'Comfortaa'; background-color: rgb(82 110 122 / 0.55); color: #FFFFFF " class="jumbotron">
     <h2 style="text-align: left">My Account</h2>
     <p style="border-bottom: 1px solid rgb(255 255 255 / 0.05)" class="row">
         <a class="btn btn-blue-md col-md-2" href="@Url.Action("EditAccount", "Account")">Edit Profile</a>
@@ -33,30 +37,30 @@
     </p>
 </div>
 
-<div style="background-color: rgb(82 110 122 / 0.55); color: #FFFFFF " class="jumbotron">
+<div style="font-family: 'Comfortaa'; background-color: rgb(82 110 122 / 0.55); color: #FFFFFF " class="jumbotron">
     <h2>Help Center</h2>
     <div style="border-bottom: 1px solid rgb(255 255 255 / 0.05)" class="row">
-        <a class="btn btn-blue-md col-md-2" href="http://www.brew-queue.com/Home/About">About Us</a>
+        <a class="btn btn-blue-md col-md-2" href="@Url.Action("About", "Home")">About Us</a>
     </div>
     <div style="border-bottom: 1px solid rgb(255 255 255 / 0.05)" class="row">
         <a class="btn btn-blue-md col-md-2" href="https://go.microsoft.com/fwlink/?LinkId=301866">Contact Us</a>
     </div>
     <div style="border-bottom: 1px solid rgb(255 255 255 / 0.05)" class="row">
-        <a class="btn btn-blue-md col-md-2" href="https://go.microsoft.com/fwlink/?LinkId=301866">Privacy Policy</a>
+        <a class="btn btn-blue-md col-md-2" href="@Url.Action("Privacy", "Account")">Privacy Policy</a>
     </div>
     <div class="row">
         <a class="btn btn-blue-md col-md-2" href="https://go.microsoft.com/fwlink/?LinkId=301866">Terms & Conditions</a>
     </div>
 </div>
 
-<div style="background-color: rgb(82 110 122 / 0.55); color: #FFFFFF " class="jumbotron">
+<div style="font-family: 'Comfortaa'; background-color: rgb(82 110 122 / 0.55); color: #FFFFFF " class="jumbotron">
     <h2>Follow Us</h2>
     <div class="row">
         <a class="btn btn-blue-md col-md-2" href="https://www.instagram.com/brewqueue/">Instagram</a>
     </div>
 </div>
 
-<div style="background-color: transparent; color: #FFFFFF" class="jumbotron text-center">
+<div style="font-family: 'Comfortaa'; background-color: transparent; color: #FFFFFF" class="jumbotron text-center">
     <div class="row">
         <a class="btn btn-red-md col-md-2" style="background: linear-gradient(to top, #cf0303, #ff0000, #cf0303) " href="@Url.Action("DeleteAccount", "Account")">Delete Account</a>
     </div>
@@ -69,6 +73,7 @@
         padding: 14px 20px;
         font-size: 14px;
         line-height: 1.333333;
+        font-family: 'Comfortaa';
         color: white;
         background-color: transparent;
         border: 0px;
@@ -81,6 +86,7 @@
         padding: 14px 20px;
         font-size: 14px;
         line-height: 1.333333;
+        font-family: 'Comfortaa';
         color: white;
         background-color: #b60606;
         border: 0.5px solid #cf0303;
@@ -106,6 +112,7 @@
         height: 100px;
         background-color: #2f4d5a;
         color: #FFFFFF;
+        font-family: 'Comfortaa';
         border-radius: 50%;
         display: flex;
         justify-content: center;

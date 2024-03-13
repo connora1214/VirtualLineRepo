@@ -22,5 +22,6 @@ namespace VirtualLine2._0.Models
         public bool timerStarted { get; set; }
         public Nullable<bool> enteringBar { get; set; }
         public int Quantity { get; set; }
+        public int ExtendTime { get; set; }
     }
 }

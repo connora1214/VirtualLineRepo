@@ -13,6 +13,8 @@ using Microsoft.Ajax.Utilities;
 using EntityState = System.Data.Entity.EntityState;
 using VirtualLine2._0.Controllers;
 using VirtualLine2._0.Models;
+using NodaTime;
+using GeoTimeZone;
 
 namespace VirtualLine2._0.Controllers
 {
@@ -57,6 +59,11 @@ namespace VirtualLine2._0.Controllers
          {
             return RedirectToAction("MyAccount", "Home");
          }
+         Queue user = db.Queues.Find(User.Identity.Name);
+         if (user.ExtendTime >= 1)
+         {
+            ViewBag.Message = "You may only extend your time once.";
+         }
          return View();
       }
 
@@ -95,7 +102,7 @@ namespace VirtualLine2._0.Controllers
             return RedirectToAction("MyAccount", "Home");
          }
          Queue q = db.Queues.Find(User.Identity.Name);
-         q.StartTime = DateTime.MinValue;
+         //q.StartTime = DateTime.MinValue;
          q.enteringBar = true;
          db.SaveChanges();
          return RedirectToAction("RemoveFromQueue", "Queue");
@@ -129,11 +136,11 @@ namespace VirtualLine2._0.Controllers
             {
                return RedirectToAction("ReadyToEnter", "Queue");
             }
-            ViewBag.Message = "Estimated wait time: " + minutes + "min";
+            ViewBag.Message = minutes + " min";
          }
          else
          {
-            ViewBag.Message = "Estimated wait time: " + hours + "hr " + minutes + "min";
+            ViewBag.Message = + hours + " hr " + minutes + " min";
          }
          ViewBag.Venue = e.BarName;
          ViewBag.ProfilePicturePath = e.ProfilePicture;
@@ -168,11 +175,11 @@ namespace VirtualLine2._0.Controllers
 
          if (hours == 0)
          {
-            ViewBag.Message = "Estimated wait time: " + estimatedTime + "min";
+            ViewBag.Message = + estimatedTime + " min";
          }
          else
          {
-            ViewBag.Message = "Estimated wait time: " + hours + "hr " + minutes + "min";
+            ViewBag.Message = hours + " hr " + minutes + " min";
          }
 
          var e = db.Establishments.Find(bar);
@@ -305,6 +312,25 @@ namespace VirtualLine2._0.Controllers
             return Json(new { isAuthenticated = true, isInQueue = false }, JsonRequestBehavior.AllowGet);
          }
 
+         /*Establishment e = db.Establishments.Find(User.Identity.Name);
+         var tzProvider = DateTimeZoneProviders.Tzdb;
+
+         double lat = Convert.ToDouble(e.Latitude.Value);
+         double lon = Convert.ToDouble(e.Longitude.Value);
+
+         // Get the time zone ID using GeoTimeZone
+         var tzId = TimeZoneLookup.GetTimeZone(lat, lon).Result;
+
+         // Get the DateTimeZone object from NodaTime using the time zone ID
+         var timeZone = tzProvider[tzId];
+
+         // Get the current ZonedDateTime in the establishment's time zone
+         var nowInZone = SystemClock.Instance.GetCurrentInstant().InZone(timeZone);
+
+         //var today = nowInZone.DayOfWeek;
+         var currentTime = new DateTime(nowInZone.TimeOfDay.Hour, nowInZone.TimeOfDay.Minute, nowInZone.TimeOfDay.Second);*/
+
+         //TimeSpan elapsed = currentTime - user.StartTime;
          TimeSpan elapsed = DateTime.Now - user.StartTime;
          TimeSpan duration = TimeSpan.FromMinutes(15);
          TimeSpan timeLeft = duration - elapsed;
@@ -394,7 +420,13 @@ namespace VirtualLine2._0.Controllers
          }
          //reset timer
          Queue user = db.Queues.Find(User.Identity.Name);
+
+         if (user.ExtendTime >= 1)
+         {
+            return RedirectToAction("GetExtendConfirmation", "Queue");
+         }
          user.StartTime = DateTime.Now;
+         user.ExtendTime += 1;
          db.SaveChanges();
 
          return RedirectToAction("Timer", "Queue");
@@ -406,10 +438,10 @@ namespace VirtualLine2._0.Controllers
          {
             return RedirectToAction("MyAccount", "Home");
          }
-         Queue user = db.Queues.Find(User.Identity.Name);
+         //Queue user = db.Queues.Find(User.Identity.Name);
          // Reset timer 
-         user.StartTime = DateTime.Now;
-         db.SaveChanges();
+         //user.StartTime = DateTime.Now;
+         //db.SaveChanges();
 
          return RedirectToAction("GrantAccess");
       }
@@ -452,12 +484,32 @@ namespace VirtualLine2._0.Controllers
       {
          QueueTime qt = db.QueueTimes.Find(id);
 
+         Establishment e = db.Establishments.Find(id);
+
          if (qt != null)
          {
-            var today = DateTime.Now.DayOfWeek;
-            TimeSpan currentTime = DateTime.Now.TimeOfDay;
+            // Use NodaTime's DateTimeZoneProviders.Tzdb to get the IDateTimeZoneProvider
+            var tzProvider = DateTimeZoneProviders.Tzdb;
 
-            if (today == DayOfWeek.Sunday)
+            double lat = Convert.ToDouble(e.Latitude.Value);
+            double lon = Convert.ToDouble(e.Longitude.Value);
+
+            // Get the time zone ID using GeoTimeZone
+            var tzId = TimeZoneLookup.GetTimeZone(lat, lon).Result;
+
+            // Get the DateTimeZone object from NodaTime using the time zone ID
+            var timeZone = tzProvider[tzId];
+
+            // Get the current ZonedDateTime in the establishment's time zone
+            var nowInZone = SystemClock.Instance.GetCurrentInstant().InZone(timeZone);
+
+            var today = nowInZone.DayOfWeek;
+            var currentTime = new TimeSpan(nowInZone.TimeOfDay.Hour, nowInZone.TimeOfDay.Minute, nowInZone.TimeOfDay.Second);
+
+            //var today = DateTime.Now.DayOfWeek;
+            //TimeSpan currentTime = DateTime.Now.TimeOfDay;
+
+            if (today == IsoDayOfWeek.Sunday)
             {
                // Handle the case where the current time is early in the day but before the previous night's closing time
                if (qt.SaturdayClose < qt.SaturdayOpen)
@@ -487,7 +539,7 @@ namespace VirtualLine2._0.Controllers
                   }
                }
             }
-            else if (today == DayOfWeek.Monday)
+            else if (today == IsoDayOfWeek.Monday)
             {
                if (qt.SundayClose < qt.SundayOpen)
                {
@@ -512,7 +564,7 @@ namespace VirtualLine2._0.Controllers
                   }
                }
             }
-            else if (today == DayOfWeek.Tuesday)
+            else if (today == IsoDayOfWeek.Tuesday)
             {
                if (qt.MondayClose < qt.MondayOpen)
                {
@@ -537,7 +589,7 @@ namespace VirtualLine2._0.Controllers
                   }
                }
             }
-            else if (today == DayOfWeek.Wednesday)
+            else if (today == IsoDayOfWeek.Wednesday)
             {
                if (qt.TuesdayClose < qt.TuesdayOpen)
                {
@@ -562,7 +614,7 @@ namespace VirtualLine2._0.Controllers
                   }
                }
             }
-            else if (today == DayOfWeek.Thursday)
+            else if (today == IsoDayOfWeek.Thursday)
             {
                if (qt.WednesdayClose < qt.WednesdayOpen)
                {
@@ -587,7 +639,7 @@ namespace VirtualLine2._0.Controllers
                   }
                }
             }
-            else if (today == DayOfWeek.Friday)
+            else if (today == IsoDayOfWeek.Friday)
             {
                if (qt.ThursdayClose < qt.ThursdayOpen)
                {
@@ -612,7 +664,7 @@ namespace VirtualLine2._0.Controllers
                   }
                }
             }
-            else
+            else //today is saturday
             {
                if (qt.FridayClose < qt.FridayOpen)
                {
@@ -739,6 +791,8 @@ namespace VirtualLine2._0.Controllers
             user.Quantity = Int32.Parse(numberSelect);
             user.timerStarted = false;
             user.enteringBar = false;
+            user.ExtendTime = 0;
+
 
             if (db.Queues.Find(user.Username) != null)
             {
@@ -787,9 +841,27 @@ namespace VirtualLine2._0.Controllers
                int num = 0;
                while(num < user.Quantity)
                {
+                  Establishment e = db.Establishments.Find(user.Bar);
+
+                  var tzProvider = DateTimeZoneProviders.Tzdb;                  
+                  double lat = Convert.ToDouble(e.Latitude.Value);
+                  double lon = Convert.ToDouble(e.Longitude.Value);
+
+                  // Get the time zone ID using GeoTimeZone
+                  var tzId = TimeZoneLookup.GetTimeZone(lat, lon).Result;
+
+                  // Get the DateTimeZone object from NodaTime using the time zone ID
+                  var timeZone = tzProvider[tzId];
+
+                  // Get the current ZonedDateTime in the establishment's time zone
+                  var nowInZone = SystemClock.Instance.GetCurrentInstant().InZone(timeZone);
+
+                  var currentDate = nowInZone.Date;
+                  var currentTime = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day, nowInZone.TimeOfDay.Hour, nowInZone.TimeOfDay.Minute, nowInZone.TimeOfDay.Second);
+                  
                   EnteredUser u = new EnteredUser();
                   u.VenueName = db.Establishments.Find(user.Bar).BarName;
-                  u.TimeStamp = DateTime.Now;
+                  u.TimeStamp = currentTime;
                   u.VenueId = user.Bar;
                   db.EnteredUsers.Add(u);
                   num += 1;

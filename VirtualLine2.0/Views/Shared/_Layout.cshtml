@@ -11,19 +11,19 @@
 </head>
 <body class="full-page-gradient">
     
-        <div class="navbar-container">
+        @*<div class="navbar-container">
             <div class="navbar navbar-inverse navbar-fixed-bottom" style="background: #142730; border-color: #FFFFFF; width: 100%;">
                 <div class="container-fluid">
                     <ul class="nav navbar-nav navbar-center">
-                        <li>@Html.ActionLink("Home", "Index", "Home", null, new { @class = "nav-link", @style = "color: #FFFFFF" })</li>
-                        <li>@Html.ActionLink("My Queue", "MyQueue", "Queue", null, new { @class = "nav-link", @style = "color: #FFFFFF" })</li>
-                        <li>@Html.ActionLink("My Account", "MyAccount", "Home", null, new { @class = "nav-link", @style = "color: #FFFFFF" })</li>
+                        <li>@Html.ActionLink("Home", "Index", "Home", null, new { @class = "nav-link", @style = "color: #FFFFFF; font-family: 'Comfortaa'" })</li>
+                        <li>@Html.ActionLink("Queue", "MyQueue", "Queue", null, new { @class = "nav-link", @style = "color: #FFFFFF; font-family: 'Comfortaa'" })</li>
+                        <li>@Html.ActionLink("Account", "MyAccount", "Home", null, new { @class = "nav-link", @style = "color: #FFFFFF; font-family: 'Comfortaa'" })</li>
                     </ul>
                 </div>
             </div>
-        </div>
+        </div>*@
     
-    <div class="container body-content" style="background-color: transparent">
+    <div class="container body-content" style="padding-bottom: 10px; padding-top: 10px; background-color: transparent">
         @RenderBody()
     </div>
     @Scripts.Render("~/bundles/jquery")
