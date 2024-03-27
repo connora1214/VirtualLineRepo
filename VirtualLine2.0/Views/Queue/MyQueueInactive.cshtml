@@ -13,7 +13,7 @@
     <div style="margin-bottom: 10px">
         @if (!String.IsNullOrEmpty(ViewBag.ProfilePicturePath))
         {
-            <img src="@ViewBag.ProfilePicturePath" alt="Profile Picture" style="max-width: 100px; max-height: 100px; border-radius: 50%;" />
+            <img src="@ViewBag.ProfilePicturePath" onerror="this.onerror=null; this.src='@ViewBag.DefaultProfilePicturePath';" alt="Profile Picture" style="max-width: 100px; max-height: 100px; border-radius: 50%;" />
         }
         else
         {
@@ -33,7 +33,7 @@
         {
 
             <label for="numberSelect" style="font-family: 'Comfortaa'; margin-top: 5%; margin-bottom: 5%; color: #FFFFFF">Select a Quantity:</label>
-            @Html.DropDownList("numberSelect", numberList, null, new { @style = " color: #2f4d5a; font-family: 'Comfortaa'" })
+            @Html.DropDownList("numberSelect", numberList, null, new { @style = " color: #1e1e1e; font-family: 'Comfortaa'" })
 
             <button class="btn btn-blue-md" type="submit">Join Line</button>
         }
@@ -47,8 +47,8 @@
         padding: 14px 20px;
         font-size: 14px;
         line-height: 1.333333;
-        color: white;
-        background-color: transparent;
+        color: #1e1e1e;
+        background-color: rgb(64 255 154);
         border: 4px solid #FFFFFF;
         border-radius: 75px;
         margin-bottom: 10px; /* Adds space between the buttons */
@@ -58,11 +58,10 @@
 
     .jumbotron.banner-background {
         position: relative;
-        background-color: #FFFFFF;
         min-width: 300px;
         color: #FFFFFF;
-        z-index: -1;
-        font-family: 'Comfortaa'
+        z-index: 1;
+        background-color: black; /* Fallback background color */
     }
 
     .jumbotron.banner-background::before {
@@ -76,15 +75,54 @@
         background-size: cover;
         background-position: center center;
         background-repeat: no-repeat;
-        opacity: 0.5; /* 50% Transparency */
-        z-index: -1; /* Ensure the content is above the background */
-        font-family: 'Comfortaa'
+        z-index: -2;
+    }
+
+    .jumbotron.banner-background::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: white;
+        opacity: 0.5; /* Adjust the white overlay's opacity as needed */
+        z-index: -1;
     }
 </style>
 
 <script>
-    // Scroll to the bottom of the page when the page is loaded
-    window.addEventListener('load', function () {
-        window.scrollTo(0, document.body.scrollHeight);
+    var bannerImageUrl = '@ViewBag.BannerPicturePath' || 'https://brew-queue.com/Images/background.jpg'; // Initialize with a fallback
+    var fallbackImageUrl = 'https://brew-queue.com/Images/background.jpg';
+    var backgroundImageDiv = document.querySelector('.jumbotron.banner-background');
+
+    // Set initial background image
+    backgroundImageDiv.style.setProperty('--background-image-url', `url('${bannerImageUrl}')`);
+
+    var image = new Image();
+    image.src = bannerImageUrl;
+
+    image.onerror = function() {
+        // Fallback image
+        backgroundImageDiv.style.setProperty('--background-image-url', `url('${fallbackImageUrl}')`);
+        backgroundImageDiv.style.backgroundRepeat = 'no-repeat';
+        backgroundImageDiv.style.backgroundSize = 'cover';
+        backgroundImageDiv.style.backgroundPosition = 'center';
+    };
+
+    // Optional: If you want to confirm the image has loaded before setting it
+    image.onload = function() {
+        backgroundImageDiv.style.setProperty('--background-image-url', `url('${bannerImageUrl}')`);
+        backgroundImageDiv.style.backgroundRepeat = 'no-repeat';
+        backgroundImageDiv.style.backgroundSize = 'cover';
+        backgroundImageDiv.style.backgroundPosition = 'center';
+    };
+
+    // Ensure the background image is initially set
+    document.addEventListener('DOMContentLoaded', function () {
+        backgroundImageDiv.style.backgroundImage = `var(--background-image-url)`;
+        backgroundImageDiv.style.backgroundRepeat = 'no-repeat';
+        backgroundImageDiv.style.backgroundSize = 'cover';
+        backgroundImageDiv.style.backgroundPosition = 'center';
     });
 </script>

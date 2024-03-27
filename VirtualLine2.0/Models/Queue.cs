@@ -23,5 +23,6 @@ namespace VirtualLine2._0.Models
         public Nullable<bool> enteringBar { get; set; }
         public int Quantity { get; set; }
         public int ExtendTime { get; set; }
+        public bool NotificationSent { get; set; }
     }
 }

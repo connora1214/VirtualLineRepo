@@ -24,6 +24,7 @@ namespace VirtualLine2._0.Controllers
    {
       public string Username { get; set; }
       public string Password { get; set; }
+      public string OneSignalPlayerId { get; set; }
    }
 
    public class AccountLoginController : Controller
@@ -54,24 +55,22 @@ namespace VirtualLine2._0.Controllers
       public ActionResult AccountLogin(AccountLoginEntry entry)
       {
 
-         using (var context = new queueDBEntities3())
+         string hashedPassword = HashPassword(entry.Password);
+
+         // Check if the user exists with the provided username/email and hashed password
+         var user = db.Accounts.FirstOrDefault(u => (u.Username == entry.Username || u.Email == entry.Username) && u.Password == hashedPassword);
+
+         if (user != null)
          {
-            // hash the password
-            string hashedPassword = HashPassword(entry.Password);
-
-            // Check if the user exists with the provided username/email and hashed password
-            var user = context.Accounts.FirstOrDefault(u => (u.Username == entry.Username || u.Email == entry.Username) && u.Password == hashedPassword);
-
-            if (user != null)
-            {
-               FormsAuthentication.SetAuthCookie(user.Username, false);
-               return RedirectToAction("AccountInfo", "Account");
-            }
-            else
-            {
-               ViewBag.Message = "Invalid username or password";
-               return View();
-            }
+            FormsAuthentication.SetAuthCookie(user.Username, false);
+            user.OneSignalPlayerId = entry.OneSignalPlayerId;
+            db.SaveChanges(); 
+            return RedirectToAction("AccountInfo", "Account");
+         }
+         else
+         {
+            ViewBag.Message = "Invalid username or password";
+            return View();
          }
       }
 

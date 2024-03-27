@@ -128,7 +128,7 @@ namespace VirtualLine2._0.Controllers
             // Save the file to the shared folder
             file.SaveAs(fullPath);
 
-            user.ProfilePicture = "https://thebrewqueue.com/Images/" + newFileName;
+            user.ProfilePicture = "https://brew-queue.com/Images/" + newFileName;
             db.Entry(user).State = EntityState.Modified;
             db.SaveChanges();
 

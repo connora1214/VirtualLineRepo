@@ -2,9 +2,26 @@
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
+<div class="jumbotron text-center banner-background"
+     style="@(String.IsNullOrEmpty(ViewBag.BannerPicturePath) ?
+             "min-width: 300px;" :
+             $"")">
+    <div style="margin-bottom: 10px">
+        @if (!String.IsNullOrEmpty(ViewBag.ProfilePicturePath))
+        {
+            <img src="@ViewBag.ProfilePicturePath" onerror="this.onerror=null; this.src='@ViewBag.DefaultProfilePicturePath';" alt="Profile Picture" style="max-width: 100px; max-height: 100px; border-radius: 50%;" />
+        }
+        else
+        {
+            <img src="@ViewBag.DefaultProfilePicturePath" alt="Profile Picture" style="max-width: 100px; max-height: 100px; border-radius: 50%;" />
+        }
+    </div>
+    <div>
+        <h1 style="font-family: 'Comfortaa'; color: #000000; text-shadow: 0 0 15px rgb(255 255 255);">@ViewBag.Title</h1>
+    </div>
+</div>
+
 <div class="jumbotron text-center" style="background-color: transparent; color: #FFFFFF; border-color: transparent; font-family: 'Comfortaa'">
-    <h1 class="blue-accent" style="font-family: 'Comfortaa'; color: #FFFFFF">@ViewBag.Title</h1>
-    <!--<p class="lead">Don't wait in line. Select a bar to join a virtual line and we'll let you know when to arrive!</p>-->
     <h3 style="font-family: 'Comfortaa'; color: #FFFFFF">Your turn is coming up!</h3>
     <h5 style="font-family: 'Comfortaa'; color: #FFFFFF">You must be ready to enter before the timer expires or else your spot in line will be terminated. You will not receive a refund and you will not be permitted entry into the venue.</h5>
     <h1 style="margin-top: 7.5%; font-family: 'Comfortaa'; color: #FFFFFF" id="timer"></h1>
@@ -102,8 +119,38 @@
             .catch(error => console.error('Error:', error));
     }
 
-    window.addEventListener('load', function () {
-        window.scrollTo(0, document.body.scrollHeight);
+    var bannerImageUrl = '@ViewBag.BannerPicturePath' || 'https://brew-queue.com/Images/background.jpg'; // Initialize with a fallback
+    var fallbackImageUrl = 'https://brew-queue.com/Images/background.jpg';
+    var backgroundImageDiv = document.querySelector('.jumbotron.banner-background');
+
+    // Set initial background image
+    backgroundImageDiv.style.setProperty('--background-image-url', `url('${bannerImageUrl}')`);
+
+    var image = new Image();
+    image.src = bannerImageUrl;
+
+    image.onerror = function() {
+        // Fallback image
+        backgroundImageDiv.style.setProperty('--background-image-url', `url('${fallbackImageUrl}')`);
+        backgroundImageDiv.style.backgroundRepeat = 'no-repeat';
+        backgroundImageDiv.style.backgroundSize = 'cover';
+        backgroundImageDiv.style.backgroundPosition = 'center';
+    };
+
+    // Optional: If you want to confirm the image has loaded before setting it
+    image.onload = function() {
+        backgroundImageDiv.style.setProperty('--background-image-url', `url('${bannerImageUrl}')`);
+        backgroundImageDiv.style.backgroundRepeat = 'no-repeat';
+        backgroundImageDiv.style.backgroundSize = 'cover';
+        backgroundImageDiv.style.backgroundPosition = 'center';
+    };
+
+    // Ensure the background image is initially set
+    document.addEventListener('DOMContentLoaded', function () {
+        backgroundImageDiv.style.backgroundImage = `var(--background-image-url)`;
+        backgroundImageDiv.style.backgroundRepeat = 'no-repeat';
+        backgroundImageDiv.style.backgroundSize = 'cover';
+        backgroundImageDiv.style.backgroundPosition = 'center';
     });
 </script>
 
@@ -114,12 +161,46 @@
         padding: 14px 20px;
         font-size: 14px;
         line-height: 1.333333;
-        color: white;
-        background-color: #2f4d5a;
+        color: #1e1e1e;
+        background-color: rgb(64 255 154);
         border: 4px solid #FFFFFF;
         border-radius: 75px;
         margin-bottom: 10px; /* Adds space between the buttons */
         text-align: center; /* Center the text in the button */
         font-family: 'Comfortaa'
+    }
+
+    .jumbotron.banner-background {
+        position: relative;
+        min-width: 300px;
+        color: #FFFFFF;
+        z-index: 1;
+        background-color: black; /* Fallback background color */
+    }
+
+    .jumbotron.banner-background::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url('@ViewBag.BannerPicturePath');
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        z-index: -2;
+    }
+
+    .jumbotron.banner-background::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: white;
+        opacity: 0.5; /* Adjust the white overlay's opacity as needed */
+        z-index: -1;
     }
 </style>

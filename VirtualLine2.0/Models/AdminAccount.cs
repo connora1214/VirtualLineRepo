@@ -27,5 +27,8 @@ namespace VirtualLine2._0.Models
         public Nullable<System.DateTime> ResetTokenExpires { get; set; }
         public string ProfilePicture { get; set; }
         public string BannerPicture { get; set; }
+        public Nullable<bool> Verified { get; set; }
+        public string Address { get; set; }
+        public Nullable<bool> PasswordSet { get; set; }
     }
 }

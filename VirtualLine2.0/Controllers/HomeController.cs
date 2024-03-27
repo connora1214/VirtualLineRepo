@@ -27,8 +27,8 @@ namespace VirtualLine2._0.Controllers
          {
             return RedirectToAction("MyAccount", "Home");
          }
-         
-         /*for (int i = 1; i<20; i++)
+
+         /*for (int i = 1; i < 20; i++)
          {
             String s = i.ToString();
             Queue user = new Queue();
@@ -43,7 +43,6 @@ namespace VirtualLine2._0.Controllers
             db.Queues.Add(user);
             db.SaveChanges();
          }*/
-
 
          ViewBag.Locations = db.Establishments.Select(e => e.Location).Distinct().ToList();
          return View();         

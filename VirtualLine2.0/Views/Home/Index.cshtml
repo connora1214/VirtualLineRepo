@@ -12,7 +12,7 @@
             <option value="">Select a Location</option>
             @foreach (var location in ViewBag.Locations)
             {
-                <option style="font-family: 'Comfortaa', sans-serif; background-color: transparent; color: #2f4d5a" value="@location">@location</option>
+                <option style="font-family: 'Comfortaa', sans-serif; background-color: transparent; color: rgb(64 255 154)" value="@location">@location</option>
             }
         </select>
     </p>
@@ -59,10 +59,28 @@
 
                 var backgroundImageDiv = document.createElement('div');
                 backgroundImageDiv.className = 'buttonBackground';
-                backgroundImageDiv.style.backgroundImage = `url('${bar.BannerPicturePath}')`;
+               @* backgroundImageDiv.style.backgroundImage = `url('${bar.BannerPicturePath}')`;*@
+                var testImage = new Image();
+                testImage.src = bar.BannerPicturePath;
 
+                // On successful load, set the background image
+                testImage.onload = function () {
+                    backgroundImageDiv.style.backgroundImage = `url('${bar.BannerPicturePath}')`;
+                };
+
+                // On error, set a fallback background image
+                testImage.onerror = function () {
+                    var fallbackImageUrl = 'https://brew-queue.com/Images/button_background.jpg'; // Path to your fallback image
+                    backgroundImageDiv.style.backgroundImage = `url('${fallbackImageUrl}')`;
+                };
+
+                
                 var img = document.createElement('img');
-                img.src = bar.ProfilePicturePath;
+                img.src = bar.ProfilePicturePath; // Set the initial image source
+                img.onerror = function () {
+                    // This function will be triggered if the initial image fails to load
+                    img.src = "https://brew-queue.com/Images/BrewQueueLogoNoBackground.png";
+                };
                 img.className = 'barProfilePicture';
 
                 var textSpan = document.createElement('span');
@@ -129,7 +147,7 @@
     }
 
     .barButton:hover {
-        background-color: #2f4d5a;
+        background-color: rgb(64 255 154);
     }
 </style>
 

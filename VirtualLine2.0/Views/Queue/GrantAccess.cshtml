@@ -2,13 +2,29 @@
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
-<div class="jumbotron text-center" style="font-family: 'Comfortaa'; background-color: transparent; color: #FFFFFF">
-    <h1 style=" color: #FFFFFF">@ViewBag.Title</h1>
+<div class="jumbotron text-center banner-background"
+     style="@(String.IsNullOrEmpty(ViewBag.BannerPicturePath) ?
+             "min-width: 300px;" :
+             $"")">
+    <div style="margin-bottom: 10px">
+        @if (!String.IsNullOrEmpty(ViewBag.ProfilePicturePath))
+        {
+            <img src="@ViewBag.ProfilePicturePath" alt="Profile Picture" style="max-width: 100px; max-height: 100px; border-radius: 50%;" />
+        }
+        else
+        {
+            <img src="@ViewBag.DefaultProfilePicturePath" alt="Profile Picture" style="max-width: 100px; max-height: 100px; border-radius: 50%;" />
+        }
+    </div>
+    <div>
+        <h1 style="font-family: 'Comfortaa'; color: #000000; text-shadow: 0 0 15px rgb(255 255 255);">@ViewBag.Title</h1>
+    </div>
 </div>
 
 @using (Html.BeginForm("GrantAccessConfirmation", "Queue", FormMethod.Post))
+    <a href="~/Views/Queue/GrantAccess.cshtml">~/Views/Queue/GrantAccess.cshtml</a>
 {
-    <button class="btn btn-blue-lg" type="submit">I am the doorman and I permit entry</button>
+<button class="btn btn-blue-lg" type="submit">I am the doorman and I permit entry</button>
 }
 
 <style>
@@ -18,12 +34,37 @@
         padding: 14px 20px;
         font-size: 14px;
         line-height: 1.333333;
-        color: white;
-        background-color: #2f4d5a;
+        color: #1e1e1e;
+        background-color: rgb(64 255 154);
         border: 4px solid #FFFFFF;
         border-radius: 75px;
         margin-bottom: 10px; /* Adds space between the buttons */
         text-align: center; /* Center the text in the button */
+        font-family: 'Comfortaa'
+    }
+
+    .jumbotron.banner-background {
+        position: relative;
+        background-color: #FFFFFF;
+        font-family: 'Comfortaa';
+        min-width: 300px;
+        color: #FFFFFF;
+        z-index: -1;
+    }
+
+    .jumbotron.banner-background::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url('@ViewBag.BannerPicturePath');
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        opacity: 0.5; /* 50% Transparency */
+        z-index: -1; /* Ensure the content is above the background */
         font-family: 'Comfortaa'
     }
 </style>

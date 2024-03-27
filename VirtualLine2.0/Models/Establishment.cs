@@ -21,5 +21,6 @@ namespace VirtualLine2._0.Models
         public Nullable<decimal> Longitude { get; set; }
         public string ProfilePicture { get; set; }
         public string BannerPicture { get; set; }
+        public string Address { get; set; }
     }
 }

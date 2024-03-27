@@ -186,7 +186,7 @@ namespace VirtualLine2._0.Controllers
          ViewBag.Venue = e.BarName;
          ViewBag.ProfilePicturePath = e.ProfilePicture;
          ViewBag.BannerPicturePath = e.BannerPicture;
-         ViewBag.DefaultProfilePicturePath = "/Content/Images/BrewQueueLogo.jpg";
+         ViewBag.DefaultProfilePicturePath = "https://brew-queue.com/Images/BrewQueueLogoNoBackground.png";
          return View();
       }
 
@@ -198,7 +198,7 @@ namespace VirtualLine2._0.Controllers
             bar = q.Bar;
          }
 
-         if (db.EnteredUsers.ToArray().Length > 15) //only use the algorithm if more than 15 people have already entered the bar that night
+         if (db.EnteredUsers.Where(e => e.VenueId.Equals(bar)).ToArray().Length > 15) //only use the algorithm if more than 15 people have already entered the bar that night
          {
             int numRecentEntriesSixty = 0;
             int numRecentEntriesThirty = 0;
@@ -260,6 +260,9 @@ namespace VirtualLine2._0.Controllers
          Account account = db.Accounts.Find(User.Identity.Name);
          Establishment e = db.Establishments.Find(user.Bar);
          ViewBag.Title = e.BarName;
+         ViewBag.ProfilePicturePath = e.ProfilePicture;
+         ViewBag.BannerPicturePath = e.BannerPicture;
+         ViewBag.DefaultProfilePicturePath = "https://brew-queue.com/Images/BrewQueueLogoNoBackground.png";
          if (user.Position < 6)
          {
             return RedirectToAction("startTimer", "Queue");
@@ -277,6 +280,9 @@ namespace VirtualLine2._0.Controllers
 
          Queue user = db.Queues.Find(User.Identity.Name);
          Establishment e = db.Establishments.Find(user.Bar);
+         ViewBag.ProfilePicturePath = e.ProfilePicture;
+         ViewBag.BannerPicturePath = e.BannerPicture;
+         ViewBag.DefaultProfilePicturePath = "https://brew-queue.com/Images/BrewQueueLogoNoBackground.png";
          ViewBag.Title = e.BarName;
          return View();
       }
@@ -290,6 +296,9 @@ namespace VirtualLine2._0.Controllers
          Queue user = db.Queues.Find(User.Identity.Name);
          Establishment e = db.Establishments.Find(user.Bar);
          ViewBag.Title = e.BarName;
+         ViewBag.ProfilePicturePath = e.ProfilePicture;
+         ViewBag.BannerPicturePath = e.BannerPicture;
+         ViewBag.DefaultProfilePicturePath = "https://brew-queue.com/Images/BrewQueueLogoNoBackground.png";
          ViewBag.username = user.Username;
          ViewBag.latitude = e.Latitude;
          ViewBag.longitude = e.Longitude;
@@ -791,6 +800,7 @@ namespace VirtualLine2._0.Controllers
             user.Quantity = Int32.Parse(numberSelect);
             user.timerStarted = false;
             user.enteringBar = false;
+            user.NotificationSent = false;
             user.ExtendTime = 0;
 
 

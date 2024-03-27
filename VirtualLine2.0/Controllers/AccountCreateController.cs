@@ -31,6 +31,7 @@ namespace VirtualLine2._0.Controllers
       public string Email { get; set; }
       public string FirstName { get; set; }
       public string LastName { get; set; }
+      
    }
 
    public class AccountCreateController : Controller
@@ -208,7 +209,7 @@ namespace VirtualLine2._0.Controllers
                Password = v.Password,
                Email = v.Email,
                FirstName = v.FirstName,
-               LastName = v.LastName
+               LastName = v.LastName,
             };
 
             db.Accounts.Add(accountUser);

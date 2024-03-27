@@ -23,5 +23,6 @@ namespace VirtualLine2._0.Models
         public string LastName { get; set; }
         public string Code { get; set; }
         public Nullable<System.DateTime> CodeExpires { get; set; }
+        public string OneSignalPlayerId { get; set; }
     }
 }

@@ -1,10 +1,76 @@
 ﻿<head>
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    
+    <script>
+        window.OneSignal = window.OneSignal || [];
+        OneSignal.push(function () {
+            OneSignal.init({
+                appId: "f6d00091-edec-4303-af03-59f288d177e2",
+                safari_web_id: "web.onesignal.auto.2bd24c9c-6b5e-41da-a209-1033c3319dfc",
+                notifyButton: {
+                    enable: true,
+                },
+            });
+
+            document.querySelector('form').addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the form from submitting
+
+                OneSignal.getUserId(function (userId) {
+                    console.log("User ID:", userId); // Log the user ID
+                    document.getElementById('OneSignalPlayerId').value = userId;
+
+                    console.log("Input value before submit:", document.getElementById('OneSignalPlayerId').value); // Log the input value
+
+                    event.target.submit(); // Submit the form
+                });
+            });
+        });
+        @*window.OneSignalDeferred = window.OneSignalDeferred || [];
+        OneSignalDeferred.push(function (OneSignal) {
+            OneSignal.init({
+                appId: "f6d00091-edec-4303-af03-59f288d177e2",
+                safari_web_id: "web.onesignal.auto.2bd24c9c-6b5e-41da-a209-1033c3319dfc",
+                notifyButton: {
+                    enable: true,
+                },
+            });
+
+
+            // This function will be called when the form is submitted
+            function fetchOneSignalPlayerIdAndSubmitForm(e) {
+                e.preventDefault();  // Prevent the form from submitting immediately
+
+                OneSignal.getUserId(function (userId) {
+                    if (userId) {
+                        // Assign the user ID to the hidden input and submit the form
+                        document.getElementById('OneSignalPlayerId').value = userId;
+                        e.target.submit();  // Submit the form now that we have the user ID
+                    } else {
+                        console.error('Could not retrieve OneSignal user ID.');
+                        // Handle the case where you can't fetch the user ID here
+                        // You might choose to submit the form anyway or show an error message
+                    }
+                });
+            }
+
+            // Add the event listener to the form's submit event
+            document.addEventListener('DOMContentLoaded', function () {
+                var form = document.querySelector('form');
+                if (form) {
+                    form.addEventListener('submit', fetchOneSignalPlayerIdAndSubmitForm);
+                }
+
+                // Scroll to the bottom of the page when it's loaded
+                window.scrollTo(0, document.body.scrollHeight);
+            });
+        });*@
+    </script>
 </head>
 
 <div class="form-container" style="font-family: 'Comfortaa'; width:100%">
-    <div class="jumbotron text-center" style="font-family: 'Comfortaa'; background-color: transparent; color: #FFFFFF">
-        <h2 style=" color: #FFFFFF">Account Login</h2>
+    <div class="jumbotron text-center" style="font-family: 'Comfortaa'; background-color: rgb(229 229 229 / 0.75); color: #FFFFFF">
+        <h2 style=" color: #1e1e1e">Account Login</h2>
         <h4 style="margin-bottom: 20px">@ViewBag.Message</h4>
 
         @using (Html.BeginForm("AccountLogin", "AccountLogin", FormMethod.Post))
@@ -20,10 +86,12 @@
                 </div>
             </div>
 
+            <input type="hidden" id="OneSignalPlayerId" name="OneSignalPlayerId">
+
             <button class="btn btn-blue-md" type="submit">Submit</button>
 
             <h5>
-                @Html.ActionLink("Forgot Password", "ForgotPassword", "AccountLogin", null, new { @class = "nav-link", @style = "color: #FFFFFF; font-family: 'Comfortaa'" })
+                @Html.ActionLink("Forgot Password", "ForgotPassword", "AccountLogin", null, new { @class = "nav-link", @style = "color: #1e1e1e; font-family: 'Comfortaa'" })
             </h5>
 
         }
@@ -40,8 +108,8 @@
         font-size: 14px;
         line-height: 1.333333;
         font-family: 'Comfortaa';
-        color: white;
-        background-color: #2f4d5a;
+        color: #1e1e1e;
+        background-color: rgb(64 255 154);
         border: 4px solid #FFFFFF;
         border-radius: 75px;
         margin-bottom: 10px; /* Adds space between the buttons */
@@ -98,17 +166,16 @@
 
         .floating-label-group input {
             font-size: 15px;
-            color: #FFFFFF;
-            background-color: #2f4d5a;
-            border: 1px solid #FFFFFF;
+            background-color: white;
+            color: #1e1e1e;
+            border: 1px solid #1e1e1e;
             padding: 10px 10px 10px 5px;
             display: block;
-            width: 100%; /* Full width of its parent */
-            font-family: 'Comfortaa'
+            width: 100%;
         }
 
         .floating-label-group label {
-            color: #FFFFFF;
+            color: #1e1e1e;
             pointer-events: none;
             position: absolute;
             top: 10px;
@@ -116,7 +183,6 @@
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
-            font-family: 'Comfortaa'
         }
 
         .floating-label-group input:focus ~ label,
@@ -126,10 +192,3 @@
             font-size: 14px;
         }
 </style>
-
-<script>
-    // Scroll to the bottom of the page when the page is loaded
-    window.addEventListener('load', function () {
-        window.scrollTo(0, document.body.scrollHeight);
-    });
-</script>
