@@ -20,12 +20,13 @@
         <h1 style="font-family: 'Comfortaa'; color: #000000; text-shadow: 0 0 15px rgb(255 255 255);">@ViewBag.Title</h1>
     </div>
 </div>
+<div style="margin-top: 20px">
+    @using (Html.BeginForm("GrantAccessConfirmation", "Queue", FormMethod.Post))
+    {
+        <button class="btn btn-blue-lg" type="submit">I am the doorman and I permit entry</button>
+    }
+</div>
 
-@using (Html.BeginForm("GrantAccessConfirmation", "Queue", FormMethod.Post))
-    <a href="~/Views/Queue/GrantAccess.cshtml">~/Views/Queue/GrantAccess.cshtml</a>
-{
-<button class="btn btn-blue-lg" type="submit">I am the doorman and I permit entry</button>
-}
 
 <style>
     .btn-blue-lg {

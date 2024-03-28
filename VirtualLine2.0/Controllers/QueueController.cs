@@ -447,10 +447,10 @@ namespace VirtualLine2._0.Controllers
          {
             return RedirectToAction("MyAccount", "Home");
          }
-         //Queue user = db.Queues.Find(User.Identity.Name);
-         // Reset timer 
-         //user.StartTime = DateTime.Now;
-         //db.SaveChanges();
+         Queue user = db.Queues.Find(User.Identity.Name);
+          //Reset timer 
+         user.StartTime = DateTime.Now;
+         db.SaveChanges();
 
          return RedirectToAction("GrantAccess");
       }
