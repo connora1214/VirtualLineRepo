@@ -1,70 +1,20 @@
 ﻿<head>
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-    
+    <script src="https://unpkg.com/webtonative@1.0.52/webtonative.min.js"></script>
     <script>
-        window.OneSignal = window.OneSignal || [];
-        OneSignal.push(function () {
-            OneSignal.init({
-                appId: "f6d00091-edec-4303-af03-59f288d177e2",
-                safari_web_id: "web.onesignal.auto.2bd24c9c-6b5e-41da-a209-1033c3319dfc",
-                notifyButton: {
-                    enable: true,
-                },
-            });
+        const { getPlayerId } = WTN.OneSignal;
 
-            document.querySelector('form').addEventListener('submit', function (event) {
-                event.preventDefault(); // Prevent the form from submitting
-
-                OneSignal.getUserId(function (userId) {
-                    console.log("User ID:", userId); // Log the user ID
-                    document.getElementById('OneSignalPlayerId').value = userId;
-
-                    console.log("Input value before submit:", document.getElementById('OneSignalPlayerId').value); // Log the input value
-
-                    event.target.submit(); // Submit the form
-                });
-            });
-        });
-        @*window.OneSignalDeferred = window.OneSignalDeferred || [];
-        OneSignalDeferred.push(function (OneSignal) {
-            OneSignal.init({
-                appId: "f6d00091-edec-4303-af03-59f288d177e2",
-                safari_web_id: "web.onesignal.auto.2bd24c9c-6b5e-41da-a209-1033c3319dfc",
-                notifyButton: {
-                    enable: true,
-                },
-            });
-
-
-            // This function will be called when the form is submitted
-            function fetchOneSignalPlayerIdAndSubmitForm(e) {
-                e.preventDefault();  // Prevent the form from submitting immediately
-
-                OneSignal.getUserId(function (userId) {
-                    if (userId) {
-                        // Assign the user ID to the hidden input and submit the form
-                        document.getElementById('OneSignalPlayerId').value = userId;
-                        e.target.submit();  // Submit the form now that we have the user ID
-                    } else {
-                        console.error('Could not retrieve OneSignal user ID.');
-                        // Handle the case where you can't fetch the user ID here
-                        // You might choose to submit the form anyway or show an error message
-                    }
-                });
+        getPlayerId().then(function (playerId) {
+            if (playerId) {
+                // handle for playerId
+                document.getElementById('OneSignalPlayerId').value = playerId;
+                console.log(playerId)
             }
+        });
 
-            // Add the event listener to the form's submit event
-            document.addEventListener('DOMContentLoaded', function () {
-                var form = document.querySelector('form');
-                if (form) {
-                    form.addEventListener('submit', fetchOneSignalPlayerIdAndSubmitForm);
-                }
+        const { setExternalUserId } = WTN.OneSignal;
 
-                // Scroll to the bottom of the page when it's loaded
-                window.scrollTo(0, document.body.scrollHeight);
-            });
-        });*@
+        setExternalUserId(document.getElementById('OneSignalPlayerId').value);
     </script>
 </head>
 
@@ -86,7 +36,7 @@
                 </div>
             </div>
 
-            <input type="hidden" id="OneSignalPlayerId" name="OneSignalPlayerId">
+            <input type="hidden" id="OneSignalPlayerId" name="OneSignalPlayerId" value="">
 
             <button class="btn btn-blue-md" type="submit">Submit</button>
 

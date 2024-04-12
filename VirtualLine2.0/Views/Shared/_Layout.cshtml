@@ -30,7 +30,7 @@
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
 
-    <script>
+    @*<script>
     function checkUserPosition() {
         fetch('@Url.Action("GetUserPosition", "Queue")')
             .then(response => response.json())
@@ -68,7 +68,7 @@
     }
 
     var timerId = setInterval(checkServerTimer, 1000); // Check every second
-    </script>
+    </script>*@
 
     <script>
         function adjustBackgroundSize() {

@@ -809,10 +809,10 @@ namespace VirtualLine2._0.Controllers
                return RedirectToAction("AlreadyInQueue");
             }
 
-            if (user.Quantity == 1)
+            /*if (user.Quantity == 1)
             {
                RedirectToAction("Pay5", "Queue");
-            }
+            }*/
 
             db.Queues.Add(user);
             db.SaveChanges();
@@ -824,9 +824,6 @@ namespace VirtualLine2._0.Controllers
             return RedirectToAction("MyAccount", "Home");
          }
       }
-
-      //[Route("https://pay.brew-queue.com/queuepass5")]
-      //public ActionResult
 
       public ActionResult RemoveFromQueue()
       {

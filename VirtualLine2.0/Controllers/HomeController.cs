@@ -28,21 +28,27 @@ namespace VirtualLine2._0.Controllers
             return RedirectToAction("MyAccount", "Home");
          }
 
-         /*for (int i = 1; i < 20; i++)
+         /*List<string> names = new List<string> { "BeccaLebrao", "nerimias11", "jrgavlik@gmail.com", "test", "admin" };
+         for (int i = 1; i < 6; i++)
          {
-            String s = i.ToString();
+            //String s = i.ToString();
             Queue user = new Queue();
             user.Position = i;
-            user.Username = "u" + s;
+            //user.Username = "u" + s;
+            user.Username = names[i - 1];
             user.Bar = 4;
             user.StartTime = DateTime.MinValue;
             user.Quantity = 1;
+            user.StartTime = DateTime.MinValue;
             user.timerStarted = false;
             user.enteringBar = false;
             user.ExtendTime = 0;
             db.Queues.Add(user);
             db.SaveChanges();
-         }*/
+         }
+         Array[] ReadyUsers = GetReadyUsers();*/
+
+         //StartTimers(ReadyUsers);
 
          ViewBag.Locations = db.Establishments.Select(e => e.Location).Distinct().ToList();
          return View();         
