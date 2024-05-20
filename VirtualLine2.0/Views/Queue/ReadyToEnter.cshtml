@@ -115,4 +115,22 @@
         backgroundImageDiv.style.backgroundSize = 'cover';
         backgroundImageDiv.style.backgroundPosition = 'center';
     });
+
+    // Check timerStarted variable every 5 seconds
+    setInterval(function () {
+        // Make an AJAX request to check the value of timerStarted
+        // Assuming timerStarted is a boolean variable accessible through AJAX
+        // Replace 'checkTimerStarted' with the appropriate route or endpoint in your application
+        fetch('@Url.Action("CheckTimerStarted", "Queue")')
+            .then(response => response.json())
+            .then(data => {
+                if (data.timerStarted) {
+                    // If timerStarted is true, redirect to the Timer page
+                    window.location.href = '@Url.Action("Timer", "Queue")';
+                }
+            })
+            .catch(error => {
+                console.error('Error checking timerStarted:', error);
+            });
+    }, 5000); // 5000 milliseconds = 5 seconds
 </script>

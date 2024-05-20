@@ -4,6 +4,49 @@
 
 <head>
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/webtonative@1.0.52/webtonative.min.js"></script>
+    <script>
+        var pricePoint = ''; // Variable to store the price point
+        var selectedQuantity = 1;
+
+        function getPricePointFromServer(quantity) {
+            // Make an AJAX request to the server to get the price point
+            fetch('/Queue/getPricePoint?quantity=' + quantity)
+                .then(response => response.json())
+                .then(data => {
+                    // Set the price point received from the server
+                    pricePoint = data.PricePoint;
+                    console.log(pricePoint);
+                })
+                .catch(error => console.error('Error fetching price point:', error));
+        }
+
+        function handleQuantityChange() {
+            // Update the selectedQuantity variable with the new value of the dropdown list
+            selectedQuantity = parseInt(document.getElementById("numberSelect").value);
+            console.log('Selected quantity:', selectedQuantity);
+            getPricePointFromServer(selectedQuantity);
+        }
+
+        function triggerIAP() {
+            // Check if price point is empty, if so, fetch it from the server
+            getPricePointFromServer(selectedQuantity);
+
+            window.WTN.inAppPurchase({
+                productId: pricePoint,
+                callback: function (data) {
+                    var receiptData = data.receiptData;
+                    if (data.isSuccess) {
+                        document.getElementById("btnSubmit").click();
+                        //document.getElementById("AddToQueueForm").submit();
+                        // use this receipt data to verify transaction from app store
+                        // refer : https://developer.apple.com/documentation/appstorereceipts/verifyreceipt
+                    }
+                }
+            })
+        }
+
+    </script>
 </head>
 
 <div class="jumbotron text-center banner-background"
@@ -29,16 +72,19 @@
     <div style="font-family: 'Comfortaa'; margin-top:5%">
         <h3 style="color: #FFFFFF">Estimated wait time:</h3>
         <h3 style="margin-bottom: 20px; color:#FFFFFF">@ViewBag.Message</h3>
-        @using (Html.BeginForm("AddToQueue", "Queue", FormMethod.Post))
+        @using (Html.BeginForm("AddToQueue", "Queue", FormMethod.Post, new { id = "AddToQueueForm" }))
         {
 
             <label for="numberSelect" style="font-family: 'Comfortaa'; margin-top: 5%; margin-bottom: 5%; color: #FFFFFF">Select a Quantity:</label>
-            @Html.DropDownList("numberSelect", numberList, null, new { @style = " color: #1e1e1e; font-family: 'Comfortaa'" })
+            @Html.DropDownList("numberSelect", numberList, null, new { @style = " color: #1e1e1e; font-family: 'Comfortaa'", onchange = "handleQuantityChange()" })
 
-            <button class="btn btn-blue-md" type="submit">Join Line</button>
+            <button style="visibility:hidden" id="btnSubmit" type="submit" class="btn btn-blue-md">Join Line</button>
         }
+        <button onclick="triggerIAP()" class="btn btn-blue-md">Join Line</button>
     </div>
 </div>
+
+
 
 <style>
     .btn-blue-md {

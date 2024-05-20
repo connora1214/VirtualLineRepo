@@ -3,7 +3,7 @@
 </head>
 
 <div class="jumbotron text-center" style="font-family: 'Comfortaa'; background-color: rgb(23 23 23 / 0.75); color: #FFFFFF ">
-    <div class="profile-container">
+    @*<div class="profile-container">
         @if (!String.IsNullOrEmpty(ViewBag.ProfilePicturePath))
         {
             <img src="@ViewBag.ProfilePicturePath" alt="Profile Picture" class="profile-image" />
@@ -14,7 +14,7 @@
                 @ViewBag.Initial
             </div>
         }
-    </div>
+    </div>*@
     <div>
         <h1 class="name-header" style="font-family: 'Comfortaa'; color:#FFFFFF">@ViewBag.Name</h1>
     </div>
@@ -26,9 +26,9 @@
     <p style="border-bottom: 1px solid rgb(47 90 87 / 0.10)" class="row">
         <a class="btn btn-blue-md col-md-2" href="@Url.Action("EditAccount", "Account")">Edit Profile</a>
     </p>
-    <p style="border-bottom: 1px solid rgb(47 90 87 / 0.10)" class="row">
+    @*<p style="border-bottom: 1px solid rgb(47 90 87 / 0.10)" class="row">
         <a class="btn btn-blue-md col-md-2" href="@Url.Action("SetProfilePicture", "Account")">Set Profile Picture</a>
-    </p>
+    </p>*@
     <p style="border-bottom: 1px solid rgb(47 90 87 / 0.10)" class="row">
         <a class="btn btn-blue-md col-md-2" href="@Url.Action("ChangePassword", "Account")">Change Password</a>
     </p>
@@ -43,14 +43,14 @@
         <a class="btn btn-blue-md col-md-2" href="@Url.Action("About", "Home")">About Us</a>
     </div>
     <div style="border-bottom: 1px solid rgb(47 90 87 / 0.10)" class="row">
-        <a class="btn btn-blue-md col-md-2" href="https://go.microsoft.com/fwlink/?LinkId=301866">Contact Us</a>
+        <a class="btn btn-blue-md col-md-2" href="https://thebrewqueue.com/contact">Contact Us</a>
     </div>
     <div style="border-bottom: 1px solid rgb(47 90 87 / 0.10)" class="row">
         <a class="btn btn-blue-md col-md-2" href="@Url.Action("Privacy", "Account")">Privacy Policy</a>
     </div>
-    <div class="row">
+    @*<div class="row">
         <a class="btn btn-blue-md col-md-2" href="https://go.microsoft.com/fwlink/?LinkId=301866">Terms & Conditions</a>
-    </div>
+    </div>*@
 </div>
 
 <div style="font-family: 'Comfortaa'; background-color: rgb(23 23 23 / 0.75); color: #FFFFFF " class="jumbotron">

@@ -20,6 +20,13 @@
         <h1 style="font-family: 'Comfortaa'; color: #000000; text-shadow: 0 0 15px rgb(255 255 255);">@ViewBag.Title</h1>
     </div>
 </div>
+
+<div class="jumbotron text-center" style="background-color: transparent; color: white">
+    <div>
+        <h2 style="font-family: 'Comfortaa'">Quantity: @ViewBag.Quantity</h2>
+    </div>
+</div>
+
 <div style="margin-top: 20px">
     @using (Html.BeginForm("GrantAccessConfirmation", "Queue", FormMethod.Post))
     {

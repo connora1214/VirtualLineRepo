@@ -83,7 +83,7 @@
                 var userLongitude = position.coords.longitude;
                 var distance = calculateDistance(userLatitude, userLongitude, barLatitude, barLongitude);
 
-                if (distance <= 100) {
+                if (distance <= 0.1) {
                     // User is within 0.1 miles of the bar, reset timer and redirect
                     resetTimerAndRedirect();
                 } else {

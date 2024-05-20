@@ -151,22 +151,19 @@ namespace VirtualLine2._0.Controllers
       }
       public ActionResult MyQueueInactive()
       {
-         if (User.Identity.Name == "")
+         /*if (User.Identity.Name == "")
          {
             return RedirectToAction("MyAccount", "Home");
-         }
+         }*/
 
          var BarQueue = from q in db.Queues select q;
          BarQueue = BarQueue.Where(q => q.Bar.Equals(bar));
 
          int LineLength = 0;
 
-         if (db.Queues.ToArray() != null)
+         if (BarQueue.ToArray() != null)
          {
-            foreach (Queue q in BarQueue.ToArray())
-            {
-               LineLength += 1;
-            }
+            LineLength = BarQueue.ToArray().Sum(u => u.Quantity);
          }
 
          int estimatedTime = calculateWaitTime(LineLength);
@@ -179,6 +176,10 @@ namespace VirtualLine2._0.Controllers
          }
          else
          {
+            if (hours == 0)
+            {
+               ViewBag.Message = hours + " hr ";
+            }
             ViewBag.Message = hours + " hr " + minutes + " min";
          }
 
@@ -249,6 +250,160 @@ namespace VirtualLine2._0.Controllers
          return 0;
       }
 
+      public JsonResult CheckTimerStarted()
+      {
+         Queue user = db.Queues.Find(User.Identity.Name);
+         if (user == null)
+         {
+            RedirectToAction("NotInQueue", "Queue");
+         }
+
+         return Json(new { timerStarted = user.timerStarted}, JsonRequestBehavior.AllowGet);
+      }
+
+      public JsonResult getPricePoint(int quantity)
+      {
+         string pricePoint = "";
+         int LineLength = 0;
+         //int lastUserPos = 0;
+
+         //select only the queue entries of the bar that the user is joining the queue of
+         var BarQueue = from q in db.Queues select q;
+         BarQueue = BarQueue.Where(q => q.Bar.Equals(bar));
+
+         if (db.Queues.ToArray() != null)
+         {
+            foreach (Queue q in BarQueue.ToArray())
+            {
+               LineLength += q.Quantity;
+            }
+         }
+
+         if (LineLength < 25)
+         {
+            //$5 base price
+            if (quantity == 1)
+            {
+               pricePoint = "price5";
+            }
+            else if (quantity == 2)
+            {
+               pricePoint = "price10";
+            }
+            else if (quantity == 3)
+            {
+               pricePoint = "price15";
+            }
+            else if (quantity == 4)
+            {
+               pricePoint = "price20";
+            }
+            else
+            {
+               pricePoint = "price25";
+            }
+
+         }
+         else if (LineLength >= 25 && LineLength < 50)
+         {
+            //$7.50 base price
+            if (quantity == 1)
+            {
+               pricePoint = "price7.5";
+            }
+            else if (quantity == 2)
+            {
+               pricePoint = "price15";
+            }
+            else if (quantity == 3)
+            {
+               pricePoint = "price22.5";
+            }
+            else if (quantity == 4)
+            {
+               pricePoint = "price30";
+            }
+            else
+            {
+               pricePoint = "price37.5";
+            }           
+         }
+         else if (LineLength >= 50 && LineLength < 75)
+         {
+            //$10 base price
+            if (quantity == 1)
+            {
+               pricePoint = "price10";
+            }
+            else if (quantity == 2)
+            {
+               pricePoint = "price20";
+            }
+            else if (quantity == 3)
+            {
+               pricePoint = "price30";
+            }
+            else if (quantity == 4)
+            {
+               pricePoint = "price40";
+            }
+            else
+            {
+               pricePoint = "price50";
+            }
+         }
+         else if (LineLength >= 75 && LineLength < 100)
+         {
+            //$12.50 base price
+            if (quantity == 1)
+            {
+               pricePoint = "price12.5";
+            }
+            else if (quantity == 2)
+            {
+               pricePoint = "price25";
+            }
+            else if (quantity == 3)
+            {
+               pricePoint = "price37.5";
+            }
+            else if (quantity == 4)
+            {
+               pricePoint = "price50";
+            }
+            else
+            {
+               pricePoint = "price62.5";
+            }
+         }
+         else
+         {
+            //$15 base price
+            if (quantity == 1)
+            {
+               pricePoint = "price15";
+            }
+            else if (quantity == 2)
+            {
+               pricePoint = "price30";
+            }
+            else if (quantity == 3)
+            {
+               pricePoint = "price45";
+            }
+            else if (quantity == 4)
+            {
+               pricePoint = "price60";
+            }
+            else
+            {
+               pricePoint = "price75";
+            }
+         }
+
+         return Json(new { PricePoint = pricePoint }, JsonRequestBehavior.AllowGet);
+      }
+
       public ActionResult ReadyToEnter()
       {
          if (User.Identity.Name == "")
@@ -263,9 +418,9 @@ namespace VirtualLine2._0.Controllers
          ViewBag.ProfilePicturePath = e.ProfilePicture;
          ViewBag.BannerPicturePath = e.BannerPicture;
          ViewBag.DefaultProfilePicturePath = "https://brew-queue.com/Images/BrewQueueLogoNoBackground.png";
-         if (user.Position < 6)
+         if (user.timerStarted)
          {
-            return RedirectToAction("startTimer", "Queue");
+            return RedirectToAction("Timer", "Queue");
          }
          ViewBag.Message = account.FirstName + ", please arrive at " + e.BarName + " within the next " + user.Position + " minutes to gain entry.";
          return View();
@@ -280,6 +435,7 @@ namespace VirtualLine2._0.Controllers
 
          Queue user = db.Queues.Find(User.Identity.Name);
          Establishment e = db.Establishments.Find(user.Bar);
+         ViewBag.Quantity = user.Quantity;
          ViewBag.ProfilePicturePath = e.ProfilePicture;
          ViewBag.BannerPicturePath = e.BannerPicture;
          ViewBag.DefaultProfilePicturePath = "https://brew-queue.com/Images/BrewQueueLogoNoBackground.png";
@@ -358,36 +514,37 @@ namespace VirtualLine2._0.Controllers
 
       private void RemoveUserFromQueue(Queue user)
       {
+         int quantity = user.Quantity;
+         int position = user.Position;
          bool oldValidateOnSaveEnabled = db.Configuration.ValidateOnSaveEnabled;
 
          try
          {
             db.Configuration.ValidateOnSaveEnabled = false;
 
-            if (db.Queues.Find(user.Username)!=null)
+            // Check if user exists before removing
+            var existingUser = db.Queues.Find(user.Username);
+            if (existingUser != null)
             {
-               bar = user.Bar; //make sure the bar variable is correct before removing the user; to be used by the confirmation message 
-               db.Queues.Attach(user);
-               db.Queues.Remove(user);
+               bar = existingUser.Bar; // Save bar before removing user
+
+               // Remove user from queue
+               db.Queues.Remove(existingUser);
+
+               // Update positions of remaining users
+               var remainingUsers = db.Queues.Where(q => q.Bar == user.Bar && q.Position > position).ToList();
+               foreach (var q in remainingUsers)
+               {
+                  q.Position -= quantity;
+               }
+
+               // Save all changes at once
                db.SaveChanges();
             }
-            
          }
          finally
          {
             db.Configuration.ValidateOnSaveEnabled = oldValidateOnSaveEnabled;
-         }
-
-         bar = user.Bar;
-         var BarQueue = from q in db.Queues select q;
-         BarQueue = BarQueue.Where(q => q.Bar.Equals(user.Bar));
-         foreach (Queue q in BarQueue.ToArray())
-         {
-            if (q.Position > user.Position)
-            {
-               q.Position = q.Position - user.Quantity;
-               db.SaveChanges();
-            }
          }
       }
 
@@ -448,10 +605,14 @@ namespace VirtualLine2._0.Controllers
             return RedirectToAction("MyAccount", "Home");
          }
          Queue user = db.Queues.Find(User.Identity.Name);
-          //Reset timer 
-         user.StartTime = DateTime.Now;
-         db.SaveChanges();
-
+         //Reset timer 
+         if (user.ExtendTime < 1)
+         {
+            user.ExtendTime += 1;
+            user.StartTime = DateTime.Now;
+            db.SaveChanges();
+         }
+         
          return RedirectToAction("GrantAccess");
       }
 
@@ -705,10 +866,10 @@ namespace VirtualLine2._0.Controllers
 
       public ActionResult Index(int id)
       {
-         if (User.Identity.Name == "")
+         /*if (User.Identity.Name == "")
          {
             return RedirectToAction("MyAccount", "Home");
-         }
+         }*/
 
          bar = id;
 
@@ -717,35 +878,36 @@ namespace VirtualLine2._0.Controllers
             return RedirectToAction("QueueNotOpen", "Queue");
          }
 
-
-         //if user is not logged in redirect them to the account page
-         if (User.Identity.Name == "")
+         if(User.Identity.Name == "")
          {
-            return RedirectToAction("MyAccount", "Home");
-         }
-
-         //user is logged in but is not currently in a line
-         if (db.Queues.Find(User.Identity.Name) == null)
-         {
-            if (bar == 0)
-            {
-               return RedirectToAction("NotinQueue", "Queue");
-            }
             return RedirectToAction("MyQueueInactive", "Queue");
          }
-         //user is logged in and is currently in a line
-         else
+         else 
          {
-            Queue user = db.Queues.Find(User.Identity.Name);
-            if (user.Bar == bar)
+            //user is logged in but is not currently in a line
+            if (db.Queues.Find(User.Identity.Name) == null)
             {
-               return RedirectToAction("MyQueueActive", "Queue");
+               if (bar == 0)
+               {
+                  return RedirectToAction("NotinQueue", "Queue");
+               }
+               return RedirectToAction("MyQueueInactive", "Queue");
             }
+            //user is logged in and is currently in a line
             else
             {
-               return RedirectToAction("AlreadyInAnotherQueue", "Queue");
+               Queue user = db.Queues.Find(User.Identity.Name);
+               if (user.Bar == id)
+               {
+                  return RedirectToAction("MyQueueActive", "Queue");
+               }
+               else
+               {
+                  return RedirectToAction("AlreadyInAnotherQueue", "Queue");
+               }
             }
          }
+         
       }
 
       [HttpPost]
@@ -803,16 +965,32 @@ namespace VirtualLine2._0.Controllers
             user.NotificationSent = false;
             user.ExtendTime = 0;
 
+            if (user.Position < 25)
+            {
+               user.PricePoint = (decimal?)5.0;
+            }
+            else if(user.Position >=25 && user.Position<50)
+            {
+               user.PricePoint = (decimal?)7.50;
+            }
+            else if (user.Position >= 50 && user.Position < 75)
+            {
+               user.PricePoint = (decimal?)10.0;
+            }
+            else if (user.Position >= 75 && user.Position < 100)
+            {
+               user.PricePoint = (decimal?)12.50;
+            }
+            else
+            {
+               user.PricePoint = (decimal?)15.0;
+            }
+
 
             if (db.Queues.Find(user.Username) != null)
             {
                return RedirectToAction("AlreadyInQueue");
             }
-
-            /*if (user.Quantity == 1)
-            {
-               RedirectToAction("Pay5", "Queue");
-            }*/
 
             db.Queues.Add(user);
             db.SaveChanges();
@@ -870,6 +1048,7 @@ namespace VirtualLine2._0.Controllers
                   u.VenueName = db.Establishments.Find(user.Bar).BarName;
                   u.TimeStamp = currentTime;
                   u.VenueId = user.Bar;
+                  u.PricePoint = user.PricePoint;
                   db.EnteredUsers.Add(u);
                   num += 1;
                }             

@@ -14,6 +14,14 @@ using EntityState = System.Data.Entity.EntityState;
 using VirtualLine2._0.Controllers;
 using VirtualLine2._0.Models;
 using System.Web.Security;
+using OneSignalApi.Api;
+using OneSignalApi.Client;
+using OneSignalApi.Model;
+using System.Net.Http;
+using Newtonsoft.Json;
+using System.Text;
+using System.Threading.Tasks;
+using System.Security.Cryptography;
 
 namespace VirtualLine2._0.Controllers
 {
@@ -21,21 +29,45 @@ namespace VirtualLine2._0.Controllers
    {
       private queueDBEntities3 db = new queueDBEntities3();
 
+      private static bool guest = false;
+
+      public ActionResult SetGuest()
+      {
+         guest = true;
+         return RedirectToAction("Index");
+      }
       public ActionResult Index()
       {
          if (User.Identity.Name == "")
          {
-            return RedirectToAction("MyAccount", "Home");
+            if (!guest)
+            {
+               return RedirectToAction("MyAccount", "Home");
+            }
+            guest = false;
          }
 
-         /*List<string> names = new List<string> { "BeccaLebrao", "nerimias11", "jrgavlik@gmail.com", "test", "admin" };
-         for (int i = 1; i < 6; i++)
+         /*List<string> names = new List<string> { "BeccaLebrao", "nerimias11", "jrgavlik@gmail.com", "test", "admin", "connora1214" };
+         for (int i = 1; i < 100; i++)
          {
-            //String s = i.ToString();
+            String s = i.ToString();
+            *//*Account a = new Account();
+            a.Username = "u" + s;
+            a.FirstName = "First_Name";
+            a.LastName = "Last_Name";
+            a.Password = HashPassword("50Butterfly!");
+            a.Email = "u" + s + "@gmail.com";
+            Random rand = new Random();
+            int randomNumber1 = rand.Next(10000, 99999);
+            int randomNumber2 = rand.Next(10000, 99999);
+            a.Phone = randomNumber1.ToString() + randomNumber2.ToString();
+            db.Accounts.Add(a);
+            db.SaveChanges();*//*
+
             Queue user = new Queue();
             user.Position = i;
-            //user.Username = "u" + s;
-            user.Username = names[i - 1];
+            user.Username = "u" + s;
+            //user.Username = names[i - 1];
             user.Bar = 4;
             user.StartTime = DateTime.MinValue;
             user.Quantity = 1;
@@ -45,13 +77,25 @@ namespace VirtualLine2._0.Controllers
             user.ExtendTime = 0;
             db.Queues.Add(user);
             db.SaveChanges();
-         }
-         Array[] ReadyUsers = GetReadyUsers();*/
+         }*/
 
-         //StartTimers(ReadyUsers);
+         /*if (initialOpen)
+         {
+            initialOpen = false;
+            return RedirectToAction("MyAccount", "Home");
+         }*/
 
          ViewBag.Locations = db.Establishments.Select(e => e.Location).Distinct().ToList();
          return View();         
+      }
+
+      private string HashPassword(string password)
+      {
+         using (var sha256 = SHA256.Create())
+         {
+            var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+            return BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
+         }
       }
 
       public JsonResult FindNearestLocation(double userLatitude, double userLongitude)
@@ -100,38 +144,111 @@ namespace VirtualLine2._0.Controllers
          return degrees * (Math.PI / 180);
       }
 
-      public void transferData()
-      {
-         /*
-         List<EnteredUser> tempDB = db.EnteredUsers.ToList<EnteredUser>();
-         foreach (EnteredUser e in tempDB)
-         {
-            VenueEntry v = new VenueEntry();
-            v.VenueId = e.VenueId;
-            v.VenueName = e.VenueName;
-            v.TimeStamp = e.TimeStamp;
-            db.VenueEntries.Add(v);
-            db.SaveChanges();
-            db.EnteredUsers.Remove(e);
-            db.SaveChanges();
-         }
-         */
-      }
-
       public JsonResult GetBarsByLocation(string location)
       {
-         var bars = db.Establishments
-                     .Where(b => b.Location == location)
-                     .Select(b => new
-                     {
-                        Id = b.Id,
-                        BarName = b.BarName,
-                        ProfilePicturePath = b.ProfilePicture,
-                        BannerPicturePath = b.BannerPicture
-                     })
-                     .ToList();
+         var bars = db.Establishments.Where(b => b.Location == location).ToList();
 
-         return Json(bars, JsonRequestBehavior.AllowGet);
+         List<object> barDetails = new List<object>();
+
+         foreach (var bar in bars)
+         {
+            
+            int time = calculateWaitTime(bar.Id);  // Assuming this method now takes a bar's ID and calculates wait time based on that.
+            int hours = time / 60;
+            int minutes = time % 60;
+
+            String waitTime = "";
+
+            if (hours == 0)
+            {
+               waitTime = minutes + " min";
+            }
+            else
+            {
+               if (minutes == 0)
+               {
+                  waitTime = + hours + " h";
+               }
+               waitTime = + hours + " h " + minutes + " m";
+            }
+            barDetails.Add(new
+            {
+               Id = bar.Id,
+               BarName = bar.BarName,
+               ProfilePicturePath = bar.ProfilePicture,
+               BannerPicturePath = bar.BannerPicture,
+               WaitTime = waitTime  // Include calculated wait time
+            });
+         }
+
+         return Json(barDetails, JsonRequestBehavior.AllowGet);
+
+         //return Json(bars, JsonRequestBehavior.AllowGet);
+      }
+
+      public int calculateWaitTime(int id)
+      {
+         Establishment bar = db.Establishments.Find(id);
+
+         var BarQueue = from q in db.Queues select q;
+         BarQueue = BarQueue.Where(q => q.Bar.Equals(bar.Id));
+
+         int LineLength = 0;
+
+         if (BarQueue.ToArray() != null)
+         {
+            LineLength = BarQueue.ToArray().Sum(u => u.Quantity);
+         }
+
+         if (db.EnteredUsers.Where(e => e.VenueId.Equals(bar.Id)).ToArray().Length > 15) //only use the algorithm if more than 15 people have already entered the bar that night
+         {
+            int numRecentEntriesSixty = 0;
+            int numRecentEntriesThirty = 0;
+            int numRecentEntriesFifteen = 0;
+
+            var sixtyMinutesAgo = DateTime.Now.AddMinutes(-60);
+
+            var recentEntriesSixty = db.EnteredUsers.Where(e => e.VenueId.Equals(bar.Id) && e.TimeStamp > sixtyMinutesAgo).ToList();
+
+            if (recentEntriesSixty.Count > 0)
+            {
+               //if there are enteries from 1 hour ago, check entries from 30 minutes to get a more specific wait time
+               var thirtyMinutesAgo = DateTime.Now.AddMinutes(-30);
+               var recentEntriesThirty = db.EnteredUsers.Where(e => e.VenueId.Equals(bar.Id) && e.TimeStamp > thirtyMinutesAgo).ToList();
+
+               if (recentEntriesThirty.Count > 0)
+               {
+                  //if there are enteries from 30 minutes ago, check entries from 15 minutes to get a more specific wait time
+                  numRecentEntriesThirty = recentEntriesThirty.Count;
+
+                  var FifteenMinutesAgo = DateTime.Now.AddMinutes(-15);
+                  var recentEntriesFifteen = db.EnteredUsers.Where(e => e.VenueId.Equals(bar.Id) && e.TimeStamp > FifteenMinutesAgo).ToList();
+
+                  if (recentEntriesFifteen.Count > 0)
+                  {
+                     numRecentEntriesFifteen = recentEntriesFifteen.Count;
+                  }
+               }
+
+               numRecentEntriesSixty = recentEntriesSixty.Count;
+
+               double enterPerMinuteSixty = numRecentEntriesSixty / 60.0;
+               double enterPerMinuteThirty = numRecentEntriesThirty / 30.0;
+               double enterPerMinuteFifteen = numRecentEntriesFifteen / 15.0;
+
+               double enterPerMinuteWeighted = (.50 * enterPerMinuteThirty) + (.35 * enterPerMinuteSixty) + (.15 * enterPerMinuteFifteen);
+               int estimatedTime = (int)(LineLength / enterPerMinuteWeighted);
+
+               return estimatedTime;
+            }
+         }
+
+         //probably will only enter this if statement if no one from the queue has entered yet for the night
+         if (LineLength != 0)
+         {
+            return LineLength;
+         }
+         return 0;
       }
 
       public ActionResult MyAccount()

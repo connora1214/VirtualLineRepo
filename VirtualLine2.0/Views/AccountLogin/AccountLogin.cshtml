@@ -15,23 +15,83 @@
         const { setExternalUserId } = WTN.OneSignal;
 
         setExternalUserId(document.getElementById('OneSignalPlayerId').value);
+        document.getElementById('btnAuth').click();
+
     </script>
+    <script>
+        var userSecret = "";
+        // Function to check Face ID status and initiate authentication if available
+        function checkAndAuthenticateWithFaceID() {
+            window.WTN.Biometric.checkStatus({
+                callback: function (data) {
+                    if (data.isSuccess && data.hasTouchId) {
+                        // Biometric (Face ID) is available
+                        if (data.hasSecret) {
+                            // User has used Face ID before, automatically authenticate
+                            showBiometricPrompt();
+                        }
+                        else {
+                            saveSecretAndAuthenticate();
+                        }
+                    } else {
+                        showBiometricPrompt();
+                    }
+                }
+            });
+        }
+
+
+        function showBiometricPrompt() {
+            window.WTN.Biometric.show({
+                prompt: "Authenticate to continue!",
+                callback: function (data) {
+                    // Handle biometric authentication result
+                    if (data.isSuccess) {
+                        userSecret = data.secret;
+                        document.getElementById("loginForm").submit();
+                    } else {
+                        // Biometric authentication failed or cancelled
+                        console.log("Biometric authentication failed or cancelled.");
+                    }
+                }
+            });
+        }
+
+        // Function to save secret token after successful biometric authentication
+        function saveSecretAndAuthenticate() {
+            window.WTN.Biometric.saveSecret({
+                secret: userSecret,
+                callback: function (data) {
+                    if (data.isSuccess) {
+                        console.log("Secret token saved successfully.");
+                        // Proceed with biometric authentication after saving secret
+                        showBiometricPrompt();
+                    } else {
+                        console.error("Failed to save secret token.");
+                    }
+                }
+            });
+        }
+
+    </script>
+
 </head>
 
 <div class="form-container" style="font-family: 'Comfortaa'; width:100%">
     <div class="jumbotron text-center" style="font-family: 'Comfortaa'; background-color: rgb(229 229 229 / 0.75); color: #FFFFFF">
         <h2 style=" color: #1e1e1e">Account Login</h2>
         <h4 style="margin-bottom: 20px">@ViewBag.Message</h4>
+        <button  id="btnAuth" class="btn btn-blue-md" onclick="checkAndAuthenticateWithFaceID()">Authenticate with Biometric</button>
 
-        @using (Html.BeginForm("AccountLogin", "AccountLogin", FormMethod.Post))
+        @using (Html.BeginForm("AccountLogin", "AccountLogin", FormMethod.Post, new { id = "loginForm" }))
         {
             <div class="floating-label-group" style="width:100%">
-                <input type="text" id="Username" name="Username" required />
+                <input autocomplete="on" type="text" id="Username" name="Username" required />
                 <label for="Username">Username or Email</label>
             </div>
             <div class="floating-label-group">
                 <div class="input-without-icon">
-                    <input type="password" id="Password" name="Password" maxlength="15" required />
+                    <input autocomplete="on" type="password" id="Password" name="Password" maxlength="15" required />
                     <label for="Password">Password</label>
                 </div>
             </div>

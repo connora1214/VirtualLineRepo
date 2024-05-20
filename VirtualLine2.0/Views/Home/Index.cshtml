@@ -1,12 +1,12 @@
 ﻿<head>
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 </head>
 
-<div class="jumbotron text-center" style="background-color: transparent; color: #FFFFFF; margin-bottom: -50px">
+<div class="jumbotron text-center" style="background-color: transparent; color: #FFFFFF; margin-bottom: -50px; margin-left: -5%; margin-right: 5%">
     <h1 style="transform: translateY(-15px); font-family: 'Comfortaa'; font-size: 50px; text-shadow: 0 0 10px rgba(255, 255, 255, 0.9); color: #FFFFFF ">BrewQueue</h1>
 </div>
-<div class="jumbotron text-center" style="font-family: 'Comfortaa', sans-serif; background-color: transparent;">
+<div class="jumbotron text-center" style="font-family: 'Comfortaa', sans-serif; background-color: transparent; margin-left: -5%; margin-right: 5%">
     <p>
         <select id="locationDropdown" style="font-family: 'Comfortaa', sans-serif; background-color: transparent; text-align: center; border-color: #ffffff;">
             <option value="">Select a Location</option>
@@ -16,7 +16,7 @@
             }
         </select>
     </p>
-    <div id="barsList"></div>
+    <div id="barsList" style="width: 90vw"></div>
 </div>
 
 <script>
@@ -59,26 +59,21 @@
 
                 var backgroundImageDiv = document.createElement('div');
                 backgroundImageDiv.className = 'buttonBackground';
-               @* backgroundImageDiv.style.backgroundImage = `url('${bar.BannerPicturePath}')`;*@
+
                 var testImage = new Image();
                 testImage.src = bar.BannerPicturePath;
 
-                // On successful load, set the background image
                 testImage.onload = function () {
                     backgroundImageDiv.style.backgroundImage = `url('${bar.BannerPicturePath}')`;
                 };
 
-                // On error, set a fallback background image
                 testImage.onerror = function () {
-                    var fallbackImageUrl = 'https://brew-queue.com/Images/button_background.jpg'; // Path to your fallback image
-                    backgroundImageDiv.style.backgroundImage = `url('${fallbackImageUrl}')`;
+                    backgroundImageDiv.style.backgroundImage = `url('https://brew-queue.com/Images/button_background.jpg')`;
                 };
 
-                
                 var img = document.createElement('img');
-                img.src = bar.ProfilePicturePath; // Set the initial image source
+                img.src = bar.ProfilePicturePath;
                 img.onerror = function () {
-                    // This function will be triggered if the initial image fails to load
                     img.src = "https://brew-queue.com/Images/BrewQueueLogoNoBackground.png";
                 };
                 img.className = 'barProfilePicture';
@@ -87,20 +82,32 @@
                 textSpan.innerText = bar.BarName;
                 textSpan.className = 'barButtonText';
 
+                // Create a new span element for the wait time
+                var waitTimeSpan = document.createElement('span');
+                waitTimeSpan.className = 'barWaitTime';
+                waitTimeSpan.innerText = `${bar.WaitTime}`;
+                waitTimeSpan.style.marginLeft = 'auto'; // Push it to the right side
+
                 button.appendChild(backgroundImageDiv);
                 button.appendChild(img);
                 button.appendChild(textSpan);
+                button.appendChild(waitTimeSpan);  // Append wait time to the button
 
                 button.addEventListener('click', function () {
                     window.location.href = '@Url.Action("Index", "Queue")' + '?id=' + bar.Id;
                 });
+
                 barsList.appendChild(button);
             });
         });
-    });    
+    });
 </script>
 
-<style>  
+<style>
+    html, body {
+        max-width: 100vw;
+        overflow-x: hidden; /* Hide horizontal overflow */
+    }
 
     .barButton {
         display: flex; /* Use flexbox for layout */
@@ -108,7 +115,7 @@
         justify-content: flex-start; /* Align content to the left */
         width: 100%;
         padding: 10px;
-        font-size: 30px;
+        font-size: 25px;
         color: white;
         background-color: #FFFFFF;
         border: 4px solid #FFFFFF;
@@ -128,6 +135,16 @@
         background-position: center;
         opacity: 0.4; /* 40% opacity */
         z-index: 1; /* Below the content */
+    }
+
+    .barWaitTime {
+        color: #1e1e1e;
+        font-size: 17px;
+        font-weight: bold;
+        text-align: right;
+        padding-right: 20px; /* Right padding for better spacing */
+        z-index: 2; /* Ensure it's above the background */
+        white-space: nowrap;
     }
 
     .barProfilePicture {

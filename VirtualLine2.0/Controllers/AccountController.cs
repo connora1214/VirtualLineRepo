@@ -274,34 +274,35 @@ namespace VirtualLine2._0.Controllers
 
       private void RemoveUserFromQueue(Queue user)
       {
+         int quantity = user.Quantity;
+         int position = user.Position;
          bool oldValidateOnSaveEnabled = db.Configuration.ValidateOnSaveEnabled;
 
          try
          {
             db.Configuration.ValidateOnSaveEnabled = false;
 
-            if (db.Queues.Find(user.Username) != null)
+            // Check if user exists before removing
+            var existingUser = db.Queues.Find(user.Username);
+            if (existingUser != null)
             {
-               db.Queues.Attach(user);
-               db.Queues.Remove(user);
+               // Remove user from queue
+               db.Queues.Remove(existingUser);
+
+               // Update positions of remaining users
+               var remainingUsers = db.Queues.Where(q => q.Bar == user.Bar && q.Position > position).ToList();
+               foreach (var q in remainingUsers)
+               {
+                  q.Position -= quantity;
+               }
+
+               // Save all changes at once
                db.SaveChanges();
             }
-
          }
          finally
          {
             db.Configuration.ValidateOnSaveEnabled = oldValidateOnSaveEnabled;
-         }
-
-         var BarQueue = from q in db.Queues select q;
-         BarQueue = BarQueue.Where(q => q.Bar.Equals(user.Bar));
-         foreach (Queue q in BarQueue.ToArray())
-         {
-            if (q.Position > user.Position)
-            {
-               q.Position = q.Position - user.Quantity;
-               db.SaveChanges();
-            }
          }
       }
 

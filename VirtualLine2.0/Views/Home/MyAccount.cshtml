@@ -10,6 +10,10 @@
 
     <a class="btn btn-blue-lg" href="@Url.Action("CreateAccount", "AccountCreate")">Create Account</a>
     <a class="btn btn-blue-lg" href="@Url.Action("AccountLogin", "AccountLogin")">Login</a>
+
+    <h5>
+        @Html.ActionLink("Browse as Guest", "SetGuest", "Home", null, new { @class = "nav-link", @style = "color: #FFFFFF; font-family: 'Comfortaa'" })
+    </h5>
 </div>
 <style>
     .btn-blue-lg {

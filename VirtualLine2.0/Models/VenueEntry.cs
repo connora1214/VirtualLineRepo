@@ -18,5 +18,6 @@ namespace VirtualLine2._0.Models
         public System.DateTime TimeStamp { get; set; }
         public int Id { get; set; }
         public int VenueId { get; set; }
+        public Nullable<decimal> PricePoint { get; set; }
     }
 }
