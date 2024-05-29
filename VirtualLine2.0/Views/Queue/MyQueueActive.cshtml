@@ -39,7 +39,6 @@
         line-height: 1.333333;
         color: #1e1e1e;
         background-color: #ff0000;
-        border: 0.5px solid #cf0303;
         border-radius: 75px;
         margin-bottom: 10px; /* Adds space between the buttons */
         text-align: center; /* Center the text in the button */
@@ -115,4 +114,26 @@
         backgroundImageDiv.style.backgroundSize = 'cover';
         backgroundImageDiv.style.backgroundPosition = 'center';
     });
+</script>
+
+<script>
+    function checkUserPosition() {
+        fetch('@Url.Action("GetUserPosition", "Queue")')
+            .then(response => response.json())
+            .then(data => {
+                if (data.timerStarted) {
+                    clearInterval(positionCheckInterval);
+                    window.location.href = '@Url.Action("Timer", "Queue")';
+                }
+                else {
+                    if (data.waitTime <= 15) {
+                        clearInterval(positionCheckInterval);
+                        window.location.href = '@Url.Action("ReadyToEnter", "Queue")';
+                    }
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    var positionCheckInterval = setInterval(checkUserPosition, 10000); // Check every 10 seconds
 </script>

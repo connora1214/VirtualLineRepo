@@ -126,6 +126,10 @@ namespace VirtualLine2._0.Controllers
          Establishment e = db.Establishments.Find(q.Bar);
          ViewBag.Title = e.BarName;
 
+         if (q.timerStarted)
+         {
+            return RedirectToAction("Timer", "Queue");
+         }
          int estimatedTime = calculateWaitTime(q.Position); 
          int hours = estimatedTime / 60;
          int minutes = estimatedTime % 60;
@@ -266,6 +270,12 @@ namespace VirtualLine2._0.Controllers
          string pricePoint = "";
          int LineLength = 0;
          //int lastUserPos = 0;
+         bool loggedin = false;
+
+         if (User.Identity.Name == "")
+         {
+            loggedin = true;
+         }
 
          //select only the queue entries of the bar that the user is joining the queue of
          var BarQueue = from q in db.Queues select q;
@@ -401,7 +411,7 @@ namespace VirtualLine2._0.Controllers
             }
          }
 
-         return Json(new { PricePoint = pricePoint }, JsonRequestBehavior.AllowGet);
+         return Json(new { PricePoint = pricePoint, loggedIn = loggedin }, JsonRequestBehavior.AllowGet);
       }
 
       public ActionResult ReadyToEnter()
@@ -423,6 +433,8 @@ namespace VirtualLine2._0.Controllers
             return RedirectToAction("Timer", "Queue");
          }
          ViewBag.Message = account.FirstName + ", please arrive at " + e.BarName + " within the next " + user.Position + " minutes to gain entry.";
+         ViewBag.Quantity = user.Quantity;
+         
          return View();
       }
 
@@ -496,18 +508,18 @@ namespace VirtualLine2._0.Controllers
          var currentTime = new DateTime(nowInZone.TimeOfDay.Hour, nowInZone.TimeOfDay.Minute, nowInZone.TimeOfDay.Second);*/
 
          //TimeSpan elapsed = currentTime - user.StartTime;
-         TimeSpan elapsed = DateTime.Now - user.StartTime;
+         TimeSpan elapsed = DateTime.UtcNow - user.StartTime;
          TimeSpan duration = TimeSpan.FromMinutes(15);
          TimeSpan timeLeft = duration - elapsed;
 
-         if (timeLeft.Ticks < 0)
+         /*if (timeLeft.Ticks < 0)
          {
             if (!isFromTimerPage && user.enteringBar == false) //make sure the expired timer message only comes up when the user is not entering the bar
             {
                RemoveUserFromQueue(user);
             }
             return Json(new { isAuthenticated = true, isInQueue = true, timeLeft = 0, expired = true }, JsonRequestBehavior.AllowGet);
-         }
+         }*/
 
          return Json(new { isAuthenticated = true, isInQueue = true, timeLeft = timeLeft.TotalSeconds, expired = false }, JsonRequestBehavior.AllowGet);
       }
@@ -555,8 +567,9 @@ namespace VirtualLine2._0.Controllers
          {
             return Json(new { position = -1 }, JsonRequestBehavior.AllowGet);
          }
+         int time = calculateWaitTime(user.Position);
 
-         return Json(new { position = user.Position, timerStarted = user.timerStarted }, JsonRequestBehavior.AllowGet);
+         return Json(new { position = user.Position, waitTime = time, timerStarted = user.timerStarted }, JsonRequestBehavior.AllowGet);
       }
 
       public ActionResult startTimer()
@@ -591,7 +604,7 @@ namespace VirtualLine2._0.Controllers
          {
             return RedirectToAction("GetExtendConfirmation", "Queue");
          }
-         user.StartTime = DateTime.Now;
+         user.StartTime = DateTime.UtcNow;
          user.ExtendTime += 1;
          db.SaveChanges();
 

@@ -38,6 +38,7 @@ namespace VirtualLine2._0.Controllers
       }
       public ActionResult Index()
       {
+
          if (User.Identity.Name == "")
          {
             if (!guest)
@@ -84,9 +85,79 @@ namespace VirtualLine2._0.Controllers
             initialOpen = false;
             return RedirectToAction("MyAccount", "Home");
          }*/
+         List<string> ExpiringUsers = checkExpiringTimers();
 
          ViewBag.Locations = db.Establishments.Select(e => e.Location).Distinct().ToList();
          return View();         
+      }
+
+      private List<string> checkExpiringTimers()
+      {
+         List<string> Ids = new List<string>();
+
+         // Retrieve all queue objects where timerStarted is true
+         var queuesExpiring = db.Queues.Where(q => q.timerStarted);
+
+         // Check if there are any queue objects
+         if (queuesExpiring.Any())
+         {
+            foreach (Queue q in queuesExpiring.ToArray())
+            {
+               Account a = db.Accounts.Find(q.Username);
+               // Calculate the elapsed time since timerStarted
+               TimeSpan elapsed = DateTime.UtcNow - q.StartTime;
+
+               // Check if 15 minutes have elapsed
+               if (elapsed.TotalMinutes >= 15)
+               {
+                  if (a.OneSignalPlayerId != null)
+                  {
+                     if (!Ids.Contains(a.OneSignalPlayerId))
+                     {
+                        Ids.Add(a.OneSignalPlayerId);
+                     }
+                  }
+                  RemoveUserFromQueue(q);
+               }
+            }
+
+            db.SaveChanges();
+         }
+         return Ids;
+      }
+
+      private void RemoveUserFromQueue(Queue user)
+      {
+         bool oldValidateOnSaveEnabled = db.Configuration.ValidateOnSaveEnabled;
+
+         try
+         {
+            db.Configuration.ValidateOnSaveEnabled = false;
+
+            if (db.Queues.Find(user.Username) != null)
+            {
+               db.Queues.Attach(user);
+               db.Queues.Remove(user);
+               db.SaveChanges();
+            }
+
+         }
+         finally
+         {
+            db.Configuration.ValidateOnSaveEnabled = oldValidateOnSaveEnabled;
+         }
+
+         var BarQueue = from q in db.Queues select q;
+         BarQueue = BarQueue.Where(q => q.Bar.Equals(user.Bar));
+         foreach (Queue q in BarQueue.ToArray())
+         {
+            if (q.Position > user.Position)
+            {
+               q.Position = q.Position - user.Quantity;
+               db.SaveChanges();
+            }
+         }
+
       }
 
       private string HashPassword(string password)
