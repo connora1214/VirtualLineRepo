@@ -52,7 +52,7 @@ namespace VirtualLine2._0.Controllers
       [HttpPost]
       public async Task<ActionResult> CreateAccount(AccountCreateEntry entry)
       {
-         string phone = entry.phonePart1 + entry.phonePart2 + entry.phonePart3;
+         string phone = entry.phonePart1.Trim() + entry.phonePart2.Trim() + entry.phonePart3.Trim();
 
          if (entry.Password != entry.ConfirmPassword)
          {
@@ -62,11 +62,11 @@ namespace VirtualLine2._0.Controllers
             return View(entry);
          }
 
-         if (await db.Accounts.AnyAsync(u => u.Username == entry.Username) || !UsernameRegex.IsMatch(entry.Username))
+         if (await db.Accounts.AnyAsync(u => u.Username == entry.Username.Trim()) || !UsernameRegex.IsMatch(entry.Username.Trim()))
          {
             string message = "Username already exists"; 
 
-            if (!UsernameRegex.IsMatch(entry.Username))
+            if (!UsernameRegex.IsMatch(entry.Username.Trim()))
             {
                message = "Username can only contain letters, numbers, and underscores.";               
             }
@@ -75,11 +75,11 @@ namespace VirtualLine2._0.Controllers
             return View(entry);
          }
 
-         if (await db.Accounts.AnyAsync(u => u.Email == entry.Email) || !EmailRegex.IsMatch(entry.Email))
+         if (await db.Accounts.AnyAsync(u => u.Email == entry.Email.Trim()) || !EmailRegex.IsMatch(entry.Email.Trim()))
          {
             string message = "An account with this email already exists";
 
-            if (!EmailRegex.IsMatch(entry.Email))
+            if (!EmailRegex.IsMatch(entry.Email.Trim()))
             {
                message = "Invalid email format.";
             }
@@ -90,7 +90,7 @@ namespace VirtualLine2._0.Controllers
             return View(entry);
          }
 
-         string fullPhone = $"{entry.phonePart1}-{entry.phonePart2}-{entry.phonePart3}";
+         string fullPhone = $"{entry.phonePart1.Trim()}-{entry.phonePart2.Trim()}-{entry.phonePart3.Trim()}";
 
          if (await db.Accounts.AnyAsync(u => u.Phone == phone) || !PhoneRegex.IsMatch(fullPhone))
          {
@@ -109,7 +109,7 @@ namespace VirtualLine2._0.Controllers
             return View(entry);
          }
 
-         if (!PasswordRegex.IsMatch(entry.Password))
+         if (!PasswordRegex.IsMatch(entry.Password.Trim()))
          {
             entry.Password = "";
             entry.ConfirmPassword = "";
@@ -117,7 +117,7 @@ namespace VirtualLine2._0.Controllers
             return View(entry);
          }
 
-         var hashedPassword = HashPassword(entry.Password);
+         var hashedPassword = HashPassword(entry.Password.Trim());
          var code = GenerateVerificationCode();
          var VerifyCodeExpires = DateTime.UtcNow.AddHours(1);
 
@@ -125,12 +125,12 @@ namespace VirtualLine2._0.Controllers
          {
             Code = code,
             CodeExpires = VerifyCodeExpires,
-            Username = entry.Username,
-            Phone = phone,
+            Username = entry.Username.Trim(),
+            Phone = phone.Trim(),
             Password = hashedPassword,
-            Email = entry.Email,
-            FirstName = entry.FirstName,
-            LastName = entry.LastName
+            Email = entry.Email.Trim(),
+            FirstName = entry.FirstName.Trim(),
+            LastName = entry.LastName.Trim()
          };
 
          db.Verifications.Add(v);
@@ -147,7 +147,7 @@ namespace VirtualLine2._0.Controllers
 
          await SendResetEmail(v.Email, code);
 
-         return RedirectToAction("VerifyEmail", new { email = entry.Email });
+         return RedirectToAction("VerifyEmail", new { email = entry.Email.Trim() });
       }
 
       [HttpGet]

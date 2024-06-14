@@ -155,10 +155,7 @@ namespace VirtualLine2._0.Controllers
       }
       public ActionResult MyQueueInactive()
       {
-         /*if (User.Identity.Name == "")
-         {
-            return RedirectToAction("MyAccount", "Home");
-         }*/
+
 
          var BarQueue = from q in db.Queues select q;
          BarQueue = BarQueue.Where(q => q.Bar.Equals(bar));
@@ -270,9 +267,9 @@ namespace VirtualLine2._0.Controllers
          string pricePoint = "";
          int LineLength = 0;
          //int lastUserPos = 0;
-         bool loggedin = false;
+         var loggedin = false;
 
-         if (User.Identity.Name == "")
+         if (User.Identity.Name != "")
          {
             loggedin = true;
          }
@@ -281,7 +278,7 @@ namespace VirtualLine2._0.Controllers
          var BarQueue = from q in db.Queues select q;
          BarQueue = BarQueue.Where(q => q.Bar.Equals(bar));
 
-         if (db.Queues.ToArray() != null)
+         if (BarQueue.ToArray() != null)
          {
             foreach (Queue q in BarQueue.ToArray())
             {
@@ -289,9 +286,10 @@ namespace VirtualLine2._0.Controllers
             }
          }
 
-         if (LineLength < 25)
+         var e = db.Establishments.Find(bar);
+
+         if (e.PriceType == "Static")
          {
-            //$5 base price
             if (quantity == 1)
             {
                pricePoint = "price5";
@@ -314,104 +312,134 @@ namespace VirtualLine2._0.Controllers
             }
 
          }
-         else if (LineLength >= 25 && LineLength < 50)
+         else if (e.PriceType == "Incremental")
          {
-            //$7.50 base price
-            if (quantity == 1)
+            if (LineLength < 25)
             {
-               pricePoint = "price7.5";
+               //$5 base price
+               if (quantity == 1)
+               {
+                  pricePoint = "price5";
+               }
+               else if (quantity == 2)
+               {
+                  pricePoint = "price10";
+               }
+               else if (quantity == 3)
+               {
+                  pricePoint = "price15";
+               }
+               else if (quantity == 4)
+               {
+                  pricePoint = "price20";
+               }
+               else
+               {
+                  pricePoint = "price25";
+               }
+
             }
-            else if (quantity == 2)
+            else if (LineLength >= 25 && LineLength < 50)
             {
-               pricePoint = "price15";
+               //$7.50 base price
+               if (quantity == 1)
+               {
+                  pricePoint = "price7.5";
+               }
+               else if (quantity == 2)
+               {
+                  pricePoint = "price15";
+               }
+               else if (quantity == 3)
+               {
+                  pricePoint = "price22.5";
+               }
+               else if (quantity == 4)
+               {
+                  pricePoint = "price30";
+               }
+               else
+               {
+                  pricePoint = "price37.5";
+               }
             }
-            else if (quantity == 3)
+            else if (LineLength >= 50 && LineLength < 75)
             {
-               pricePoint = "price22.5";
+               //$10 base price
+               if (quantity == 1)
+               {
+                  pricePoint = "price10";
+               }
+               else if (quantity == 2)
+               {
+                  pricePoint = "price20";
+               }
+               else if (quantity == 3)
+               {
+                  pricePoint = "price30";
+               }
+               else if (quantity == 4)
+               {
+                  pricePoint = "price40";
+               }
+               else
+               {
+                  pricePoint = "price50";
+               }
             }
-            else if (quantity == 4)
+            else if (LineLength >= 75 && LineLength < 100)
             {
-               pricePoint = "price30";
+               //$12.50 base price
+               if (quantity == 1)
+               {
+                  pricePoint = "price12.5";
+               }
+               else if (quantity == 2)
+               {
+                  pricePoint = "price25";
+               }
+               else if (quantity == 3)
+               {
+                  pricePoint = "price37.5";
+               }
+               else if (quantity == 4)
+               {
+                  pricePoint = "price50";
+               }
+               else
+               {
+                  pricePoint = "price62.5";
+               }
             }
             else
             {
-               pricePoint = "price37.5";
-            }           
-         }
-         else if (LineLength >= 50 && LineLength < 75)
-         {
-            //$10 base price
-            if (quantity == 1)
-            {
-               pricePoint = "price10";
-            }
-            else if (quantity == 2)
-            {
-               pricePoint = "price20";
-            }
-            else if (quantity == 3)
-            {
-               pricePoint = "price30";
-            }
-            else if (quantity == 4)
-            {
-               pricePoint = "price40";
-            }
-            else
-            {
-               pricePoint = "price50";
-            }
-         }
-         else if (LineLength >= 75 && LineLength < 100)
-         {
-            //$12.50 base price
-            if (quantity == 1)
-            {
-               pricePoint = "price12.5";
-            }
-            else if (quantity == 2)
-            {
-               pricePoint = "price25";
-            }
-            else if (quantity == 3)
-            {
-               pricePoint = "price37.5";
-            }
-            else if (quantity == 4)
-            {
-               pricePoint = "price50";
-            }
-            else
-            {
-               pricePoint = "price62.5";
-            }
-         }
-         else
-         {
-            //$15 base price
-            if (quantity == 1)
-            {
-               pricePoint = "price15";
-            }
-            else if (quantity == 2)
-            {
-               pricePoint = "price30";
-            }
-            else if (quantity == 3)
-            {
-               pricePoint = "price45";
-            }
-            else if (quantity == 4)
-            {
-               pricePoint = "price60";
-            }
-            else
-            {
-               pricePoint = "price75";
+               //$15 base price
+               if (quantity == 1)
+               {
+                  pricePoint = "price15";
+               }
+               else if (quantity == 2)
+               {
+                  pricePoint = "price30";
+               }
+               else if (quantity == 3)
+               {
+                  pricePoint = "price45";
+               }
+               else if (quantity == 4)
+               {
+                  pricePoint = "price60";
+               }
+               else
+               {
+                  pricePoint = "price75";
+               }
             }
          }
 
-         return Json(new { PricePoint = pricePoint, loggedIn = loggedin }, JsonRequestBehavior.AllowGet);
+         
+
+         return Json(new { PricePoint = pricePoint, loggedIn = loggedin, PriceType = e.PriceType }, JsonRequestBehavior.AllowGet);
       }
 
       public ActionResult ReadyToEnter()
@@ -622,7 +650,7 @@ namespace VirtualLine2._0.Controllers
          if (user.ExtendTime < 1)
          {
             user.ExtendTime += 1;
-            user.StartTime = DateTime.Now;
+            user.StartTime = DateTime.UtcNow;
             db.SaveChanges();
          }
          
@@ -980,23 +1008,23 @@ namespace VirtualLine2._0.Controllers
 
             if (user.Position < 25)
             {
-               user.PricePoint = (decimal?)5.0;
+               user.PricePoint = (decimal)5.0;
             }
             else if(user.Position >=25 && user.Position<50)
             {
-               user.PricePoint = (decimal?)7.50;
+               user.PricePoint = (decimal)7.50;
             }
             else if (user.Position >= 50 && user.Position < 75)
             {
-               user.PricePoint = (decimal?)10.0;
+               user.PricePoint = (decimal)10.0;
             }
             else if (user.Position >= 75 && user.Position < 100)
             {
-               user.PricePoint = (decimal?)12.50;
+               user.PricePoint = (decimal)12.50;
             }
             else
             {
-               user.PricePoint = (decimal?)15.0;
+               user.PricePoint = (decimal)15.0;
             }
 
 
@@ -1061,6 +1089,7 @@ namespace VirtualLine2._0.Controllers
                   u.VenueName = db.Establishments.Find(user.Bar).BarName;
                   u.TimeStamp = currentTime;
                   u.VenueId = user.Bar;
+                  u.Username = user.Username;
                   u.PricePoint = user.PricePoint;
                   db.EnteredUsers.Add(u);
                   num += 1;

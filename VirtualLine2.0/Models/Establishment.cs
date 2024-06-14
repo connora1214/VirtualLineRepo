@@ -22,5 +22,6 @@ namespace VirtualLine2._0.Models
         public string ProfilePicture { get; set; }
         public string BannerPicture { get; set; }
         public string Address { get; set; }
+        public string PriceType { get; set; }
     }
 }

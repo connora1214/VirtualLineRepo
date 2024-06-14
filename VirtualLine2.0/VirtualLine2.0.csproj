@@ -330,6 +330,7 @@
     <Content Include="Views\Account\DeleteAccount.cshtml" />
     <Content Include="Views\Account\SetProfilePicture.cshtml" />
     <Content Include="Views\Account\Privacy.cshtml" />
+    <Content Include="Views\Account\History.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

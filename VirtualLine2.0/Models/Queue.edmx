@@ -50,6 +50,7 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="VenueId" Type="int" Nullable="false" />
           <Property Name="PricePoint" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="Username" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="Establishments">
           <Key>
@@ -63,6 +64,7 @@
           <Property Name="ProfilePicture" Type="nvarchar(max)" />
           <Property Name="BannerPicture" Type="nvarchar(max)" />
           <Property Name="Address" Type="nvarchar(max)" />
+          <Property Name="PriceType" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="Queue">
           <Key>
@@ -109,6 +111,7 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="VenueId" Type="int" Nullable="false" />
           <Property Name="PricePoint" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="Username" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="Verification">
           <Key>
@@ -192,6 +195,7 @@
           <Property Name="ProfilePicture" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="BannerPicture" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Address" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PriceType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="EnteredUser">
           <Key>
@@ -202,6 +206,7 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="VenueId" Type="Int32" Nullable="false" />
           <Property Name="PricePoint" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="Username" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="AdminAccount">
           <Key>
@@ -253,6 +258,7 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="VenueId" Type="Int32" Nullable="false" />
           <Property Name="PricePoint" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="Username" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Verification">
           <Key>
@@ -311,6 +317,7 @@
           <EntitySetMapping Name="Establishments">
             <EntityTypeMapping TypeName="Queue.Establishment">
               <MappingFragment StoreEntitySet="Establishments">
+                <ScalarProperty Name="PriceType" ColumnName="PriceType" />
                 <ScalarProperty Name="Address" ColumnName="Address" />
                 <ScalarProperty Name="BannerPicture" ColumnName="BannerPicture" />
                 <ScalarProperty Name="ProfilePicture" ColumnName="ProfilePicture" />
@@ -325,6 +332,7 @@
           <EntitySetMapping Name="EnteredUsers">
             <EntityTypeMapping TypeName="Queue.EnteredUser">
               <MappingFragment StoreEntitySet="EnteredUsers">
+                <ScalarProperty Name="Username" ColumnName="Username" />
                 <ScalarProperty Name="PricePoint" ColumnName="PricePoint" />
                 <ScalarProperty Name="VenueId" ColumnName="VenueId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
@@ -379,6 +387,7 @@
           <EntitySetMapping Name="VenueEntries">
             <EntityTypeMapping TypeName="Queue.VenueEntry">
               <MappingFragment StoreEntitySet="VenueEntries">
+                <ScalarProperty Name="Username" ColumnName="Username" />
                 <ScalarProperty Name="PricePoint" ColumnName="PricePoint" />
                 <ScalarProperty Name="VenueId" ColumnName="VenueId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />

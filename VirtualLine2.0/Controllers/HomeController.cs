@@ -48,11 +48,11 @@ namespace VirtualLine2._0.Controllers
             guest = false;
          }
 
-         /*List<string> names = new List<string> { "BeccaLebrao", "nerimias11", "jrgavlik@gmail.com", "test", "admin", "connora1214" };
-         for (int i = 1; i < 100; i++)
+         //List<string> names = new List<string> { "BeccaLebrao", "nerimias11", "jrgavlik@gmail.com", "test", "admin", "connora1214" };
+         for (int i = 1; i < 26; i++)
          {
             String s = i.ToString();
-            *//*Account a = new Account();
+            /*Account a = new Account();
             a.Username = "u" + s;
             a.FirstName = "First_Name";
             a.LastName = "Last_Name";
@@ -63,7 +63,7 @@ namespace VirtualLine2._0.Controllers
             int randomNumber2 = rand.Next(10000, 99999);
             a.Phone = randomNumber1.ToString() + randomNumber2.ToString();
             db.Accounts.Add(a);
-            db.SaveChanges();*//*
+            db.SaveChanges();*/
 
             Queue user = new Queue();
             user.Position = i;
@@ -72,20 +72,31 @@ namespace VirtualLine2._0.Controllers
             user.Bar = 4;
             user.StartTime = DateTime.MinValue;
             user.Quantity = 1;
-            user.StartTime = DateTime.MinValue;
             user.timerStarted = false;
             user.enteringBar = false;
+            user.PricePoint = (decimal?)5.0;
             user.ExtendTime = 0;
             db.Queues.Add(user);
             db.SaveChanges();
-         }*/
+         }
+
+         /*VenueEntry v = new VenueEntry();
+         v.Username = "connora1214";
+         v.TimeStamp = DateTime.Now;
+         v.VenueId = 4;
+         v.VenueName = "Doggies";
+         v.PricePoint = (decimal?)5.0;
+         db.VenueEntries.Add(v);
+         db.SaveChanges();*/
 
          /*if (initialOpen)
          {
             initialOpen = false;
             return RedirectToAction("MyAccount", "Home");
          }*/
-         List<string> ExpiringUsers = checkExpiringTimers();
+         //List<string> ExpiringUsers = checkExpiringTimers();
+
+
 
          ViewBag.Locations = db.Establishments.Select(e => e.Location).Distinct().ToList();
          return View();         

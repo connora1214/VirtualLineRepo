@@ -24,11 +24,14 @@
 <div style="font-family: 'Comfortaa'; background-color: rgb(20 20 20 / 0.75); color: #FFFFFF " class="jumbotron">
     <h2 style="text-align: left; color: rgb(64 255 154)">My Account</h2>
     <p style="border-bottom: 1px solid rgb(47 90 87 / 0.10)" class="row">
+        <a class="btn btn-blue-md col-md-2" href="@Url.Action("History", "Account")">Account History</a>
+    </p>
+    <p style="border-bottom: 1px solid rgb(47 90 87 / 0.10)" class="row">
         <a class="btn btn-blue-md col-md-2" href="@Url.Action("EditAccount", "Account")">Edit Profile</a>
     </p>
     @*<p style="border-bottom: 1px solid rgb(47 90 87 / 0.10)" class="row">
-        <a class="btn btn-blue-md col-md-2" href="@Url.Action("SetProfilePicture", "Account")">Set Profile Picture</a>
-    </p>*@
+            <a class="btn btn-blue-md col-md-2" href="@Url.Action("SetProfilePicture", "Account")">Set Profile Picture</a>
+        </p>*@
     <p style="border-bottom: 1px solid rgb(47 90 87 / 0.10)" class="row">
         <a class="btn btn-blue-md col-md-2" href="@Url.Action("ChangePassword", "Account")">Change Password</a>
     </p>

@@ -19,5 +19,6 @@ namespace VirtualLine2._0.Models
         public int Id { get; set; }
         public int VenueId { get; set; }
         public Nullable<decimal> PricePoint { get; set; }
+        public string Username { get; set; }
     }
 }

@@ -58,6 +58,28 @@ namespace VirtualLine2._0.Controllers
          return View();
       }
 
+      public ActionResult History()
+      {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
+
+
+         var historyEntries = db.VenueEntries.Where(v => v.Username == User.Identity.Name).ToList();
+
+         if (historyEntries.Any())
+         {
+            ViewBag.Data = "hasData";
+         }
+         else
+         {
+            ViewBag.Data = "";
+         }
+
+         return View(historyEntries.OrderByDescending(v => v.TimeStamp));
+      }
+
       public ActionResult EditConfirmation()
       {
          if (User.Identity.Name == "")

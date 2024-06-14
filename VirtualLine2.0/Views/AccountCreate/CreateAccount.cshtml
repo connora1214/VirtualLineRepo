@@ -3,8 +3,8 @@
 </head>
 
 <div class="form-container" style="font-family: 'Comfortaa'; width:100%">
-    <div class="jumbotron text-center" style="font-family: 'Comfortaa'; background-color: rgb(229 229 229 / 0.75); color: #FFFFFF">
-        <h2 style=" color: #1e1e1e">Create Account</h2>
+    <div class="jumbotron text-center" style="font-family: 'Comfortaa'; background-color: transparent; color: #FFFFFF">
+        <h2 style=" color: #FFFFFF">Create Account</h2>
         <h4 style="margin-bottom: 20px">@ViewBag.Message</h4>
 
         @using (Html.BeginForm("CreateAccount", "AccountCreate", FormMethod.Post))
@@ -20,7 +20,7 @@
                     <label for="Password">Password</label>
                 </div>
             </div>
-            <h6 style="text-align:left; color: #1e1e1e; margin-bottom: 30px; max-width: 300px">
+            <h6 style="text-align:left; color: #d7d7d7; margin-bottom: 30px; max-width: 300px">
                 Password must be 6-20 characters long and contain at least one uppercase letter, one lowercase letter, and one number/special character.
             </h6>
             <div class="floating-label-group">
@@ -54,8 +54,8 @@
 
 
             <button class="btn btn-blue-md" type="submit">Create Account</button>
-            <h6 style="color: #1e1e1e">
-                By creating an account, you confirm that you are at least 21 years old and agree to our @Html.ActionLink("Terms of Service", "Terms", "Account") and @Html.ActionLink("Privacy Policy", "Privacy", "Account")
+            <h6 style="color: #FFFFFF">
+                By creating an account, you confirm that you are at least 21 years old and agree to our @Html.ActionLink("Terms of Service", "Terms", "Account", null, new { @class = "nav-link", @style = "color: rgb(64 255 154); font-family: 'Comfortaa'" }) and @Html.ActionLink("Privacy Policy", "Privacy", "Account", null, new { @class = "nav-link", @style = "color: rgb(64 255 154); font-family: 'Comfortaa'" })
             </h6>
         }
     </div>

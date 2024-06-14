@@ -1,0 +1,39 @@
+﻿@model IEnumerable<VirtualLine2._0.Models.VenueEntry>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<h2 style="font-family: 'Comfortaa'; color: rgb(64 255 154); text-align: center">Account History</h2>
+
+<div id="tableView" style="font-family: 'Comfortaa'; color: #FFFFFF; padding-top: 25px; width:90vw">
+
+    @if (ViewBag.Data != "")
+    {
+        <table class="table">
+
+            <tbody>
+                @foreach (var userEntry in Model)
+                {
+                    <tr style="border-bottom: 1px solid rgb(77 77 77); border-top: 1px solid rgb(77 77 77) ">
+                        <td style="font-size:18px; border:none">
+                            @userEntry.VenueName
+                            <br />
+                            <span style="font-size: 14px; color: gray;">@userEntry.TimeStamp</span>
+                        </td>
+                        <td style="display: table-cell; font-size: 20px; vertical-align: middle; text-align: center; border: none;">
+                            @{ var formattedPrice = ((decimal)userEntry.PricePoint).ToString("C"); }
+                            @formattedPrice
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <h3>There is no data for your account.</h3>
+    }
+</div>

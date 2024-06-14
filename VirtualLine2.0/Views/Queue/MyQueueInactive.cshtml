@@ -16,9 +16,29 @@
                 .then(response => response.json())
                 .then(data => {
                     // Set the price point received from the server
-                    loggedin = data.loggedIn
                     pricePoint = data.PricePoint;
-                    console.log(pricePoint);
+                    if (data.loggedIn == true) {
+                        if (data.PriceType == "Free") {
+                            document.getElementById("btnSubmit").click();
+                        }
+                        else {
+                            window.WTN.inAppPurchase({
+                                productId: pricePoint,
+                                callback: function (data) {
+                                    var receiptData = data.receiptData;
+                                    if (data.isSuccess) {
+                                        document.getElementById("btnSubmit").click();
+                                        //document.getElementById("AddToQueueForm").submit();
+                                        // use this receipt data to verify transaction from app store
+                                        // refer : https://developer.apple.com/documentation/appstorereceipts/verifyreceipt
+                                    }
+                                }
+                            })
+                        }                       
+                    }
+                    else {
+                        window.location.href = '@Url.Action("MyAccount", "Home")';
+                    }
                 })
                 .catch(error => console.error('Error fetching price point:', error));
         }
@@ -34,7 +54,7 @@
             // Check if price point is empty, if so, fetch it from the server
             getPricePointFromServer(selectedQuantity);
 
-            if (loggedin) {
+            @*if (loggedin) {
                 window.WTN.inAppPurchase({
                     productId: pricePoint,
                     callback: function (data) {
@@ -47,7 +67,10 @@
                         }
                     }
                 })
-            }           
+            }
+            else {
+                window.location.href = '@Url.Action("MyAccount", "Home")';
+            }*@
         }
 
     </script>
