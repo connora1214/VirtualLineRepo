@@ -1,16 +1,42 @@
 ﻿<head>
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/webtonative@1.0.52/webtonative.min.js"></script>
+    <script>
+        function triggerIAP() {
+            var extendTime = @Html.Raw(Json.Encode(ViewBag.ExtendTime));
+            if (extendTime < 1) {
+                loadIAP();
+            } else {
+                alert("You may only extend your time once.");
+            }
+        }
+
+        function loadIAP() {
+            window.WTN.inAppPurchase({
+                    productId: 'price5',
+                    callback: function (data) {
+                        var receiptData = data.receiptData;
+                        if (data.isSuccess) {
+                            window.location.href = '@Url.Action("ExtendTime", "Queue")';
+                            //document.getElementById("AddToQueueForm").submit();
+                            // use this receipt data to verify transaction from app store
+                            // refer : https://developer.apple.com/documentation/appstorereceipts/verifyreceipt
+                        }
+                    }
+                });
+        }
+    </script>
 </head>
 
 <div class="jumbotron text-center" style="font-family: 'Comfortaa'; background-color: transparent; color: #FFFFFF">
     <h2 style=" color: #FFFFFF">Are you sure you want to extend your time?</h2>
-    <h6 style="color:#FFFFFF">You will be charged $2.50 if you select Yes</h6>
+    <h6 style="color:#FFFFFF">You will be charged $5.00 if you select Yes</h6>
     <div style="font-family: 'Comfortaa'; background-color: transparent; color: #FFFFFF">
         <h3 style="margin-top: 7.5%; color:red">@ViewBag.Message</h3>
     </div>
 </div>
 
-<a class="btn btn-blue-md" href="@Url.Action("ExtendTime", "Queue")">Yes</a>
+<button id="btnYes" onclick="triggerIAP()" class="btn btn-blue-md">Yes</button>
 <a class="btn btn-blue-md" href="@Url.Action("Timer", "Queue")">No</a>
 
 

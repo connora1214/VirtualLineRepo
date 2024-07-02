@@ -64,6 +64,8 @@ namespace VirtualLine2._0.Controllers
          {
             ViewBag.Message = "You may only extend your time once.";
          }
+         ViewBag.ExtendTime = user.ExtendTime;
+
          return View();
       }
 

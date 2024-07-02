@@ -49,10 +49,10 @@ namespace VirtualLine2._0.Controllers
          }
 
          //List<string> names = new List<string> { "BeccaLebrao", "nerimias11", "jrgavlik@gmail.com", "test", "admin", "connora1214" };
-         for (int i = 1; i < 26; i++)
+         /*for (int i = 1; i < 26; i++)
          {
             String s = i.ToString();
-            /*Account a = new Account();
+            *//*Account a = new Account();
             a.Username = "u" + s;
             a.FirstName = "First_Name";
             a.LastName = "Last_Name";
@@ -63,7 +63,7 @@ namespace VirtualLine2._0.Controllers
             int randomNumber2 = rand.Next(10000, 99999);
             a.Phone = randomNumber1.ToString() + randomNumber2.ToString();
             db.Accounts.Add(a);
-            db.SaveChanges();*/
+            db.SaveChanges();*//*
 
             Queue user = new Queue();
             user.Position = i;
@@ -78,7 +78,7 @@ namespace VirtualLine2._0.Controllers
             user.ExtendTime = 0;
             db.Queues.Add(user);
             db.SaveChanges();
-         }
+         }*/
 
          /*VenueEntry v = new VenueEntry();
          v.Username = "connora1214";
