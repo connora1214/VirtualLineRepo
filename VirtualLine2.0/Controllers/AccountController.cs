@@ -60,15 +60,16 @@ namespace VirtualLine2._0.Controllers
 
       public ActionResult History()
       {
-         if (User.Identity.Name == "")
+         if (string.IsNullOrEmpty(User.Identity.Name))
          {
             return RedirectToAction("MyAccount", "Home");
          }
 
-
          var historyEntries = db.VenueEntries.Where(v => v.Username == User.Identity.Name).ToList();
 
-         if (historyEntries.Any())
+         var groupedHistoryEntries = historyEntries.GroupBy(v => v.TimeStamp).Select(g => new VenueEntry{TimeStamp = g.Key,PricePoint = g.Sum(v => v.PricePoint),VenueName = g.First().VenueName,VenueId = g.First().VenueId}).OrderByDescending(v => v.TimeStamp).ToList();
+
+         if (groupedHistoryEntries.Any())
          {
             ViewBag.Data = "hasData";
          }
@@ -77,7 +78,7 @@ namespace VirtualLine2._0.Controllers
             ViewBag.Data = "";
          }
 
-         return View(historyEntries.OrderByDescending(v => v.TimeStamp));
+         return View(groupedHistoryEntries);
       }
 
       public ActionResult EditConfirmation()

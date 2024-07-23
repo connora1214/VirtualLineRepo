@@ -1008,25 +1008,38 @@ namespace VirtualLine2._0.Controllers
             user.NotificationSent = false;
             user.ExtendTime = 0;
 
-            if (user.Position < 25)
+            Establishment e = db.Establishments.Find(bar);
+
+            if (e.PriceType == "Free")
+            {
+               user.PricePoint = (decimal)0.0;
+            }
+            else if(e.PriceType == "Static")
             {
                user.PricePoint = (decimal)5.0;
             }
-            else if(user.Position >=25 && user.Position<50)
-            {
-               user.PricePoint = (decimal)7.50;
-            }
-            else if (user.Position >= 50 && user.Position < 75)
-            {
-               user.PricePoint = (decimal)10.0;
-            }
-            else if (user.Position >= 75 && user.Position < 100)
-            {
-               user.PricePoint = (decimal)12.50;
-            }
             else
             {
-               user.PricePoint = (decimal)15.0;
+               if (user.Position < 25)
+               {
+                  user.PricePoint = (decimal)5.0;
+               }
+               else if (user.Position >= 25 && user.Position < 50)
+               {
+                  user.PricePoint = (decimal)7.50;
+               }
+               else if (user.Position >= 50 && user.Position < 75)
+               {
+                  user.PricePoint = (decimal)10.0;
+               }
+               else if (user.Position >= 75 && user.Position < 100)
+               {
+                  user.PricePoint = (decimal)12.50;
+               }
+               else
+               {
+                  user.PricePoint = (decimal)15.0;
+               }
             }
 
 
@@ -1067,26 +1080,27 @@ namespace VirtualLine2._0.Controllers
             if (enteringBar == true)
             {
                int num = 0;
-               while(num < user.Quantity)
+               Establishment e = db.Establishments.Find(user.Bar);
+
+               var tzProvider = DateTimeZoneProviders.Tzdb;
+               double lat = Convert.ToDouble(e.Latitude.Value);
+               double lon = Convert.ToDouble(e.Longitude.Value);
+
+               // Get the time zone ID using GeoTimeZone
+               var tzId = TimeZoneLookup.GetTimeZone(lat, lon).Result;
+
+               // Get the DateTimeZone object from NodaTime using the time zone ID
+               var timeZone = tzProvider[tzId];
+
+               // Get the current ZonedDateTime in the establishment's time zone
+               var nowInZone = SystemClock.Instance.GetCurrentInstant().InZone(timeZone);
+
+               var currentDate = nowInZone.Date;
+               var currentTime = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day, nowInZone.TimeOfDay.Hour, nowInZone.TimeOfDay.Minute, nowInZone.TimeOfDay.Second);
+               
+               while (num < user.Quantity)
                {
-                  Establishment e = db.Establishments.Find(user.Bar);
-
-                  var tzProvider = DateTimeZoneProviders.Tzdb;                  
-                  double lat = Convert.ToDouble(e.Latitude.Value);
-                  double lon = Convert.ToDouble(e.Longitude.Value);
-
-                  // Get the time zone ID using GeoTimeZone
-                  var tzId = TimeZoneLookup.GetTimeZone(lat, lon).Result;
-
-                  // Get the DateTimeZone object from NodaTime using the time zone ID
-                  var timeZone = tzProvider[tzId];
-
-                  // Get the current ZonedDateTime in the establishment's time zone
-                  var nowInZone = SystemClock.Instance.GetCurrentInstant().InZone(timeZone);
-
-                  var currentDate = nowInZone.Date;
-                  var currentTime = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day, nowInZone.TimeOfDay.Hour, nowInZone.TimeOfDay.Minute, nowInZone.TimeOfDay.Second);
-                  
+                                   
                   EnteredUser u = new EnteredUser();
                   u.VenueName = db.Establishments.Find(user.Bar).BarName;
                   u.TimeStamp = currentTime;

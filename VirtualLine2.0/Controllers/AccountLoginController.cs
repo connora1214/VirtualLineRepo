@@ -146,6 +146,12 @@ namespace VirtualLine2._0.Controllers
 
          if (user != null && newPassword == newPasswordConfirmation)
          {
+            var passwordRegex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*[1234567890!?@#$%^&*()_+]).{6,15}$");
+            if (!passwordRegex.IsMatch(newPassword))
+            {
+               ViewBag.Message = "Password must be 6 - 15 characters long and contain at least one uppercase letter, one lowercase letter, and one special character.";
+               return View(newPassword);
+            }
             user.Password = HashPassword(newPassword);
             user.ResetToken = null; // Clear the token in the database
             user.ResetTokenExpires = null; // Clear the expiration time

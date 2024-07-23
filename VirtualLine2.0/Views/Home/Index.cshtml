@@ -1,10 +1,11 @@
 ﻿<head>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap" as="style">
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 </head>
 
 <div class="jumbotron text-center" style="background-color: transparent; color: #FFFFFF; margin-bottom: -50px; margin-left: -5%; margin-right: 5%">
-    <h1 style="transform: translateY(-15px); font-family: 'Comfortaa'; font-size: 50px; text-shadow: 0 0 10px rgba(255, 255, 255, 0.9); color: #FFFFFF ">BrewQueue</h1>
+    <h1 style="transform: translateY(-15px); font-family: 'Comfortaa'; font-size: 50px; text-shadow: 0 0 10px rgba(255, 255, 255, 0.9); color: #FFFFFF">BrewQueue</h1>
 </div>
 <div class="jumbotron text-center" style="font-family: 'Comfortaa', sans-serif; background-color: transparent; margin-left: -5%; margin-right: 5%">
     <p>
@@ -19,7 +20,7 @@
     <div id="barsList" style="width: 90vw"></div>
 </div>
 
-<script>
+<script async>
     document.addEventListener('DOMContentLoaded', function () {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function (position) {
@@ -45,7 +46,6 @@
         }
     });
 
-
     document.getElementById('locationDropdown').addEventListener('change', function () {
         var selectedLocation = this.value;
         fetch('/Home/GetBarsByLocation?location=' + encodeURIComponent(selectedLocation))
@@ -53,7 +53,7 @@
         .then(bars => {
             var barsList = document.getElementById('barsList');
             barsList.innerHTML = ''; // Clear existing buttons
-            bars.forEach(bar => {
+            var barPromises = bars.map(bar => {
                 var button = document.createElement('button');
                 button.className = 'barButton';
 
@@ -61,15 +61,17 @@
                 backgroundImageDiv.className = 'buttonBackground';
 
                 var testImage = new Image();
+                var imageLoadPromise = new Promise((resolve) => {
+                    testImage.onload = function () {
+                        backgroundImageDiv.style.backgroundImage = `url('${bar.BannerPicturePath}')`;
+                        resolve();
+                    };
+                    testImage.onerror = function () {
+                        backgroundImageDiv.style.backgroundImage = `url('https://brew-queue.com/Images/button_background.jpg')`;
+                        resolve();
+                    };
+                });
                 testImage.src = bar.BannerPicturePath;
-
-                testImage.onload = function () {
-                    backgroundImageDiv.style.backgroundImage = `url('${bar.BannerPicturePath}')`;
-                };
-
-                testImage.onerror = function () {
-                    backgroundImageDiv.style.backgroundImage = `url('https://brew-queue.com/Images/button_background.jpg')`;
-                };
 
                 var img = document.createElement('img');
                 img.src = bar.ProfilePicturePath;
@@ -82,22 +84,25 @@
                 textSpan.innerText = bar.BarName;
                 textSpan.className = 'barButtonText';
 
-                // Create a new span element for the wait time
                 var waitTimeSpan = document.createElement('span');
                 waitTimeSpan.className = 'barWaitTime';
                 waitTimeSpan.innerText = `${bar.WaitTime}`;
-                waitTimeSpan.style.marginLeft = 'auto'; // Push it to the right side
+                waitTimeSpan.style.marginLeft = 'auto';
 
                 button.appendChild(backgroundImageDiv);
                 button.appendChild(img);
                 button.appendChild(textSpan);
-                button.appendChild(waitTimeSpan);  // Append wait time to the button
+                button.appendChild(waitTimeSpan);
 
                 button.addEventListener('click', function () {
                     window.location.href = '@Url.Action("Index", "Queue")' + '?id=' + bar.Id;
                 });
 
                 barsList.appendChild(button);
+                return imageLoadPromise;
+            });
+            Promise.all(barPromises).then(() => {
+                console.log('All images loaded');
             });
         });
     });
@@ -106,23 +111,22 @@
 <style>
     html, body {
         max-width: 100vw;
-        overflow-x: hidden; /* Hide horizontal overflow */
+        overflow-x: hidden;
     }
 
     .barButton {
-        display: flex; /* Use flexbox for layout */
-        align-items: center; /* Align items vertically */
-        justify-content: flex-start; /* Align content to the left */
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
         width: 100%;
         padding: 10px;
         font-size: 25px;
         color: white;
         background-color: #FFFFFF;
-        @*border: 4px solid #FFFFFF;*@
         border-radius: 75px;
         margin-bottom: 10px;
-        position: relative; /* Needed for background positioning */
-        overflow: hidden; /* Ensure contents stay within the button */
+        position: relative;
+        overflow: hidden;
     }
 
     .buttonBackground {
@@ -133,8 +137,8 @@
         height: 100%;
         background-size: cover;
         background-position: center;
-        opacity: 0.4; /* 40% opacity */
-        z-index: 1; /* Below the content */
+        opacity: 0.4;
+        z-index: 1;
     }
 
     .barWaitTime {
@@ -142,8 +146,8 @@
         font-size: 17px;
         font-weight: bold;
         text-align: right;
-        padding-right: 20px; /* Right padding for better spacing */
-        z-index: 2; /* Ensure it's above the background */
+        padding-right: 20px;
+        z-index: 2;
         white-space: nowrap;
     }
 
@@ -151,20 +155,19 @@
         width: 100px;
         height: 100px;
         border-radius: 50%;
-        margin-right: 10px; /* Space between image and text */
-        z-index: 2; /* Above the background */
+        margin-right: 10px;
+        z-index: 2;
     }
 
     .barButtonText {
         text-align: left;
         color: #000000;
         font-family: 'Comfortaa';
-        text-shadow: 0 0 15px rgba(255, 255, 255); /* Increased contrast and opacity */
-        z-index: 2; /* Ensure text is above the background */
+        text-shadow: 0 0 15px rgba(255, 255, 255);
+        z-index: 2;
     }
 
     .barButton:hover {
         background-color: rgb(64 255 154);
     }
 </style>
-
