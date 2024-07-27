@@ -19,6 +19,7 @@
           <Property Name="ResetTokenExpires" Type="datetime2" Precision="7" />
           <Property Name="ProfilePicture" Type="nvarchar(max)" />
           <Property Name="OneSignalPlayerId" Type="nvarchar(max)" />
+          <Property Name="BrewQueueCredit" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="AdminAccount">
           <Key>
@@ -40,6 +41,7 @@
           <Property Name="Verified" Type="bit" />
           <Property Name="Address" Type="nvarchar(max)" />
           <Property Name="PasswordSet" Type="bit" />
+          <Property Name="LoggedInAs" Type="int" />
         </EntityType>
         <EntityType Name="EnteredUsers">
           <Key>
@@ -49,7 +51,7 @@
           <Property Name="TimeStamp" Type="datetime2" Precision="7" Nullable="false" />
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="VenueId" Type="int" Nullable="false" />
-          <Property Name="PricePoint" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="PricePoint" Type="decimal" Precision="18" Scale="2" />
           <Property Name="Username" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="Establishments">
@@ -80,7 +82,7 @@
           <Property Name="Quantity" Type="int" Nullable="false" />
           <Property Name="ExtendTime" Type="int" Nullable="false" />
           <Property Name="NotificationSent" Type="bit" Nullable="false" />
-          <Property Name="PricePoint" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="PricePoint" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="QueueTimes">
           <Key>
@@ -110,7 +112,7 @@
           <Property Name="TimeStamp" Type="datetime2" Precision="7" Nullable="false" />
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="VenueId" Type="int" Nullable="false" />
-          <Property Name="PricePoint" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="PricePoint" Type="decimal" Precision="18" Scale="2" />
           <Property Name="Username" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="Verification">
@@ -156,7 +158,7 @@
           <Property Name="Quantity" Type="Int32" Nullable="false" />
           <Property Name="ExtendTime" Type="Int32" Nullable="false" />
           <Property Name="NotificationSent" Type="Boolean" Nullable="false" />
-          <Property Name="PricePoint" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="PricePoint" Type="Decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="Account">
           <Key>
@@ -172,6 +174,7 @@
           <Property Name="ResetTokenExpires" Type="DateTime" Precision="7" />
           <Property Name="ProfilePicture" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="OneSignalPlayerId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="BrewQueueCredit" Type="Decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityContainer Name="queueDBEntities3" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Queues" EntityType="Self.Queue" />
@@ -205,7 +208,7 @@
           <Property Name="TimeStamp" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="VenueId" Type="Int32" Nullable="false" />
-          <Property Name="PricePoint" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="PricePoint" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="Username" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="AdminAccount">
@@ -228,6 +231,7 @@
           <Property Name="Verified" Type="Boolean" />
           <Property Name="Address" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="PasswordSet" Type="Boolean" />
+          <Property Name="LoggedInAs" Type="Int32" />
         </EntityType>
         <EntityType Name="QueueTime">
           <Key>
@@ -257,7 +261,7 @@
           <Property Name="TimeStamp" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="VenueId" Type="Int32" Nullable="false" />
-          <Property Name="PricePoint" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="PricePoint" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="Username" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Verification">
@@ -301,6 +305,7 @@
           <EntitySetMapping Name="Accounts">
             <EntityTypeMapping TypeName="Queue.Account">
               <MappingFragment StoreEntitySet="Account">
+                <ScalarProperty Name="BrewQueueCredit" ColumnName="BrewQueueCredit" />
                 <ScalarProperty Name="OneSignalPlayerId" ColumnName="OneSignalPlayerId" />
                 <ScalarProperty Name="ProfilePicture" ColumnName="ProfilePicture" />
                 <ScalarProperty Name="ResetTokenExpires" ColumnName="ResetTokenExpires" />
@@ -344,6 +349,7 @@
           <EntitySetMapping Name="AdminAccounts">
             <EntityTypeMapping TypeName="Queue.AdminAccount">
               <MappingFragment StoreEntitySet="AdminAccount">
+                <ScalarProperty Name="LoggedInAs" ColumnName="LoggedInAs" />
                 <ScalarProperty Name="PasswordSet" ColumnName="PasswordSet" />
                 <ScalarProperty Name="Address" ColumnName="Address" />
                 <ScalarProperty Name="Verified" ColumnName="Verified" />

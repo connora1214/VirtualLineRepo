@@ -24,5 +24,6 @@ namespace VirtualLine2._0.Models
         public Nullable<System.DateTime> ResetTokenExpires { get; set; }
         public string ProfilePicture { get; set; }
         public string OneSignalPlayerId { get; set; }
+        public Nullable<decimal> BrewQueueCredit { get; set; }
     }
 }

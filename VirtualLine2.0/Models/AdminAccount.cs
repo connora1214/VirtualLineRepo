@@ -30,5 +30,6 @@ namespace VirtualLine2._0.Models
         public Nullable<bool> Verified { get; set; }
         public string Address { get; set; }
         public Nullable<bool> PasswordSet { get; set; }
+        public Nullable<int> LoggedInAs { get; set; }
     }
 }
