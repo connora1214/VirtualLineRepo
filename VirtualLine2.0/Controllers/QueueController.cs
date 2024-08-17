@@ -264,9 +264,20 @@ namespace VirtualLine2._0.Controllers
          return Json(new { timerStarted = user.timerStarted}, JsonRequestBehavior.AllowGet);
       }
 
+      public JsonResult UseCredit(decimal price)
+      {
+         Account user = db.Accounts.Find(User.Identity.Name);
+
+         user.BrewQueueCredit -= price;
+         db.SaveChanges();
+
+         return Json(new { }, JsonRequestBehavior.AllowGet);
+      }
+
       public JsonResult getPricePoint(int quantity)
       {
          string pricePoint = "";
+         decimal price = (decimal)0.0;
          int LineLength = 0;
          //int lastUserPos = 0;
          var loggedin = false;
@@ -318,6 +329,7 @@ namespace VirtualLine2._0.Controllers
          {
             if (LineLength < 25)
             {
+               price = (decimal)5.0;
                //$5 base price
                if (quantity == 1)
                {
@@ -343,6 +355,7 @@ namespace VirtualLine2._0.Controllers
             }
             else if (LineLength >= 25 && LineLength < 50)
             {
+               price = (decimal)7.5;
                //$7.50 base price
                if (quantity == 1)
                {
@@ -367,6 +380,7 @@ namespace VirtualLine2._0.Controllers
             }
             else if (LineLength >= 50 && LineLength < 75)
             {
+               price = (decimal)10.0;
                //$10 base price
                if (quantity == 1)
                {
@@ -391,6 +405,7 @@ namespace VirtualLine2._0.Controllers
             }
             else if (LineLength >= 75 && LineLength < 100)
             {
+               price = (decimal)12.5;
                //$12.50 base price
                if (quantity == 1)
                {
@@ -415,6 +430,7 @@ namespace VirtualLine2._0.Controllers
             }
             else
             {
+               price = (decimal)15.0;
                //$15 base price
                if (quantity == 1)
                {
@@ -439,9 +455,12 @@ namespace VirtualLine2._0.Controllers
             }
          }
 
-         
+         price *= quantity;
 
-         return Json(new { PricePoint = pricePoint, loggedIn = loggedin, PriceType = e.PriceType }, JsonRequestBehavior.AllowGet);
+         Account user = db.Accounts.Find(User.Identity.Name);
+
+         decimal credit = (decimal)user.BrewQueueCredit;
+         return Json(new { PricePoint = pricePoint, loggedIn = loggedin, PriceType = e.PriceType, price = price, credit = credit }, JsonRequestBehavior.AllowGet);
       }
 
       public ActionResult ReadyToEnter()

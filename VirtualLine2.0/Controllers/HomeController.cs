@@ -38,6 +38,15 @@ namespace VirtualLine2._0.Controllers
       }
       public ActionResult Index()
       {
+         /*foreach ( Account a in db.Accounts.ToList())
+         {
+            a.BrewQueueCredit = (decimal?)0.0;
+            db.SaveChanges();
+         }*/
+
+        /* Account a = db.Accounts.Find("connora1214");
+         a.BrewQueueCredit = (decimal?)10.0;
+         db.SaveChanges();*/
 
          if (User.Identity.Name == "")
          {
