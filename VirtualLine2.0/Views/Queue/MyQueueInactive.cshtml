@@ -4,7 +4,7 @@
 
 <head>
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <script src="https://unpkg.com/webtonative@1.0.52/webtonative.min.js"></script>
     <script>
         var loggedin = false;
@@ -72,29 +72,6 @@
                                         })
                                     }
                                 );
-                                @*if (confirm("Do you want to use your BrewQueue credit to purchase?`")) {
-                                    // User clicked "Yes"
-                                    fetch('/Queue/UseCredit?price=' + data.price)
-                                        .then(response => response.json())
-                                        .then(data => {
-                                            document.getElementById("btnSubmit").click();
-                                        })
-                                }
-                                else {
-                                    // User clicked "No"
-                                    window.WTN.inAppPurchase({
-                                        productId: pricePoint,
-                                        callback: function (data) {
-                                            var receiptData = data.receiptData;
-                                            if (data.isSuccess) {
-                                                document.getElementById("btnSubmit").click();
-                                                //document.getElementById("AddToQueueForm").submit();
-                                                // use this receipt data to verify transaction from app store
-                                                // refer : https://developer.apple.com/documentation/appstorereceipts/verifyreceipt
-                                            }
-                                        }
-                                    })
-                                }*@
                             }
                             else {
                                 window.WTN.inAppPurchase({
@@ -110,8 +87,8 @@
                                     }
                                 })
                             }
-                            
-                        }                       
+
+                        }
                     }
                     else {
                         window.location.href = '@Url.Action("MyAccount", "Home")';
@@ -173,8 +150,8 @@
         <h1 style="font-family: 'Comfortaa'; color: #000000; text-shadow: 0 0 15px rgb(255 255 255);">@ViewBag.Venue</h1>
     </div>
     <div id="customConfirm" style="display:none; color:#1e1e1e; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); z-index: 1000;">
-        <p id="confirmMessage">Do you want to use your BrewQueue credit to purchase?</p>
-        <p id="creditAmount"></p>
+        <p id="confirmMessage" style="color: #1e1e1e; font-size: 14px; font-weight: bold">Do you want to use your BrewQueue credit to purchase?</p>
+        <p id="creditAmount" style="color: #1e1e1e"></p>
         <button id="confirmNo" class="btn btn-blue-md">No</button>
         <button id="confirmYes" class="btn btn-blue-md" style="margin-right: 10px;">Yes</button>
     </div>
