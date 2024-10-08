@@ -65,6 +65,25 @@ namespace VirtualLine2._0.Controllers
             return RedirectToAction("MyAccount", "Home");
          }
 
+         var entries = db.EnteredUsers.Where(e => e.Username == User.Identity.Name).ToList();
+         if (entries.Any())
+         {
+            foreach(var entry in entries)
+            {
+               VenueEntry v = new VenueEntry();
+               v.Id = entry.Id;
+               v.TimeStamp = entry.TimeStamp;
+               v.PricePoint = entry.PricePoint;
+               v.Username = entry.Username;
+               v.VenueId = entry.VenueId;
+               v.VenueName = entry.VenueName;
+               db.VenueEntries.Add(v);
+
+               db.EnteredUsers.Remove(entry);
+               db.SaveChanges();
+            }
+         }
+
          var historyEntries = db.VenueEntries.Where(v => v.Username == User.Identity.Name).ToList();
 
          var groupedHistoryEntries = historyEntries.GroupBy(v => v.TimeStamp).Select(g => new VenueEntry{TimeStamp = g.Key,PricePoint = g.Sum(v => v.PricePoint),VenueName = g.First().VenueName,VenueId = g.First().VenueId}).OrderByDescending(v => v.TimeStamp).ToList();

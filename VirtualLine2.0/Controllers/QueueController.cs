@@ -15,6 +15,8 @@ using VirtualLine2._0.Controllers;
 using VirtualLine2._0.Models;
 using NodaTime;
 using GeoTimeZone;
+using Stripe;
+using Stripe.Checkout;
 
 namespace VirtualLine2._0.Controllers
 {
@@ -266,7 +268,7 @@ namespace VirtualLine2._0.Controllers
 
       public JsonResult UseCredit(decimal price)
       {
-         Account user = db.Accounts.Find(User.Identity.Name);
+         Models.Account user = db.Accounts.Find(User.Identity.Name);
 
          user.BrewQueueCredit -= price;
          db.SaveChanges();
@@ -274,18 +276,12 @@ namespace VirtualLine2._0.Controllers
          return Json(new { }, JsonRequestBehavior.AllowGet);
       }
 
-      public JsonResult getPricePoint(int quantity)
+      public decimal getBasePrice(int quantity)
       {
-         string pricePoint = "";
          decimal price = (decimal)0.0;
          int LineLength = 0;
          //int lastUserPos = 0;
-         var loggedin = false;
 
-         if (User.Identity.Name != "")
-         {
-            loggedin = true;
-         }
 
          //select only the queue entries of the bar that the user is joining the queue of
          var BarQueue = from q in db.Queues select q;
@@ -303,164 +299,217 @@ namespace VirtualLine2._0.Controllers
 
          if (e.PriceType == "Static")
          {
-            if (quantity == 1)
-            {
-               pricePoint = "price5";
-            }
-            else if (quantity == 2)
-            {
-               pricePoint = "price10";
-            }
-            else if (quantity == 3)
-            {
-               pricePoint = "price15";
-            }
-            else if (quantity == 4)
-            {
-               pricePoint = "price20";
-            }
-            else
-            {
-               pricePoint = "price25";
-            }
-
+            price = (decimal)5.0;
          }
          else if (e.PriceType == "Incremental")
          {
             if (LineLength < 25)
             {
                price = (decimal)5.0;
-               //$5 base price
-               if (quantity == 1)
-               {
-                  pricePoint = "price5";
-               }
-               else if (quantity == 2)
-               {
-                  pricePoint = "price10";
-               }
-               else if (quantity == 3)
-               {
-                  pricePoint = "price15";
-               }
-               else if (quantity == 4)
-               {
-                  pricePoint = "price20";
-               }
-               else
-               {
-                  pricePoint = "price25";
-               }
-
             }
             else if (LineLength >= 25 && LineLength < 50)
             {
                price = (decimal)7.5;
-               //$7.50 base price
-               if (quantity == 1)
-               {
-                  pricePoint = "price7.5";
-               }
-               else if (quantity == 2)
-               {
-                  pricePoint = "price15";
-               }
-               else if (quantity == 3)
-               {
-                  pricePoint = "price22.5";
-               }
-               else if (quantity == 4)
-               {
-                  pricePoint = "price30";
-               }
-               else
-               {
-                  pricePoint = "price37.5";
-               }
             }
             else if (LineLength >= 50 && LineLength < 75)
             {
                price = (decimal)10.0;
-               //$10 base price
-               if (quantity == 1)
-               {
-                  pricePoint = "price10";
-               }
-               else if (quantity == 2)
-               {
-                  pricePoint = "price20";
-               }
-               else if (quantity == 3)
-               {
-                  pricePoint = "price30";
-               }
-               else if (quantity == 4)
-               {
-                  pricePoint = "price40";
-               }
-               else
-               {
-                  pricePoint = "price50";
-               }
             }
             else if (LineLength >= 75 && LineLength < 100)
             {
                price = (decimal)12.5;
-               //$12.50 base price
-               if (quantity == 1)
-               {
-                  pricePoint = "price12.5";
-               }
-               else if (quantity == 2)
-               {
-                  pricePoint = "price25";
-               }
-               else if (quantity == 3)
-               {
-                  pricePoint = "price37.5";
-               }
-               else if (quantity == 4)
-               {
-                  pricePoint = "price50";
-               }
-               else
-               {
-                  pricePoint = "price62.5";
-               }
             }
             else
             {
                price = (decimal)15.0;
-               //$15 base price
-               if (quantity == 1)
-               {
-                  pricePoint = "price15";
-               }
-               else if (quantity == 2)
-               {
-                  pricePoint = "price30";
-               }
-               else if (quantity == 3)
-               {
-                  pricePoint = "price45";
-               }
-               else if (quantity == 4)
-               {
-                  pricePoint = "price60";
-               }
-               else
-               {
-                  pricePoint = "price75";
-               }
             }
          }
 
-         price *= quantity;
+         return price;
+      }
 
-         Account user = db.Accounts.Find(User.Identity.Name);
+      public JsonResult getPriceInfo(int quantity)
+      {
+         var loggedin = false;
+
+         if (User.Identity.Name != "")
+         {
+            loggedin = true;
+         }
+
+         var e = db.Establishments.Find(bar);
+
+         decimal price = getBasePrice(quantity);
+
+         Models.Account user = db.Accounts.Find(User.Identity.Name);
 
          decimal credit = (decimal)user.BrewQueueCredit;
-         return Json(new { PricePoint = pricePoint, loggedIn = loggedin, PriceType = e.PriceType, price = price, credit = credit }, JsonRequestBehavior.AllowGet);
+         return Json(new {loggedIn = loggedin, PriceType = e.PriceType, price = price *= quantity, credit = credit }, JsonRequestBehavior.AllowGet);
+      }
+
+      [HttpPost]
+      public ActionResult CreateCheckoutSession(int quantity)
+      {
+         try
+         {
+            StripeConfiguration.ApiKey = "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"; // Your secret key
+
+            decimal price = getBasePrice(quantity);
+
+            // Convert the price to cents (Stripe expects the amount in cents)
+            long priceInCents = (long)(price * 100);
+
+            var options = new SessionCreateOptions
+            {
+               PaymentMethodTypes = new List<string> { "card" },
+               LineItems = new List<SessionLineItemOptions>
+                {
+                    new SessionLineItemOptions
+                    {
+                        PriceData = new SessionLineItemPriceDataOptions
+                        {
+                            UnitAmount = priceInCents,
+                            Currency = "usd",
+                            ProductData = new SessionLineItemPriceDataProductDataOptions
+                            {
+                                Name = "BrewQueue Line Spot",
+                            },
+                        },
+                        Quantity = quantity,
+                    },
+                },
+               Mode = "payment",
+               SuccessUrl = Url.Action("PaymentSuccess", "Queue", new { quantity = quantity }, Request.Url.Scheme),
+               CancelUrl = Url.Action("PaymentFailed", "Queue", null, Request.Url.Scheme),
+            };
+
+            var service = new SessionService();
+            Session session = service.Create(options);
+
+            return Json(new {id = session.Id });
+         }
+         catch (Exception ex)
+         {
+            return Json(new { error = ex.Message });
+         }
+      }
+
+      public ActionResult PaymentSuccess(int quantity)
+      {
+         // Handle post-payment success actions here
+         return RedirectToAction("AddToQueue", new { numberSelect = quantity.ToString()});
+      }
+
+      public ActionResult PaymentFailed()
+      {
+         // Handle payment failure actions here
+         return RedirectToAction("MyQueueInactive"); // Display a failure view
+      }
+
+      
+      public ActionResult AddToQueue(string numberSelect)
+      {
+         if (User.Identity.Name == "")
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
+
+         Queue user = new Queue();
+
+         //get length of db
+         int LineLength = 0;
+         //int lastUserPos = 0;
+
+         //select only the queue entries of the bar that the user is joining the queue of
+         var BarQueue = from q in db.Queues select q;
+         BarQueue = BarQueue.Where(q => q.Bar.Equals(bar));
+
+         if (db.Queues.ToArray() != null)
+         {
+            foreach (Queue q in BarQueue.ToArray())
+            {
+               LineLength += q.Quantity;
+            }
+         }
+
+         //first on the queue
+         if (LineLength == 0)
+         {
+            user.Position = 1;
+         }
+         //not first on the queue
+         else
+         {
+            int lastPos = db.Queues.Max(q => q.Position);
+            Queue lastUser = db.Queues.FirstOrDefault(q => q.Position.Equals(lastPos));
+
+            user.Position = lastUser.Position + lastUser.Quantity;
+         }
+
+         //user is logged in
+         if (User.Identity.Name != "")
+         {
+            //get the account info of the logged in user
+            Models.Account account = db.Accounts.Find(User.Identity.Name);
+            user.Username = account.Username;
+            user.Phone = account.Phone;
+            user.Bar = bar;
+            user.StartTime = DateTime.MinValue;
+            user.Quantity = Int32.Parse(numberSelect);
+            user.timerStarted = false;
+            user.enteringBar = false;
+            user.NotificationSent = false;
+            user.ExtendTime = 0;
+
+            Establishment e = db.Establishments.Find(bar);
+
+            if (e.PriceType == "Free")
+            {
+               user.PricePoint = (decimal)0.0;
+            }
+            else if (e.PriceType == "Static")
+            {
+               user.PricePoint = (decimal)5.0;
+            }
+            else
+            {
+               if (user.Position < 25)
+               {
+                  user.PricePoint = (decimal)5.0;
+               }
+               else if (user.Position >= 25 && user.Position < 50)
+               {
+                  user.PricePoint = (decimal)7.50;
+               }
+               else if (user.Position >= 50 && user.Position < 75)
+               {
+                  user.PricePoint = (decimal)10.0;
+               }
+               else if (user.Position >= 75 && user.Position < 100)
+               {
+                  user.PricePoint = (decimal)12.50;
+               }
+               else
+               {
+                  user.PricePoint = (decimal)15.0;
+               }
+            }
+
+
+            if (db.Queues.Find(user.Username) != null)
+            {
+               return RedirectToAction("AlreadyInQueue");
+            }
+
+            db.Queues.Add(user);
+            db.SaveChanges();
+            return RedirectToAction("MyQueue", "Queue");
+         }
+         //if user is not logged in direct them to the login page
+         else
+         {
+            return RedirectToAction("MyAccount", "Home");
+         }
       }
 
       public ActionResult ReadyToEnter()
@@ -471,7 +520,7 @@ namespace VirtualLine2._0.Controllers
          }
 
          Queue user = db.Queues.Find(User.Identity.Name);
-         Account account = db.Accounts.Find(User.Identity.Name);
+         Models.Account account = db.Accounts.Find(User.Identity.Name);
          Establishment e = db.Establishments.Find(user.Bar);
          ViewBag.Title = e.BarName;
          ViewBag.ProfilePicturePath = e.ProfilePicture;
@@ -972,111 +1021,7 @@ namespace VirtualLine2._0.Controllers
          
       }
 
-      [HttpPost]
-      public ActionResult AddToQueue(string numberSelect)
-      {
-         if (User.Identity.Name == "")
-         {
-            return RedirectToAction("MyAccount", "Home");
-         }
-
-         Queue user = new Queue();
-
-         //get length of db
-         int LineLength = 0;
-         //int lastUserPos = 0;
-
-         //select only the queue entries of the bar that the user is joining the queue of
-         var BarQueue = from q in db.Queues select q;
-         BarQueue = BarQueue.Where(q => q.Bar.Equals(bar));
-
-         if (db.Queues.ToArray() != null)
-         {
-            foreach (Queue q in BarQueue.ToArray())
-            {
-               LineLength += q.Quantity;
-            }
-         }
-
-         //first on the queue
-         if (LineLength == 0)
-         {
-            user.Position = 1;
-         }
-         //not first on the queue
-         else
-         {
-            int lastPos = db.Queues.Max(q => q.Position);
-            Queue lastUser = db.Queues.FirstOrDefault(q => q.Position.Equals(lastPos));
-            
-            user.Position = lastUser.Position + lastUser.Quantity;
-         }
-
-         //user is logged in
-         if (User.Identity.Name != "")
-         {
-            //get the account info of the logged in user
-            Account account = db.Accounts.Find(User.Identity.Name);
-            user.Username = account.Username;
-            user.Phone = account.Phone;
-            user.Bar = bar;
-            user.StartTime = DateTime.MinValue;
-            user.Quantity = Int32.Parse(numberSelect);
-            user.timerStarted = false;
-            user.enteringBar = false;
-            user.NotificationSent = false;
-            user.ExtendTime = 0;
-
-            Establishment e = db.Establishments.Find(bar);
-
-            if (e.PriceType == "Free")
-            {
-               user.PricePoint = (decimal)0.0;
-            }
-            else if(e.PriceType == "Static")
-            {
-               user.PricePoint = (decimal)5.0;
-            }
-            else
-            {
-               if (user.Position < 25)
-               {
-                  user.PricePoint = (decimal)5.0;
-               }
-               else if (user.Position >= 25 && user.Position < 50)
-               {
-                  user.PricePoint = (decimal)7.50;
-               }
-               else if (user.Position >= 50 && user.Position < 75)
-               {
-                  user.PricePoint = (decimal)10.0;
-               }
-               else if (user.Position >= 75 && user.Position < 100)
-               {
-                  user.PricePoint = (decimal)12.50;
-               }
-               else
-               {
-                  user.PricePoint = (decimal)15.0;
-               }
-            }
-
-
-            if (db.Queues.Find(user.Username) != null)
-            {
-               return RedirectToAction("AlreadyInQueue");
-            }
-
-            db.Queues.Add(user);
-            db.SaveChanges();
-            return RedirectToAction("MyQueue", "Queue");
-         }
-         //if user is not logged in direct them to the login page
-         else
-         {
-            return RedirectToAction("MyAccount", "Home");
-         }
-      }
+      
 
       public ActionResult RemoveFromQueue()
       {

@@ -44,7 +44,7 @@ namespace VirtualLine2._0.Controllers
             db.SaveChanges();
          }*/
 
-        /* Account a = db.Accounts.Find("connora1214");
+         /*Account a = db.Accounts.Find("connora1214");
          a.BrewQueueCredit = (decimal?)10.0;
          db.SaveChanges();*/
 
@@ -57,7 +57,7 @@ namespace VirtualLine2._0.Controllers
             guest = false;
          }
 
-         //List<string> names = new List<string> { "BeccaLebrao", "nerimias11", "jrgavlik@gmail.com", "test", "admin", "connora1214" };
+
          /*for (int i = 1; i < 26; i++)
          {
             String s = i.ToString();
@@ -77,7 +77,6 @@ namespace VirtualLine2._0.Controllers
             Queue user = new Queue();
             user.Position = i;
             user.Username = "u" + s;
-            //user.Username = names[i - 1];
             user.Bar = 4;
             user.StartTime = DateTime.MinValue;
             user.Quantity = 1;
@@ -88,24 +87,6 @@ namespace VirtualLine2._0.Controllers
             db.Queues.Add(user);
             db.SaveChanges();
          }*/
-
-         /*VenueEntry v = new VenueEntry();
-         v.Username = "connora1214";
-         v.TimeStamp = DateTime.Now;
-         v.VenueId = 4;
-         v.VenueName = "Doggies";
-         v.PricePoint = (decimal?)5.0;
-         db.VenueEntries.Add(v);
-         db.SaveChanges();*/
-
-         /*if (initialOpen)
-         {
-            initialOpen = false;
-            return RedirectToAction("MyAccount", "Home");
-         }*/
-         //List<string> ExpiringUsers = checkExpiringTimers();
-
-
 
          ViewBag.Locations = db.Establishments.Select(e => e.Location).Distinct().ToList();
          return View();         

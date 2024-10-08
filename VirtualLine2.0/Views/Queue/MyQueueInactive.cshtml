@@ -5,10 +5,11 @@
 <head>
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <script src="https://unpkg.com/webtonative@1.0.52/webtonative.min.js"></script>
+    <!-- Load Stripe.js -->
+    <script src="https://js.stripe.com/v3/"></script>
     <script>
-        var loggedin = false;
-        var pricePoint = ''; // Variable to store the price point
+        const stripe = Stripe('pk_live_51PosUXKRDYES0e4joslagjjSyRfja4sQ2cc9SobR9BW9fdgBworDV4EYpzWLPBbubtu2ELjSXqiIjWoMg85UZSzz00gD9SAsR9'); // Add your Stripe publishable key here
+
         var selectedQuantity = 1;
 
         function showCustomConfirm(credit, callbackYes, callbackNo) {
@@ -35,21 +36,17 @@
 
         function getPricePointFromServer(quantity) {
             // Make an AJAX request to the server to get the price point
-            fetch('/Queue/getPricePoint?quantity=' + quantity)
+            fetch('/Queue/getPriceInfo?quantity=' + quantity)
                 .then(response => response.json())
                 .then(data => {
-                    // Set the price point received from the server
-                    pricePoint = data.PricePoint;
                     if (data.loggedIn == true) {
                         if (data.PriceType == "Free") {
                             document.getElementById("btnSubmit").click();
-                        }
-                        else {
+                        } else {
                             if (data.credit >= data.price) {
                                 showCustomConfirm(
                                     data.credit,
                                     function () {
-                                        // User clicked "Yes"
                                         fetch('/Queue/UseCredit?price=' + data.price)
                                             .then(response => response.json())
                                             .then(data => {
@@ -57,80 +54,55 @@
                                             })
                                     },
                                     function () {
-                                        // User clicked "No"
-                                        window.WTN.inAppPurchase({
-                                            productId: pricePoint,
-                                            callback: function (data) {
-                                                var receiptData = data.receiptData;
-                                                if (data.isSuccess) {
-                                                    document.getElementById("btnSubmit").click();
-                                                    //document.getElementById("AddToQueueForm").submit();
-                                                    // use this receipt data to verify transaction from app store
-                                                    // refer : https://developer.apple.com/documentation/appstorereceipts/verifyreceipt
-                                                }
-                                            }
-                                        })
+                                        triggerStripeCheckout(quantity);
                                     }
                                 );
+                            } else {
+                                triggerStripeCheckout(quantity);
                             }
-                            else {
-                                window.WTN.inAppPurchase({
-                                    productId: pricePoint,
-                                    callback: function (data) {
-                                        var receiptData = data.receiptData;
-                                        if (data.isSuccess) {
-                                            document.getElementById("btnSubmit").click();
-                                            //document.getElementById("AddToQueueForm").submit();
-                                            // use this receipt data to verify transaction from app store
-                                            // refer : https://developer.apple.com/documentation/appstorereceipts/verifyreceipt
-                                        }
-                                    }
-                                })
-                            }
-
                         }
-                    }
-                    else {
+                    } else {
                         window.location.href = '@Url.Action("MyAccount", "Home")';
                     }
                 })
                 .catch(error => console.error('Error fetching price point:', error));
         }
 
+        function triggerIAP() {
+            getPricePointFromServer(selectedQuantity);
+        }
+
         function handleQuantityChange() {
             // Update the selectedQuantity variable with the new value of the dropdown list
             selectedQuantity = parseInt(document.getElementById("numberSelect").value);
-            console.log('Selected quantity:', selectedQuantity);
-            //getPricePointFromServer(selectedQuantity);
         }
 
-        function triggerIAP() {
-            // Check if price point is empty, if so, fetch it from the server
-            getPricePointFromServer(selectedQuantity);
-
-            @*if (loggedin) {
-                window.WTN.inAppPurchase({
-                    productId: pricePoint,
-                    callback: function (data) {
-                        var receiptData = data.receiptData;
-                        if (data.isSuccess) {
-                            document.getElementById("btnSubmit").click();
-                            //document.getElementById("AddToQueueForm").submit();
-                            // use this receipt data to verify transaction from app store
-                            // refer : https://developer.apple.com/documentation/appstorereceipts/verifyreceipt
-                        }
+        function triggerStripeCheckout(quantity) {
+            fetch('/Queue/CreateCheckoutSession', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    quantity: quantity,
+                }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    return stripe.redirectToCheckout({ sessionId: data.id }); // Correctly passing sessionId as a string
+                })
+                .then((result) => {
+                    if (result.error) {
+                        alert(result.error.message);
                     }
                 })
-            }
-            else {
-                window.location.href = '@Url.Action("MyAccount", "Home")';
-            }*@
+                .catch((error) => {
+                    console.error('Error in triggering Stripe Checkout:', error);
+                });
         }
 
     </script>
 </head>
-
-
 
 <div class="jumbotron text-center banner-background"
      style="@(String.IsNullOrEmpty(ViewBag.BannerPicturePath) ?
@@ -163,7 +135,6 @@
         <h3 style="margin-bottom: 20px; color:#FFFFFF">@ViewBag.Message</h3>
         @using (Html.BeginForm("AddToQueue", "Queue", FormMethod.Post, new { id = "AddToQueueForm" }))
         {
-
             <label for="numberSelect" style="font-family: 'Comfortaa'; margin-top: 5%; margin-bottom: 5%; color: #FFFFFF">Select a Quantity:</label>
             @Html.DropDownList("numberSelect", numberList, null, new { @style = " color: #1e1e1e; font-family: 'Comfortaa'", onchange = "handleQuantityChange()" })
 
@@ -173,12 +144,10 @@
     </div>
 </div>
 
-
-
 <style>
     .btn-blue-md {
-        display: block; /* Makes each button a block-level element */
-        width: 100%; /* Ensures each button stretches to the full width of its container */
+        display: block;
+        width: 100%;
         padding: 14px 20px;
         font-size: 14px;
         line-height: 1.333333;
@@ -186,8 +155,8 @@
         background-color: rgb(64 255 154);
         border: 4px solid rgb(64 255 154);
         border-radius: 75px;
-        margin-bottom: 10px; /* Adds space between the buttons */
-        text-align: center; /* Center the text in the button */
+        margin-bottom: 10px;
+        text-align: center;
         font-family: 'Comfortaa'
     }
 
@@ -196,7 +165,7 @@
         min-width: 300px;
         color: #FFFFFF;
         z-index: 1;
-        background-color: black; /* Fallback background color */
+        background-color: black;
     }
 
     .jumbotron.banner-background::before {
@@ -221,7 +190,7 @@
         right: 0;
         bottom: 0;
         background-color: white;
-        opacity: 0.5; /* Adjust the white overlay's opacity as needed */
+        opacity: 0.5;
         z-index: -1;
     }
 </style>
@@ -238,14 +207,12 @@
     image.src = bannerImageUrl;
 
     image.onerror = function() {
-        // Fallback image
         backgroundImageDiv.style.setProperty('--background-image-url', `url('${fallbackImageUrl}')`);
         backgroundImageDiv.style.backgroundRepeat = 'no-repeat';
         backgroundImageDiv.style.backgroundSize = 'cover';
         backgroundImageDiv.style.backgroundPosition = 'center';
     };
 
-    // Optional: If you want to confirm the image has loaded before setting it
     image.onload = function() {
         backgroundImageDiv.style.setProperty('--background-image-url', `url('${bannerImageUrl}')`);
         backgroundImageDiv.style.backgroundRepeat = 'no-repeat';
@@ -253,7 +220,6 @@
         backgroundImageDiv.style.backgroundPosition = 'center';
     };
 
-    // Ensure the background image is initially set
     document.addEventListener('DOMContentLoaded', function () {
         backgroundImageDiv.style.backgroundImage = `var(--background-image-url)`;
         backgroundImageDiv.style.backgroundRepeat = 'no-repeat';
