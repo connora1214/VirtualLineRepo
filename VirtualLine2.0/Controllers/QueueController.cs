@@ -299,7 +299,7 @@ namespace VirtualLine2._0.Controllers
 
          if (e.PriceType == "Static")
          {
-            price = (decimal)5.0;
+            price = (decimal)e.StaticPrice;
          }
          else if (e.PriceType == "Incremental")
          {
@@ -687,6 +687,63 @@ namespace VirtualLine2._0.Controllers
          }
 
          return RedirectToAction("Timer", "Queue");
+      }
+
+      [HttpPost]
+      public ActionResult CreateCheckoutSessionExtend()
+      {
+         try
+         {
+            StripeConfiguration.ApiKey = "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"; // Your secret key
+
+            // Convert the price to cents (Stripe expects the amount in cents)
+            long priceInCents = 500;
+
+            var options = new SessionCreateOptions
+            {
+               PaymentMethodTypes = new List<string> { "card" },
+               LineItems = new List<SessionLineItemOptions>
+                {
+                    new SessionLineItemOptions
+                    {
+                        PriceData = new SessionLineItemPriceDataOptions
+                        {
+                            UnitAmount = priceInCents,
+                            Currency = "usd",
+                            ProductData = new SessionLineItemPriceDataProductDataOptions
+                            {
+                                Name = "BrewQueue Extend Time",
+                            },
+                        },
+                        Quantity = 1,
+                    },
+                },
+               Mode = "payment",
+               SuccessUrl = Url.Action("ExtendPaymentSuccess", "Queue", null, Request.Url.Scheme),
+               CancelUrl = Url.Action("ExtendPaymentFailed", "Queue", null, Request.Url.Scheme),
+            };
+
+            var service = new SessionService();
+            Session session = service.Create(options);
+
+            return Json(new { id = session.Id });
+         }
+         catch (Exception ex)
+         {
+            return Json(new { error = ex.Message });
+         }
+      }
+
+      public ActionResult ExtendPaymentSuccess()
+      {
+         // Handle post-payment success actions here
+         return RedirectToAction("ExtendTime");
+      }
+
+      public ActionResult ExtendPaymentFailed()
+      {
+         // Handle payment failure actions here
+         return RedirectToAction("Timer"); // Display a failure view
       }
 
       public ActionResult ExtendTime()

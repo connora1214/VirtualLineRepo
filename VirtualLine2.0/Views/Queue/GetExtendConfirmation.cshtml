@@ -1,29 +1,37 @@
 ﻿<head>
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/webtonative@1.0.52/webtonative.min.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
     <script>
+        const stripe = Stripe('pk_live_51PosUXKRDYES0e4joslagjjSyRfja4sQ2cc9SobR9BW9fdgBworDV4EYpzWLPBbubtu2ELjSXqiIjWoMg85UZSzz00gD9SAsR9'); // Stripe publishable key
+
+        function triggerStripeCheckout() {
+            fetch('/Queue/CreateCheckoutSessionExtend', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    return stripe.redirectToCheckout({ sessionId: data.id }); // Correctly passing sessionId as a string
+                })
+                .then((result) => {
+                    if (result.error) {
+                        alert(result.error.message);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error in triggering Stripe Checkout:', error);
+                });
+        }
+
         function triggerIAP() {
             var extendTime = @Html.Raw(Json.Encode(ViewBag.ExtendTime));
             if (extendTime < 1) {
-                loadIAP();
+                triggerStripeCheckout();
             } else {
                 alert("You may only extend your time once.");
             }
-        }
-
-        function loadIAP() {
-            window.WTN.inAppPurchase({
-                    productId: 'price5',
-                    callback: function (data) {
-                        var receiptData = data.receiptData;
-                        if (data.isSuccess) {
-                            window.location.href = '@Url.Action("ExtendTime", "Queue")';
-                            //document.getElementById("AddToQueueForm").submit();
-                            // use this receipt data to verify transaction from app store
-                            // refer : https://developer.apple.com/documentation/appstorereceipts/verifyreceipt
-                        }
-                    }
-                });
         }
     </script>
 </head>
@@ -36,7 +44,7 @@
     </div>
 </div>
 
-<button id="btnYes" onclick="getPricePointFromServer()" class="btn btn-blue-md">Yes</button>
+<button id="btnYes" onclick="triggerStripeCheckout()" class="btn btn-blue-md">Yes</button>
 <a class="btn btn-blue-md" href="@Url.Action("Timer", "Queue")">No</a>
 
 

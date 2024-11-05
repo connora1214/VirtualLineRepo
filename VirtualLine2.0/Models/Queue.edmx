@@ -67,6 +67,7 @@
           <Property Name="BannerPicture" Type="nvarchar(max)" />
           <Property Name="Address" Type="nvarchar(max)" />
           <Property Name="PriceType" Type="nvarchar(max)" />
+          <Property Name="StaticPrice" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="Queue">
           <Key>
@@ -199,6 +200,7 @@
           <Property Name="BannerPicture" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Address" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="PriceType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="StaticPrice" Type="Decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="EnteredUser">
           <Key>
@@ -322,6 +324,7 @@
           <EntitySetMapping Name="Establishments">
             <EntityTypeMapping TypeName="Queue.Establishment">
               <MappingFragment StoreEntitySet="Establishments">
+                <ScalarProperty Name="StaticPrice" ColumnName="StaticPrice" />
                 <ScalarProperty Name="PriceType" ColumnName="PriceType" />
                 <ScalarProperty Name="Address" ColumnName="Address" />
                 <ScalarProperty Name="BannerPicture" ColumnName="BannerPicture" />

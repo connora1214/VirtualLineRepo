@@ -23,5 +23,6 @@ namespace VirtualLine2._0.Models
         public string BannerPicture { get; set; }
         public string Address { get; set; }
         public string PriceType { get; set; }
+        public Nullable<decimal> StaticPrice { get; set; }
     }
 }
