@@ -84,6 +84,7 @@
           <Property Name="ExtendTime" Type="int" Nullable="false" />
           <Property Name="NotificationSent" Type="bit" Nullable="false" />
           <Property Name="PricePoint" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="GotFlicNotification" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="QueueTimes">
           <Key>
@@ -160,6 +161,7 @@
           <Property Name="ExtendTime" Type="Int32" Nullable="false" />
           <Property Name="NotificationSent" Type="Boolean" Nullable="false" />
           <Property Name="PricePoint" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="GotFlicNotification" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="Account">
           <Key>
@@ -290,6 +292,7 @@
           <EntitySetMapping Name="Queues">
             <EntityTypeMapping TypeName="Queue.Queue">
               <MappingFragment StoreEntitySet="Queue">
+                <ScalarProperty Name="GotFlicNotification" ColumnName="GotFlicNotification" />
                 <ScalarProperty Name="PricePoint" ColumnName="PricePoint" />
                 <ScalarProperty Name="NotificationSent" ColumnName="NotificationSent" />
                 <ScalarProperty Name="ExtendTime" ColumnName="ExtendTime" />

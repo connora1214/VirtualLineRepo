@@ -353,6 +353,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Properties\PublishProfiles\" />
+    <Folder Include="Views\Flic\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

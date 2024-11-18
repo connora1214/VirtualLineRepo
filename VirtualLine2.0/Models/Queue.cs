@@ -25,5 +25,6 @@ namespace VirtualLine2._0.Models
         public int ExtendTime { get; set; }
         public bool NotificationSent { get; set; }
         public Nullable<decimal> PricePoint { get; set; }
+        public bool GotFlicNotification { get; set; }
     }
 }

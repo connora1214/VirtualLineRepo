@@ -5,6 +5,7 @@ using System.Data.Entity;
 using System.Data.Entity.Validation;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
@@ -17,6 +18,11 @@ using NodaTime;
 using GeoTimeZone;
 using Stripe;
 using Stripe.Checkout;
+using OneSignalApi.Api;
+using OneSignalApi.Client;
+using OneSignalApi.Model;
+using System.Threading.Tasks;
+using System.Text;
 
 namespace VirtualLine2._0.Controllers
 {
@@ -460,6 +466,7 @@ namespace VirtualLine2._0.Controllers
             user.enteringBar = false;
             user.NotificationSent = false;
             user.ExtendTime = 0;
+            user.GotFlicNotification = false;
 
             Establishment e = db.Establishments.Find(bar);
 
@@ -1142,6 +1149,75 @@ namespace VirtualLine2._0.Controllers
             else
             {
                return RedirectToAction("EnterConfirmation");
+            }
+         }
+      }
+
+      [HttpPost]
+      public void SendFlicNotification(int barId)
+      {
+         NotificationService _notificationService = new NotificationService("f6d00091-edec-4303-af03-59f288d177e2", "OTBkYTA1ZDctMjQ1OS00ZWM0LTg2MzItYWMyZjc4NTBmOWFm");
+
+         //Get the first user in line who has not already recieved the Flic notification
+         var queueEntry = db.Queues.Where(q => q.Bar == barId && !q.GotFlicNotification).OrderBy(q => q.Position).FirstOrDefault();
+
+         if (queueEntry != null)
+         {
+            string username = queueEntry.Username;
+
+            VirtualLine2._0.Models.Account a = db.Accounts.Find(username);
+
+            if (a.OneSignalPlayerId != null)
+            {
+               string ReadyUser = a.OneSignalPlayerId; //OneSignalId of the user                             
+               Task.Run(() => _notificationService.SendNotificationAsync(ReadyUser, "Come to the front of the line now"));
+
+               Queue user = db.Queues.Find(username);
+               user.GotFlicNotification = true;
+               db.SaveChanges();
+            }
+         }
+      }
+   }
+
+   public class NotificationService
+   {
+      private readonly string _oneSignalAppId;
+      private readonly string _restApiKey;
+
+      public NotificationService(string appId, string restApiKey)
+      {
+         _oneSignalAppId = appId;
+         _restApiKey = restApiKey;
+      }
+
+      public async Task SendNotificationAsync(string playerId, string message)
+      {
+         
+         using (var httpClient = new HttpClient())
+         {
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", _restApiKey);
+
+            var payload = new
+            {
+               app_id = _oneSignalAppId,
+               contents = new { en = message },
+               include_player_ids = new[] { playerId }
+            };
+
+            string jsonPayload = Newtonsoft.Json.JsonConvert.SerializeObject(payload);
+            var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PostAsync("https://onesignal.com/api/v1/notifications", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+               var responseContent = await response.Content.ReadAsStringAsync();
+               Console.WriteLine("Notification sent successfully: " + responseContent);
+            }
+            else
+            {
+               Console.WriteLine("Failed to send notification. StatusCode: " + response.StatusCode);
             }
          }
       }
