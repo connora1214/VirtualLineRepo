@@ -358,7 +358,7 @@ namespace VirtualLine2._0.Controllers
       {
          try
          {
-            StripeConfiguration.ApiKey = "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"; // Your secret key
+            StripeConfiguration.ApiKey = Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY");
 
             decimal price = getBasePrice(quantity);
 
@@ -701,7 +701,7 @@ namespace VirtualLine2._0.Controllers
       {
          try
          {
-            StripeConfiguration.ApiKey = "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"; // Your secret key
+            StripeConfiguration.ApiKey = Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY");
 
             // Convert the price to cents (Stripe expects the amount in cents)
             long priceInCents = 500;
@@ -1174,6 +1174,14 @@ namespace VirtualLine2._0.Controllers
 
                Queue user = db.Queues.Find(username);
                user.GotFlicNotification = true;
+
+               //start 2 minute timer
+               if (!user.timerStarted)
+               {
+                  user.timerStarted = true;
+               }
+               
+               user.StartTime = DateTime.UtcNow.AddMinutes(-12);
                db.SaveChanges();
             }
          }
